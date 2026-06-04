@@ -1,6 +1,26 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
+<script lang="ts">
+	import { createUploader } from '$lib/utils/uploadthing';
+	import { Uploader, UploadButton } from '@uploadthing/svelte';
+	const uploader = createUploader('materiUploader',{
+    onClientUploadComplete: (res) => {
+      console.log(`onClientUploadComplete`, res);
+      alert("Upload Completed");
+    },
+    onUploadError: (error: Error) => {
+      alert(`ERROR! ${error.message}`);
+    },		
+	});
+</script>
 
-<h2 class="font-bold text-9xl text-amber-500">hello world</h2>
+<div class="flex flex-row">
+	<div>
+		<!-- <Uploader {uploader} /> -->
+		<h1>Welcome to SvelteKit</h1>
+		<p>
+			Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation
+		</p>
+		<UploadButton class="pt-10" {uploader}/>
 
-<img src="https://k6m3grx7pb.ufs.sh/f/DBQQFpCfbBnMre8ktATUnY30RrHgNX8QcGZkjauJSmoyTCvd" alt="">.
+		<h2 class="text-9xl font-bold text-amber-500">hello world</h2>
+	</div>
+</div>
