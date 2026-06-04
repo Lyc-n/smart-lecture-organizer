@@ -3,6 +3,7 @@ import { json } from '@sveltejs/kit';
 
 import { requireAuth } from '$lib/server/require-auth';
 import { validateFile } from '$lib/server/validators/upload.validator.js';
+import { env } from '$env/dynamic/private';
 
 const MAX_SIZE = 50 * 1024 * 1024; // 50MB
 
@@ -22,10 +23,10 @@ export async function POST({ request, locals }) {
 
     validateFile(file);
 
-	const blob = await put(`materials/${crypto.randomUUID()}-${file.name}`, file, { access: 'private' });
-
+	const blob = await put(`materials/${crypto.randomUUID()}-${file.name}`, file, { access: 'private', token: env.BLOB_READ_WRITE_TOKEN });
+	
 	return json({
-		pathname: blob.pathname,
+		blopPath: blob.pathname,
         fileName: file.name,
         mimeType: file.type,
         fileSize: file.size

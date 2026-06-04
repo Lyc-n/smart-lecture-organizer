@@ -29,7 +29,7 @@ export const materialService = {
 		return MaterialRepository.delete(id);
 	},
 
-	search(keyword: string) {
-		return MaterialRepository.search(keyword);
+	search(userId: string, keyword: string) {
+		return MaterialRepository.search(userId, keyword);
 	}
 };

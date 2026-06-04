@@ -3,6 +3,12 @@ import { db } from '../db';
 import { notes } from '../db/schema';
 
 export const NoteRepository = {
+	async findById(id: string) {
+		return await db.query.notes.findFirst({
+			where: eq(notes.id, id)
+		});
+	},
+
 	async findByMaterialId(materialId: string) {
 		return await db.query.notes.findMany({
 			where: eq(notes.materialId, materialId)
