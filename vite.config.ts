@@ -4,6 +4,21 @@ import { playwright } from '@vitest/browser-playwright';
 import { sveltekit } from '@sveltejs/kit/vite';
 
 export default defineConfig({
+	optimizeDeps: {
+		exclude: ['@napi-rs/canvas']
+	},
+
+	// Prevent Rolldown from trying to bundle the .node binary in production
+	build: {
+		rollupOptions: {
+			external: ['@napi-rs/canvas']
+		}
+	},
+
+	// If you're doing SSR (server-side rendering / prerendering):
+	ssr: {
+		external: ['@napi-rs/canvas']
+	},
 	plugins: [tailwindcss(), sveltekit()],
 	test: {
 		expect: { requireAssertions: true },
