@@ -28,8 +28,10 @@ export const MaterialRepository = {
 		uploadedBy: string;
 		title: string;
 		description?: string | null;
-		fileUrl: string;
-		fileType: string;
+		blobPath: string;
+		fileName: string;
+		mimeType: string;
+		fileSize: number;
 	}) {
 		return await db.insert(materials).values(material).returning();
 	},
@@ -40,8 +42,9 @@ export const MaterialRepository = {
 		updates: {
 			title?: string;
 			description?: string | null;
-			fileUrl?: string;
-			fileType?: string;
+			fileName?: string;
+			mimeType?: string;
+			fileSize?: number;
 		}
 	) {
 		return await db.update(materials).set(updates).where(eq(materials.id, id)).returning();
@@ -50,5 +53,17 @@ export const MaterialRepository = {
 	// Delete material
 	async delete(id: string) {
 		return await db.delete(materials).where(eq(materials.id, id)).returning();
+	},
+
+	// Search materials
+	search(keyword: string) {
+		return db.query.materials.findMany({
+			where: (material, { or, like }) =>
+				or(
+					like(material.title, `%${keyword}%`),
+					like(material.description, `%${keyword}%`),
+					like(material.fileName, `%${keyword}%`)
+				)
+		});
 	}
 };

@@ -3,9 +3,14 @@ import { db } from '../db';
 import { bookmarks } from '../db/schema';
 
 export const BookmarkRepository = {
+	async create(userId: string, materialId: string) {
+		const [bookmark] = await db.insert(bookmarks).values({ userId, materialId }).returning();
+		return bookmark;
+	},
+
 	async findByUserId(userId: string) {
-		return await db.query.bookmarks.findMany({
-			where: eq(bookmarks.userId, userId)
+		return db.query.bookmarks.findMany({
+			where:(bookmark, {eq}) => eq(bookmark.userId, userId), with: { material: true }
 		});
 	},
 
@@ -14,7 +19,7 @@ export const BookmarkRepository = {
 	},
 
 	async remove(userId: string, materialId: string) {
-		return await db
+		return db
 			.delete(bookmarks)
 			.where(and(eq(bookmarks.userId, userId), eq(bookmarks.materialId, materialId)))
 			.returning();

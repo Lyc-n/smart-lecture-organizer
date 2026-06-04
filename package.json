@@ -54,6 +54,7 @@
 		"vitest-browser-svelte": "^2.1.0"
 	},
 	"dependencies": {
+		"@vercel/blob": "^2.4.0",
 		"rate-limiter-flexible": "^11.1.0",
 		"zod": "^4.4.3"
 	}

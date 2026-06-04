@@ -3,8 +3,10 @@ import { z } from 'zod';
 export const CreateMaterialSchema = z.object({
 	title: z.string().min(3).max(255),
 	description: z.string().optional(),
-	fileUrl: z.string(),
-	fileType: z.enum(['pdf', 'docx', 'pptx', 'xlsx', 'txt', 'ppt', 'jpg', 'png', 'mp4', 'mp3', 'zip', 'rar', 'wav', 'other'])
+	fileName: z.string().min(3).max(255),
+	mimeType: z.string().min(1),
+	fileSize: z.number().positive(),
+	blobPath: z.string().min(1)
 });
 
 export const UpdateMaterialSchema = CreateMaterialSchema.partial();

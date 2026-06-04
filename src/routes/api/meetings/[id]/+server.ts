@@ -12,56 +12,29 @@ export async function GET({ params, locals }) {
 		throw error(404, 'Meeting not found');
 	}
 
-	return json({success: true, data: meeting});
+	return json({ success: true, data: meeting });
 }
 
-export async function PUT({
-	params,
-	request,
-	locals
-}) {
-	const user =
-		requireAuth(locals);
+export async function PUT({ params, request, locals }) {
+	const user = requireAuth(locals);
 
-	const meeting =
-		await meetingService.getById(
-			params.id
-		);
+	const meeting = await meetingService.getById(params.id);
 
 	if (!meeting) {
-		throw error(
-			404,
-			'Meeting not found'
-		);
+		throw error(404, 'Meeting not found');
 	}
 
-	const subject =
-		await subjectService.getById(
-			meeting.subjectId
-		);
+	const subject = await subjectService.getById(meeting.subjectId);
 
-	if (
-		subject?.userId !== user.id
-	) {
-		throw error(
-			403,
-			'Forbidden'
-		);
+	if (subject?.userId !== user.id) {
+		throw error(403, 'Forbidden');
 	}
 
-	const body =
-		await request.json();
+	const body = await request.json();
 
-	const data =
-		UpdateMeetingSchema.parse(
-			body
-		);
+	const data = UpdateMeetingSchema.parse(body);
 
-	const updated =
-		await meetingService.update(
-			params.id,
-			data
-		);
+	const updated = await meetingService.update(params.id, data);
 
 	return json({
 		success: true,
@@ -69,42 +42,22 @@ export async function PUT({
 	});
 }
 
-export async function DELETE({
-	params,
-	locals
-}) {
-	const user =
-		requireAuth(locals);
+export async function DELETE({ params, locals }) {
+	const user = requireAuth(locals);
 
-	const meeting =
-		await meetingService.getById(
-			params.id
-		);
+	const meeting = await meetingService.getById(params.id);
 
 	if (!meeting) {
-		throw error(
-			404,
-			'Meeting not found'
-		);
+		throw error(404, 'Meeting not found');
 	}
 
-	const subject =
-		await subjectService.getById(
-			meeting.subjectId
-		);
+	const subject = await subjectService.getById(meeting.subjectId);
 
-	if (
-		subject?.userId !== user.id
-	) {
-		throw error(
-			403,
-			'Forbidden'
-		);
+	if (subject?.userId !== user.id) {
+		throw error(403, 'Forbidden');
 	}
 
-	await meetingService.delete(
-		params.id
-	);
+	await meetingService.delete(params.id);
 
 	return json({
 		success: true

@@ -2,26 +2,18 @@ import type {
 	CreateMaterialInput,
 	UpdateMaterialInput
 } from '$lib/server/validators/material.validator';
-import { MaterialRepository } from "../repositories/material.repository";
+import { MaterialRepository } from '../repositories/material.repository';
 
 export const materialService = {
 	getById(id: string) {
 		return MaterialRepository.findById(id);
 	},
 
-	getByMeetingId(
-		meetingId: string
-	) {
-		return MaterialRepository.findByMeetingId(
-			meetingId
-		);
+	getByMeetingId(meetingId: string) {
+		return MaterialRepository.findByMeetingId(meetingId);
 	},
 
-	create(
-		userId: string,
-		meetingId: string,
-		data: CreateMaterialInput
-	) {
+	create(userId: string, meetingId: string, data: CreateMaterialInput) {
 		return MaterialRepository.create({
 			meetingId,
 			uploadedBy: userId,
@@ -30,13 +22,14 @@ export const materialService = {
 	},
 
 	update(id: string, data: UpdateMaterialInput) {
-		return MaterialRepository.update(
-			id,
-			data
-		);
+		return MaterialRepository.update(id, data);
 	},
 
 	delete(id: string) {
 		return MaterialRepository.delete(id);
+	},
+
+	search(keyword: string) {
+		return MaterialRepository.search(keyword);
 	}
 };

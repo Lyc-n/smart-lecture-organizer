@@ -71,8 +71,10 @@ export const materials = pgTable('materials', {
 		.references(() => user.id),
 	title: varchar('title', { length: 255 }).notNull(),
 	description: text('description'),
-	fileUrl: varchar('file_url', { length: 500 }).notNull(),
-	fileType: varchar('file_type', { length: 50 }).notNull(),
+	blobPath: varchar('blob_path', { length: 500 }).notNull(),
+	fileName: varchar('file_name', { length: 255 }).notNull(),
+	mimeType: varchar('mime_type', { length: 100 }).notNull(),
+	fileSize: integer('file_size').notNull(),
 	createdAt: timestamp('created_at').notNull().defaultNow()
 });
 
