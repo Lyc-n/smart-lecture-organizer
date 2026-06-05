@@ -3,10 +3,20 @@
 	import type { ActionData } from './$types';
 
 	let { form }: { form: ActionData } = $props();
+
+	async function getSession() {
+		const res = await fetch('/api/auth/get-session');
+		const data = await res.json();
+		console.log(data);
+		return data.session;
+	}
+
+	const session = getSession();
+
 </script>
 
 <h1>Login</h1>
-<form method="post" action="?/signInEmail" use:enhance>
+<form method="post" action="/api/auth/sign-in/email" use:enhance>
 	<label>
 		Email
 		<input
@@ -34,9 +44,13 @@
 		>Login</button
 	>
 	<button
-		formaction="?/signUpEmail"
+		formaction="/api/auth/sign-up/email"
 		class="rounded-md bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700"
 		>Register</button
 	>
 </form>
+
+<button type="button" onclick={getSession}>get session</button>
+<p>{ session ?? 'No session found'}</p>
+
 <p class="text-red-500">{form?.message ?? ''}</p>

@@ -55,6 +55,8 @@
 	},
 	"dependencies": {
 		"@vercel/blob": "^2.4.0",
+		"onnxruntime-web": "^1.26.0",
+		"ppu-paddle-ocr": "^5.8.3",
 		"rate-limiter-flexible": "^11.1.0",
 		"zod": "^4.4.3"
 	}
