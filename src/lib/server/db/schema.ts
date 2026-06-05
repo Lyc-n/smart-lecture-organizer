@@ -1,4 +1,4 @@
-import { pgTable, uuid, varchar, text, integer, boolean, timestamp } from 'drizzle-orm/pg-core';
+import { pgTable, uuid, varchar, text, integer, boolean, timestamp, unique } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 import { user } from '../../../../auth-schema';
 
@@ -36,11 +36,13 @@ export const subjects = pgTable('subjects', {
 		.references(() => user.id, { onDelete: 'cascade' }),
 	name: varchar('name', { length: 255 }).notNull(),
 	description: text('description'),
-	createdAt: timestamp('created_at').notNull().defaultNow()
+	createdAt: timestamp('created_at').notNull().defaultNow(),
+	updateAt: timestamp('updated_at').notNull().defaultNow()
 });
 
 export const subjectsRelations = relations(subjects, ({ one, many }) => ({
 	user: one(user, { fields: [subjects.userId], references: [user.id] }),
+	materials: many(materials),
 	meetings: many(meetings)
 }));
 
@@ -48,11 +50,12 @@ export const subjectsRelations = relations(subjects, ({ one, many }) => ({
 export const meetings = pgTable('meetings', {
 	id: uuid('id').primaryKey().defaultRandom(),
 	subjectId: uuid('subject_id')
-		.notNull()
 		.references(() => subjects.id, { onDelete: 'cascade' }),
-	weekNumber: integer('week_number').notNull(),
+	weekNumber: integer('week_number'),
 	title: varchar('title', { length: 255 }).notNull(),
-	description: text('description')
+	description: text('description'),
+	createdAt: timestamp('created_at').notNull().defaultNow(),
+	updateAt: timestamp('updated_at').notNull().defaultNow()
 });
 
 export const meetingsRelations = relations(meetings, ({ one, many }) => ({
@@ -63,26 +66,31 @@ export const meetingsRelations = relations(meetings, ({ one, many }) => ({
 // MATERIALS TABLE & RELATIONS
 export const materials = pgTable('materials', {
 	id: uuid('id').primaryKey().defaultRandom(),
+	subjectId: uuid('subject_id')
+		.references(() => subjects.id, { onDelete: 'cascade' }),
 	meetingId: uuid('meeting_id')
-		.notNull()
 		.references(() => meetings.id, { onDelete: 'cascade' }),
 	uploadedBy: text('uploaded_by')
 		.notNull()
 		.references(() => user.id),
 	title: varchar('title', { length: 255 }).notNull(),
 	description: text('description'),
+	status: varchar('status', { length: 50 }).default('pending').notNull(), // pending, completed, failed
+	category: varchar('category', { length: 100 }).default('other').notNull(),
 	blobPath: varchar('blob_path', { length: 500 }).notNull(),
 	fileName: varchar('file_name', { length: 255 }).notNull(),
 	mimeType: varchar('mime_type', { length: 100 }).notNull(),
 	fileSize: integer('file_size').notNull(),
-	createdAt: timestamp('created_at').notNull().defaultNow()
+	createdAt: timestamp('created_at').notNull().defaultNow(),
+	updateAt: timestamp('updated_at').notNull().defaultNow()
 });
 
 export const materialsRelations = relations(materials, ({ one, many }) => ({
+	subject: one(subjects, { fields: [materials.subjectId], references: [subjects.id] }),
 	meeting: one(meetings, { fields: [materials.meetingId], references: [meetings.id] }),
 	uploader: one(user, { fields: [materials.uploadedBy], references: [user.id] }),
-	ocrResults: many(ocrResults),
-	materialSummaries: many(materialSummaries),
+	ocrResults: one(ocrResults),
+	materialSummaries: one(materialSummaries),
 	notes: many(notes),
 	bookmarks: many(bookmarks),
 	learningHistories: many(learningHistories),
@@ -93,7 +101,7 @@ export const materialsRelations = relations(materials, ({ one, many }) => ({
 export const ocrResults = pgTable('ocr_results', {
 	id: uuid('id').primaryKey().defaultRandom(),
 	materialId: uuid('material_id')
-		.notNull()
+		.notNull().unique()
 		.references(() => materials.id, { onDelete: 'cascade' }),
 	extractedText: text('extracted_text').notNull(),
 	createdAt: timestamp('created_at').notNull().defaultNow()
@@ -107,7 +115,7 @@ export const ocrResultsRelations = relations(ocrResults, ({ one }) => ({
 export const materialSummaries = pgTable('material_summaries', {
 	id: uuid('id').primaryKey().defaultRandom(),
 	materialId: uuid('material_id')
-		.notNull()
+		.notNull().unique()
 		.references(() => materials.id, { onDelete: 'cascade' }),
 	summaryText: text('summary_text').notNull(),
 	createdAt: timestamp('created_at').notNull().defaultNow()
@@ -121,7 +129,6 @@ export const materialSummariesRelations = relations(materialSummaries, ({ one })
 export const notes = pgTable('notes', {
 	id: uuid('id').primaryKey().defaultRandom(),
 	materialId: uuid('material_id')
-		.notNull()
 		.references(() => materials.id, { onDelete: 'cascade' }),
 	userId: text('user_id')
 		.notNull()
@@ -145,12 +152,15 @@ export const bookmarks = pgTable('bookmarks', {
 	userId: text('user_id')
 		.notNull()
 		.references(() => user.id, { onDelete: 'cascade' }),
-	createdAt: timestamp('created_at').notNull().defaultNow()
-});
+	createdAt: timestamp('created_at').notNull().defaultNow()},
+	(table) => [
+		unique('uniqueBookmark').on(table.materialId, table.userId)
+	]
+);
 
 export const bookmarksRelations = relations(bookmarks, ({ one }) => ({
 	material: one(materials, { fields: [bookmarks.materialId], references: [materials.id] }),
-	user: one(user, { fields: [bookmarks.userId], references: [user.id] })
+	user: one(user, { fields: [bookmarks.userId], references: [user.id] }),
 }));
 
 // LEARNING HISTORIES TABLE & RELATIONS

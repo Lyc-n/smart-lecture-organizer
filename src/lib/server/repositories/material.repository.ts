@@ -2,6 +2,9 @@ import { eq } from 'drizzle-orm';
 import { db } from '../db';
 import { materials } from '../db/schema';
 
+type newMaterial = typeof materials.$inferInsert;
+type updateMaterial = Partial<newMaterial>;
+
 export const MaterialRepository = {
 	// Find all materials
 	async findAll() {
@@ -22,31 +25,20 @@ export const MaterialRepository = {
 		});
 	},
 
+	// Find all materials inside a specific Subject
+	async findBySubjectId(subjectId: string) {
+		return await db.query.materials.findMany({
+			where: eq(materials.subjectId, subjectId)
+		});
+	},
+
 	// Create new material
-	async create(material: {
-		meetingId: string;
-		uploadedBy: string;
-		title: string;
-		description?: string | null;
-		blobPath: string;
-		fileName: string;
-		mimeType: string;
-		fileSize: number;
-	}) {
+	async create(material: newMaterial) {
 		return await db.insert(materials).values(material).returning();
 	},
 
 	// Update material metadata
-	async update(
-		id: string,
-		updates: {
-			title?: string;
-			description?: string | null;
-			fileName?: string;
-			mimeType?: string;
-			fileSize?: number;
-		}
-	) {
+	async update(id: string, updates: updateMaterial) {
 		return await db.update(materials).set(updates).where(eq(materials.id, id)).returning();
 	},
 

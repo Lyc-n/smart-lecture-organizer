@@ -13,11 +13,15 @@ export const materialService = {
 		return MaterialRepository.findByMeetingId(meetingId);
 	},
 
+	getBySubjectId(subjectId: string) {
+		return MaterialRepository.findBySubjectId(subjectId);
+	},
+
 	create(userId: string, meetingId: string, data: CreateMaterialInput) {
 		return MaterialRepository.create({
-			meetingId,
 			uploadedBy: userId,
-			...data
+			...data,
+			meetingId,
 		});
 	},
 

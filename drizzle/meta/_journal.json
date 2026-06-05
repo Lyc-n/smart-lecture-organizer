@@ -43,6 +43,13 @@
       "when": 1780579826670,
       "tag": "0005_complex_whistler",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1780633120016,
+      "tag": "0006_lush_loki",
+      "breakpoints": true
     }
   ]
 }

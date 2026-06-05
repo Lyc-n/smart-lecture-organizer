@@ -1,6 +1,6 @@
 import { requireAuth } from '$lib/server/require-auth';
 import { materialService } from '$lib/server/services/material.service';
-import { UpdateMaterialSchema } from '$lib/server/validators/material.validator';
+import { CreateMaterialSchema, UpdateMaterialSchema } from '$lib/server/validators/material.validator';
 import { error, json } from '@sveltejs/kit';
 
 export async function GET({ params }) {
@@ -11,6 +11,26 @@ export async function GET({ params }) {
 	}
 
 	return json(material);
+}
+
+export async function POST({ params, request, locals }) {
+	const user = requireAuth(locals);
+
+	const body = await request.json();
+
+	const data = CreateMaterialSchema.parse(body);
+
+	const material = await materialService.create(user.id, params.id, data);
+
+	return json(
+		{
+			success: true,
+			data: material
+		},
+		{
+			status: 201
+		}
+	);
 }
 
 export async function PUT({ params, request, locals }) {
