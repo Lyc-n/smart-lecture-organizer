@@ -6,15 +6,15 @@ import { materials } from './db/schema';
 const f = createUploadthing();
 
 export const fileRouter = {
-	// Allow type file
-	materiUploader: f(['image', 'pdf', 'audio'])
-		.middleware(async ({ req }) => {
-			// get user session
-			const session = await auth.api.getSession({ headers: req.headers });
-
-			if (!session) {
-				throw new Error('Unauthorized');
-			}
+  // Define as many FileRoutes as you like, each with a unique routeSlug
+  materiUploader: f(["image", "pdf", "audio"])
+    // Set permissions and file types for this FileRoute
+    .middleware(async ({ req }) => {
+      // This code runs on your server before upload
+      // const user = await auth(req);
+      console.log(req.headers);
+      // // If you throw, the user will not be able to upload
+      // if (!user) throw new Error("Unauthorized");
 
 			return { userId: session.user.id };
 		})

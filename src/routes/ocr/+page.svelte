@@ -27,10 +27,10 @@
 </script>
 
 <form
-	onsubmit={(event) => {
-		event.preventDefault();
-		void handleRunOcr();
-	}}
+  onsubmit={(event) => {
+    event.preventDefault();
+    handleRunOcr();
+  }}
 >
 	<label>
 		Image URL
