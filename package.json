@@ -45,8 +45,10 @@
 	},
 	"dependencies": {
 		"@napi-rs/canvas-linux-x64-gnu": "^1.0.0",
+		"@uploadthing/svelte": "^7.3.3",
 		"onnxruntime-node": "^1.26.0",
 		"onnxruntime-web": "^1.26.0",
-		"ppu-paddle-ocr": "^5.8.3"
+		"ppu-paddle-ocr": "^5.8.3",
+		"uploadthing": "^7.7.4"
 	}
 }
