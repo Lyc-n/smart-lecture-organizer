@@ -1,29 +1,34 @@
-import { createUploadthing } from "uploadthing/server";
-import type { FileRouter } from "uploadthing/server";
+import { createUploadthing, type FileRouter } from "uploadthing/server";
+import { auth } from "./auth";
+import { db } from "./db";
+import { materials } from "./db/schema";
 
 const f = createUploadthing();
 
-
-// FileRouter for your app, can contain multiple FileRoutes
 export const fileRouter = {
-  // Define as many FileRoutes as you like, each with a unique routeSlug
+  // Allow type file
   materiUploader: f(["image", "pdf", "audio"])
-    // Set permissions and file types for this FileRoute
-    .middleware(async ({ req }) => {
-      // This code runs on your server before upload
-      // const user = await auth(req);
+    .middleware(async ({req}) => {
+      // get user session
+      const session = await auth.api.getSession({headers: req.headers});
 
-      // // If you throw, the user will not be able to upload
-      // if (!user) throw new Error("Unauthorized");
+      if(!session){ throw new Error('Unauthorized')};
 
-      // Whatever is returned here is accessible in onUploadComplete as `metadata`
-      return { userId: "fakeUserId" };
+      return { userId: session.user.id };
     })
     .onUploadComplete(async ({ metadata, file }) => {
-      // This code RUNS ON YOUR SERVER after upload
-      console.log("Upload complete for userId:", metadata.userId);
-      // post to database
-      console.log("file url", file.ufsUrl);
+      const [material] = await db.insert(materials).values({
+					title: file.name,
+					fileKey: file.key,
+					fileUrl: file.ufsUrl,
+					fileName: file.name,
+					mimeType: file.type,
+					fileSize: file.size,
+					uploadedBy: metadata.userId
+      }).returning();
+      return {
+        materialId: material.id
+      }
     }),
 } satisfies FileRouter;
 
