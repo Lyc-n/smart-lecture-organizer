@@ -10,7 +10,8 @@ export const BookmarkRepository = {
 
 	async findByUserId(userId: string) {
 		return db.query.bookmarks.findMany({
-			where:(bookmark, {eq}) => eq(bookmark.userId, userId), with: { material: true }
+			where: (bookmark, { eq }) => eq(bookmark.userId, userId),
+			with: { material: true }
 		});
 	},
 

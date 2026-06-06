@@ -1,6 +1,9 @@
 import { requireAuth } from '$lib/server/require-auth';
 import { materialService } from '$lib/server/services/material.service';
-import { CreateMaterialSchema, UpdateMaterialSchema } from '$lib/server/validators/material.validator';
+import {
+	CreateMaterialSchema,
+	UpdateMaterialSchema
+} from '$lib/server/validators/material.validator';
 import { error, json } from '@sveltejs/kit';
 
 export async function GET({ params }) {

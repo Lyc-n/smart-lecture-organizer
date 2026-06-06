@@ -7,8 +7,7 @@
 
 	let file = $state<File | null>(null);
 
-	let service: PaddleOcrService | null =
-		null;
+	let service: PaddleOcrService | null = null;
 
 	async function handleFile(event: Event) {
 		const input = event.target as HTMLInputElement;
@@ -33,11 +32,9 @@
 			const img = new Image();
 			img.src = URL.createObjectURL(file);
 
-			await new Promise(
-				(resolve) => {
-					img.onload = resolve;
-				}
-			);
+			await new Promise((resolve) => {
+				img.onload = resolve;
+			});
 
 			const canvas = document.createElement('canvas');
 
@@ -45,11 +42,11 @@
 
 			canvas.height = img.height;
 
-			const ctx = canvas.getContext( '2d' )!;
+			const ctx = canvas.getContext('2d')!;
 
-			ctx.drawImage( img, 0, 0 );
+			ctx.drawImage(img, 0, 0);
 
-			const ocrResult = await service.recognize( canvas );
+			const ocrResult = await service.recognize(canvas);
 
 			result = ocrResult.text;
 		} catch (error) {
@@ -64,26 +61,14 @@
 
 <h1>OCR Test</h1>
 
-<input
-	type="file"
-	accept="image/*"
-	onchange={handleFile}
-/>
+<input type="file" accept="image/*" onchange={handleFile} />
 
 <!-- {#if imageUrl} -->
-	<img
-		src={imageUrl}
-		alt="preview"
-		style="max-width:600px"
-	/>
+<img src={imageUrl} alt="preview" style="max-width:600px" />
 
-	<button
-		onclick={runOCR}
-		disabled={loading}
-		class="bg-blue-500 active:scale-98 p-1"
-	>
-		{loading ? 'Processing...' : 'Run OCR'}
-	</button>
+<button onclick={runOCR} disabled={loading} class="bg-blue-500 p-1 active:scale-98">
+	{loading ? 'Processing...' : 'Run OCR'}
+</button>
 <!-- {/if} -->
 
 <textarea rows="20" bind:value={result}></textarea>

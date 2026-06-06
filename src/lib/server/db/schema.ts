@@ -1,4 +1,13 @@
-import { pgTable, uuid, varchar, text, integer, boolean, timestamp, unique } from 'drizzle-orm/pg-core';
+import {
+	pgTable,
+	uuid,
+	varchar,
+	text,
+	integer,
+	boolean,
+	timestamp,
+	unique
+} from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 import { user } from '../../../../auth-schema';
 
@@ -49,8 +58,7 @@ export const subjectsRelations = relations(subjects, ({ one, many }) => ({
 // MEETINGS TABLE & RELATIONS
 export const meetings = pgTable('meetings', {
 	id: uuid('id').primaryKey().defaultRandom(),
-	subjectId: uuid('subject_id')
-		.references(() => subjects.id, { onDelete: 'cascade' }),
+	subjectId: uuid('subject_id').references(() => subjects.id, { onDelete: 'cascade' }),
 	weekNumber: integer('week_number'),
 	title: varchar('title', { length: 255 }).notNull(),
 	description: text('description'),
@@ -66,10 +74,8 @@ export const meetingsRelations = relations(meetings, ({ one, many }) => ({
 // MATERIALS TABLE & RELATIONS
 export const materials = pgTable('materials', {
 	id: uuid('id').primaryKey().defaultRandom(),
-	subjectId: uuid('subject_id')
-		.references(() => subjects.id, { onDelete: 'cascade' }),
-	meetingId: uuid('meeting_id')
-		.references(() => meetings.id, { onDelete: 'cascade' }),
+	subjectId: uuid('subject_id').references(() => subjects.id, { onDelete: 'cascade' }),
+	meetingId: uuid('meeting_id').references(() => meetings.id, { onDelete: 'cascade' }),
 	uploadedBy: text('uploaded_by')
 		.notNull()
 		.references(() => user.id),
@@ -102,7 +108,8 @@ export const materialsRelations = relations(materials, ({ one, many }) => ({
 export const ocrResults = pgTable('ocr_results', {
 	id: uuid('id').primaryKey().defaultRandom(),
 	materialId: uuid('material_id')
-		.notNull().unique()
+		.notNull()
+		.unique()
 		.references(() => materials.id, { onDelete: 'cascade' }),
 	extractedText: text('extracted_text').notNull(),
 	createdAt: timestamp('created_at').notNull().defaultNow()
@@ -116,7 +123,8 @@ export const ocrResultsRelations = relations(ocrResults, ({ one }) => ({
 export const materialSummaries = pgTable('material_summaries', {
 	id: uuid('id').primaryKey().defaultRandom(),
 	materialId: uuid('material_id')
-		.notNull().unique()
+		.notNull()
+		.unique()
 		.references(() => materials.id, { onDelete: 'cascade' }),
 	summaryText: text('summary_text').notNull(),
 	createdAt: timestamp('created_at').notNull().defaultNow()
@@ -129,8 +137,7 @@ export const materialSummariesRelations = relations(materialSummaries, ({ one })
 // NOTES TABLE & RELATIONS
 export const notes = pgTable('notes', {
 	id: uuid('id').primaryKey().defaultRandom(),
-	materialId: uuid('material_id')
-		.references(() => materials.id, { onDelete: 'cascade' }),
+	materialId: uuid('material_id').references(() => materials.id, { onDelete: 'cascade' }),
 	userId: text('user_id')
 		.notNull()
 		.references(() => user.id),
@@ -145,23 +152,24 @@ export const notesRelations = relations(notes, ({ one }) => ({
 }));
 
 // BOOKMARKS TABLE & RELATIONS
-export const bookmarks = pgTable('bookmarks', {
-	id: uuid('id').primaryKey().defaultRandom(),
-	materialId: uuid('material_id')
-		.notNull()
-		.references(() => materials.id, { onDelete: 'cascade' }),
-	userId: text('user_id')
-		.notNull()
-		.references(() => user.id, { onDelete: 'cascade' }),
-	createdAt: timestamp('created_at').notNull().defaultNow()},
-	(table) => [
-		unique('uniqueBookmark').on(table.materialId, table.userId)
-	]
+export const bookmarks = pgTable(
+	'bookmarks',
+	{
+		id: uuid('id').primaryKey().defaultRandom(),
+		materialId: uuid('material_id')
+			.notNull()
+			.references(() => materials.id, { onDelete: 'cascade' }),
+		userId: text('user_id')
+			.notNull()
+			.references(() => user.id, { onDelete: 'cascade' }),
+		createdAt: timestamp('created_at').notNull().defaultNow()
+	},
+	(table) => [unique('uniqueBookmark').on(table.materialId, table.userId)]
 );
 
 export const bookmarksRelations = relations(bookmarks, ({ one }) => ({
 	material: one(materials, { fields: [bookmarks.materialId], references: [materials.id] }),
-	user: one(user, { fields: [bookmarks.userId], references: [user.id] }),
+	user: one(user, { fields: [bookmarks.userId], references: [user.id] })
 }));
 
 // LEARNING HISTORIES TABLE & RELATIONS

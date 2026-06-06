@@ -6,9 +6,7 @@ export const NoteService = {
 	},
 
 	getByMaterialId(materialId: string) {
-		return NoteRepository.findByMaterialId(
-			materialId
-		);
+		return NoteRepository.findByMaterialId(materialId);
 	},
 
 	create(userId: string, materialId: string, content: string) {
@@ -20,7 +18,7 @@ export const NoteService = {
 	},
 
 	update(id: string, content: string) {
-		return NoteRepository.update( id,content );
+		return NoteRepository.update(id, content);
 	},
 
 	delete(id: string) {

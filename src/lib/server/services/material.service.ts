@@ -21,7 +21,7 @@ export const materialService = {
 		return MaterialRepository.create({
 			uploadedBy: userId,
 			...data,
-			meetingId,
+			meetingId
 		});
 	},
 

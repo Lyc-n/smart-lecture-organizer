@@ -12,7 +12,6 @@
 	}
 
 	const session = getSession();
-
 </script>
 
 <h1>Login</h1>
@@ -51,6 +50,6 @@
 </form>
 
 <button type="button" onclick={getSession}>get session</button>
-<p>{ session ?? 'No session found'}</p>
+<p>{session ?? 'No session found'}</p>
 
 <p class="text-red-500">{form?.message ?? ''}</p>

@@ -50,7 +50,7 @@ export const MaterialRepository = {
 	// Search materials
 	async search(id: string, keyword: string) {
 		return db.query.materials.findMany({
-			where: (material, { and, or, ilike }) => 
+			where: (material, { and, or, ilike }) =>
 				and(
 					eq(material.uploadedBy, id),
 					or(

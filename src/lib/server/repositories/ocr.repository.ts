@@ -9,7 +9,7 @@ export const OcrRepository = {
 		});
 	},
 
-	async create(data: { materialId: string, extractedText: string }) {
+	async create(data: { materialId: string; extractedText: string }) {
 		return await db.insert(ocrResults).values(data).returning();
 	},
 
