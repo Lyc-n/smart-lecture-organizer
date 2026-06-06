@@ -18,12 +18,14 @@
 	const options = [
 		{
 			id: 'logout',
+			href: '',
 			icon: 'ph-sign-out',
 			label: 'Logout',
 			color: 'text-error/65 hover:text-error hover:bg-error/10'
 		},
 		{
 			id: 'help',
+			// href: ''
 			icon: 'ph-question',
 			label: 'Help',
 			color: 'text-innactive hover:text-warning hover:bg-warning/10'
