@@ -1,7 +1,9 @@
 <script lang="ts">
+	// import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 
+	// let { data }: { data: PageServerData } = $props();
 	let collapsed = $state(false);
 
 	// Collapsed SideBar
@@ -9,27 +11,19 @@
 		collapsed = !collapsed;
 	}
 
+	// Logout
+	async function logout() {
+		await fetch('/api/auth/sign-out', {
+			method: 'POST'
+		});
+		// await goto(resolve('/auth'))
+		window.location.reload();
+	}
+
 	const menus = [
 		{ id: '1', href: '/app/home' as const, icon: 'ph-house', label: 'Home' },
 		{ id: '2', href: '/app/saved' as const, icon: 'ph-bookmark', label: 'Saved' },
 		{ id: '3', href: '/app/profile' as const, icon: 'ph-user-circle', label: 'Profile' }
-	];
-
-	const options = [
-		{
-			id: 'logout',
-			href: '',
-			icon: 'ph-sign-out',
-			label: 'Logout',
-			color: 'text-error/65 hover:text-error hover:bg-error/10'
-		},
-		{
-			id: 'help',
-			// href: ''
-			icon: 'ph-question',
-			label: 'Help',
-			color: 'text-innactive hover:text-warning hover:bg-warning/10'
-		}
 	];
 </script>
 
@@ -121,31 +115,51 @@
 
 	<!-- Footer -->
 	<div class="flex h-full flex-col-reverse py-4">
-		{#each options as item (item.id)}
-			<div
-				class={`
-					flex cursor-pointer items-center py-3
-					transition-all duration-300
-					${item.color}
+		<button
+			class={`
+				flex w-full cursor-pointer items-center
+				py-3 text-error/70 transition-all
+				duration-300 hover:bg-error/10 hover:text-error
 
-					${collapsed ? 'justify-center px-0' : 'gap-8 px-8'}
+				${collapsed ? 'justify-center px-0' : 'gap-8 px-8'}
+			`}
+			onclick={logout}
+		>
+			<i class="ph ph-sign-out shrink-0 text-xl"></i>
+
+			<p
+				class={`
+					overflow-hidden text-sm
+					whitespace-nowrap
+					transition-all duration-300 ease-out
+					${collapsed ? 'max-w-0 -translate-x-2 opacity-0' : 'max-w-32 translate-x-0 opacity-100'}
 				`}
 			>
-				<i class={`ph ${item.icon} shrink-0 text-xl`}></i>
+				Logout
+			</p>
+		</button>
+		<div
+			class={`
+				flex cursor-pointer items-center py-3
+				text-innactive transition-all
+				duration-300 hover:bg-warning/10 hover:text-warning
 
-				<p
-					class={`
-						overflow-hidden text-sm
-						whitespace-nowrap
-						transition-all duration-300 ease-out
-						${collapsed ? 'max-w-0 -translate-x-2 opacity-0' : 'max-w-32 translate-x-0 opacity-100'}
-					`}
-				>
-					{item.label}
-				</p>
-			</div>
-		{/each}
+				${collapsed ? 'justify-center px-0' : 'gap-8 px-8'}
+			`}
+		>
+			<i class="ph ph-question shrink-0 text-xl"></i>
 
+			<p
+				class={`
+					overflow-hidden text-sm
+					whitespace-nowrap
+					transition-all duration-300 ease-out
+					${collapsed ? 'max-w-0 -translate-x-2 opacity-0' : 'max-w-32 translate-x-0 opacity-100'}
+				`}
+			>
+				Help
+			</p>
+		</div>
 		<div class="mx-5 my-3 border border-innactive/20"></div>
 	</div>
 </aside>

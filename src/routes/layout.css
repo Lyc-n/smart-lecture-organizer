@@ -13,6 +13,22 @@
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
 
+/* Microsoft Edge */
+input[type='password']::-ms-reveal,
+input[type='password']::-ms-clear {
+	display: none;
+}
+
+/* Chromium-based browsers yang mendukung password reveal */
+input[type='password']::-webkit-credentials-auto-fill-button,
+input[type='password']::-webkit-textfield-decoration-container {
+	display: none;
+}
+
+input[type='password']::-ms-reveal {
+	display: none;
+}
+
 /* 
 @layer base {
 	@font-face {

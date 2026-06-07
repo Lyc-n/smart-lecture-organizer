@@ -7,5 +7,3 @@ export const load: PageServerLoad = (event) => {
 	}
 	return { user: event.locals.user };
 };
-
-
