@@ -6,11 +6,17 @@ import {
 } from '$lib/server/validators/material.validator';
 import { error, json } from '@sveltejs/kit';
 
-export async function GET({ params }) {
+export async function GET({ params, locals }) {
+	const user = requireAuth(locals);
+
 	const material = await materialService.getById(params.id);
 
 	if (!material) {
 		throw error(404, 'Material not found');
+	}
+
+	if (material.uploadedBy !== user.id) {
+		throw error(403, 'Forbidden');
 	}
 
 	return json(material);
@@ -49,7 +55,17 @@ export async function PUT({ params, request, locals }) {
 }
 
 export async function DELETE({ params, locals }) {
-	requireAuth(locals);
+	const user = requireAuth(locals);
+
+	const material = await materialService.getById(params.id);
+
+	if (!material) {
+		throw error(404, 'Material not found');
+	}
+
+	if (material.uploadedBy !== user.id) {
+		throw error(403, 'Forbidden');
+	}
 
 	await materialService.delete(params.id);
 

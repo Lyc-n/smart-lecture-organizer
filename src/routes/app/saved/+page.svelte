@@ -13,23 +13,30 @@
 	let { data }: { data: PageData } = $props();
 
 	let value = $state(13);
-	let deletingId = $state<string | null>(null);
+	let deletingKey = $state<string | null>(null);
 
 	onMount(() => {
 		const timer = setTimeout(() => (value = 50), 500);
 		return () => clearTimeout(timer);
 	});
 
-	async function deleteNote(id: string) {
-		deletingId = id;
+	function itemKey(item: PageData['savedItems'][number]) {
+		return `${item.kind}-${item.id}`;
+	}
+
+	async function deleteItem(item: PageData['savedItems'][number]) {
+		const key = itemKey(item);
+		deletingKey = key;
 
 		try {
-			const response = await fetch(`/api/notes/${id}`, { method: 'DELETE' });
+			const endpoint =
+				item.kind === 'note' ? `/api/notes/${item.id}` : `/api/materials/${item.id}`;
+			const response = await fetch(endpoint, { method: 'DELETE' });
 			if (response.ok) {
 				await invalidateAll();
 			}
 		} finally {
-			deletingId = null;
+			deletingKey = null;
 		}
 	}
 </script>
@@ -95,33 +102,50 @@
 		<!-- Recent Saved -->
 		<p class="mt-5 text-lg">Recent Saved</p>
 		<div class="my-2 flex flex-col gap-3 px-4">
-			{#if data.notes.length === 0}
+			{#if data.savedItems.length === 0}
 				<Item variant="muted" class="justify-center border-dashed py-8">
-					<p class="text-sm text-innactive">No notes yet. Create one from the home page.</p>
+					<p class="text-sm text-innactive">No saved notes or materials yet.</p>
 				</Item>
 			{:else}
-				{#each data.notes as note (note.id)}
+				{#each data.savedItems as item (itemKey(item))}
 					<Item variant="muted" class="justify-between border-warning">
 						<div class="flex min-w-0 items-center gap-3">
-							<i class="ph-bold ph-note-pencil shrink-0 rounded-xl bg-warning/10 p-2 text-2xl text-warning"></i>
+							{#if item.kind === 'note'}
+								<i class="ph-bold ph-note-pencil shrink-0 rounded-xl bg-warning/10 p-2 text-2xl text-warning"></i>
+							{:else}
+								<i class="ph-bold ph-file-text shrink-0 rounded-xl bg-warning/10 p-2 text-2xl text-warning"></i>
+							{/if}
 							<div class="min-w-0">
-								<p class="truncate text-sm leading-5 font-medium">{note.title}</p>
+								<p class="truncate text-sm leading-5 font-medium">{item.title}</p>
 								<span class="text-xs text-innactive">
-									{note.subjectName} · MD · {formatRelativeTime(note.updatedAt)}
+									{item.subjectName} ·
+									{item.kind === 'note' ? 'MD' : item.fileType} ·
+									{formatRelativeTime(item.createdAt)}
 								</span>
 							</div>
 						</div>
 						<div class="flex shrink-0 gap-2">
+							{#if item.kind === 'note'}
+								<Button
+									class="bg-transparent p-2 hover:bg-divider/25"
+									href={resolve(`/app/notes/${item.id}`)}
+								>
+									<i class="ph-bold ph-pencil-simple-line text-xl text-innactive"></i>
+								</Button>
+							{:else}
+								<Button
+									class="bg-transparent p-2 hover:bg-divider/25"
+									href={resolve(`/api/materials/${item.id}/download`)}
+									target="_blank"
+									rel="noopener noreferrer"
+								>
+									<i class="ph-bold ph-arrow-square-out text-xl text-innactive"></i>
+								</Button>
+							{/if}
 							<Button
 								class="bg-transparent p-2 hover:bg-divider/25"
-								href={resolve(`/app/notes/${note.id}`)}
-							>
-								<i class="ph-bold ph-pencil-simple-line text-xl text-innactive"></i>
-							</Button>
-							<Button
-								class="bg-transparent p-2 hover:bg-divider/25"
-								disabled={deletingId === note.id}
-								onclick={() => deleteNote(note.id)}
+								disabled={deletingKey === itemKey(item)}
+								onclick={() => deleteItem(item)}
 							>
 								<i class="ph-bold ph-trash-simple text-xl text-innactive"></i>
 							</Button>

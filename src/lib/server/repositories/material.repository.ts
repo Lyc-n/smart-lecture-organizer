@@ -47,6 +47,15 @@ export const MaterialRepository = {
 		return await db.delete(materials).where(eq(materials.id, id)).returning();
 	},
 
+	// Find all materials uploaded by a user
+	async findByUploadedBy(userId: string) {
+		return await db.query.materials.findMany({
+			where: eq(materials.uploadedBy, userId),
+			with: { subject: true },
+			orderBy: (materials, { desc }) => [desc(materials.createdAt)]
+		});
+	},
+
 	// Search materials
 	async search(id: string, keyword: string) {
 		return db.query.materials.findMany({

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { createUploader } from '$lib/utils/uploadthing';
-	import { Uploader, UploadButton } from '@uploadthing/svelte';
+	import { UploadButton } from '@uploadthing/svelte';
 	const uploader = createUploader('materiUploader', {
 		onClientUploadComplete: (res) => {
 			console.log(`onClientUploadComplete`, res);
@@ -23,7 +23,14 @@
 			class="rounded-lg bg-blue-600 px-2 pb-1 text-white active:scale-95 active:bg-blue-700"
 			href={resolve('/app/home')}>go to app</a
 		>
-		<Uploader {uploader} />
+		<UploadButton {uploader}>
+			<span slot="button-content" let:state>
+				{state.isUploading ? 'Uploading...' : 'Add New'}
+			</span>
+			<span slot="clear-btn" let:state> Clear uploads </span>
+			<span slot="allowed-content" let:state>
+			</span>
+		</UploadButton>
 		<h1>Welcome to SvelteKit</h1>
 		<p>
 			Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation

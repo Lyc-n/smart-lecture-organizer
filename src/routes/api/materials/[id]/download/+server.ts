@@ -1,9 +1,9 @@
 import { MaterialRepository } from '$lib/server/repositories/material.repository.js';
 import { requireAuth } from '$lib/server/require-auth';
-import { error } from '@sveltejs/kit';
+import { error, redirect } from '@sveltejs/kit';
 
 export async function GET({ params, locals }) {
-	requireAuth(locals);
+	const user = requireAuth(locals);
 
 	const material = await MaterialRepository.findById(params.id);
 
@@ -11,7 +11,9 @@ export async function GET({ params, locals }) {
 		throw error(404, 'Not found');
 	}
 
-	const blob = await head(material.fileUrl);
+	if (material.uploadedBy !== user.id) {
+		throw error(403, 'Forbidden');
+	}
 
-	return Response.redirect(blob.url, 302);
+	throw redirect(302, material.fileUrl);
 }

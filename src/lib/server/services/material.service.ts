@@ -17,6 +17,10 @@ export const materialService = {
 		return MaterialRepository.findBySubjectId(subjectId);
 	},
 
+	getByUploadedBy(userId: string) {
+		return MaterialRepository.findByUploadedBy(userId);
+	},
+
 	create(userId: string, meetingId: string, data: CreateMaterialInput) {
 		return MaterialRepository.create({
 			uploadedBy: userId,

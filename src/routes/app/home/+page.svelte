@@ -6,9 +6,21 @@
 	import { CardTitle } from '$lib/components/ui/card/index.js';
 	import Input from '$lib/components/ui/input/input.svelte';
 	import Item from '$lib/components/ui/item/item.svelte';
+	import { createUploader } from '$lib/utils/uploadthing.js';
+	import { UploadButton } from '@uploadthing/svelte';
 
 	let { data, form } = $props();
 	let creating = $state(false);
+
+	const uploader = createUploader('materiUploader', {
+		onClientUploadComplete: (res) => {
+			console.log(`onClientUploadComplete`, res);
+			alert('Upload Completed');
+		},
+		onUploadError: (error: Error) => {
+			alert(`ERROR! ${error.message}`);
+		}
+	});
 </script>
 
 <div class="flex min-h-dvh w-full bg-background">
@@ -52,10 +64,14 @@
 				{#if form?.message}
 					<p class="text-sm text-destructive">{form.message}</p>
 				{/if}
-				<Button type="button" class="hover:bg-indigo-700 active:scale-97 ">
-					<i class="ph-bold ph-plus text-lg"></i>
-					<p class="text-sm">Add New</p>
-				</Button>
+				<UploadButton {uploader}>
+					<span slot="button-content" let:state>
+						{state.isUploading ? 'Uploading...' : 'Add New'}
+					</span>
+					<span slot="clear-btn" let:state> Clear uploads </span>
+					<span slot="allowed-content" let:state>
+					</span>
+				</UploadButton>
 			</div>
 		</div>
 
