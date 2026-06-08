@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { enhance } from '$app/forms';
 	import Badge from '$lib/components/ui/badge/badge.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import Card from '$lib/components/ui/card/card.svelte';
@@ -6,7 +7,8 @@
 	import Input from '$lib/components/ui/input/input.svelte';
 	import Item from '$lib/components/ui/item/item.svelte';
 
-	let { data } = $props();
+	let { data, form } = $props();
+	let creating = $state(false);
 </script>
 
 <div class="flex min-h-dvh w-full bg-background">
@@ -30,10 +32,31 @@
 				<h3 class="font-lg text-innactive">Ready to Organize your Lecture???</h3>
 			</div>
 
-			<Button type="button" class="hover:bg-indigo-700 active:scale-97 ">
-				<i class="ph-bold ph-plus text-lg"></i>
-				<p class="text-sm">Add New</p>
-			</Button>
+			<div class="flex items-center gap-3">
+				<form
+					method="POST"
+					action="?/createNote"
+					use:enhance={() => {
+						creating = true;
+						return async ({ update }) => {
+							creating = false;
+							await update();
+						};
+					}}
+				>
+					<Button type="submit" variant="outline" disabled={creating}>
+						<i class="ph-bold ph-note-pencil text-lg"></i>
+						<p class="text-sm">{creating ? 'Creating...' : 'Create Note'}</p>
+					</Button>
+				</form>
+				{#if form?.message}
+					<p class="text-sm text-destructive">{form.message}</p>
+				{/if}
+				<Button type="button" class="hover:bg-indigo-700 active:scale-97 ">
+					<i class="ph-bold ph-plus text-lg"></i>
+					<p class="text-sm">Add New</p>
+				</Button>
+			</div>
 		</div>
 
 		<!-- Main Card -->

@@ -1,10 +1,12 @@
 import { requireAuth } from '$lib/server/require-auth';
 import { NoteService } from '$lib/server/services/note.service';
+import { subjectService } from '$lib/server/services/subject.service';
 import { UpdateNoteSchema } from '$lib/server/validators/note.validator';
 import { error, json } from '@sveltejs/kit';
+import { ZodError } from 'zod';
 
 export async function GET({ params, locals }) {
-	requireAuth(locals);
+	const user = requireAuth(locals);
 
 	const note = await NoteService.getById(params.id);
 
@@ -12,21 +14,61 @@ export async function GET({ params, locals }) {
 		throw error(404, 'Note not found');
 	}
 
+	if (note.userId !== user.id) {
+		throw error(403, 'Forbidden');
+	}
+
 	return json(note);
 }
 
 export async function PUT({ params, request, locals }) {
-	requireAuth(locals);
+	const user = requireAuth(locals);
 
-	const body = await request.json();
-	const data = UpdateNoteSchema.parse(body);
-	const note = await NoteService.update(params.id, data.content ?? '');
+	const note = await NoteService.getById(params.id);
+	if (!note) {
+		throw error(404, 'Note not found');
+	}
 
-	return json(note);
+	if (note.userId !== user.id) {
+		throw error(403, 'Forbidden');
+	}
+
+	try {
+		const body = await request.json();
+		const data = UpdateNoteSchema.parse(body);
+
+		if (data.subjectId) {
+			const subject = await subjectService.getById(data.subjectId);
+			if (!subject || subject.userId !== user.id) {
+				throw error(403, 'Forbidden');
+			}
+		}
+
+		const [updated] = await NoteService.update(params.id, data);
+		if (!updated) {
+			throw error(500, 'Failed to update note');
+		}
+
+		return json(updated);
+	} catch (err) {
+		if (err instanceof ZodError) {
+			throw error(400, err.issues[0]?.message ?? 'Invalid note data');
+		}
+		throw err;
+	}
 }
 
 export async function DELETE({ params, locals }) {
-	requireAuth(locals);
+	const user = requireAuth(locals);
+
+	const note = await NoteService.getById(params.id);
+	if (!note) {
+		throw error(404, 'Note not found');
+	}
+
+	if (note.userId !== user.id) {
+		throw error(403, 'Forbidden');
+	}
 
 	await NoteService.delete(params.id);
 
