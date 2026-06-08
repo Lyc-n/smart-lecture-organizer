@@ -16,7 +16,7 @@ export const MeetingRepository = {
 	},
 
 	async create(data: {
-		subjectId: string;
+		subjectId?: string | null;
 		weekNumber: number;
 		title: string;
 		description?: string | null;

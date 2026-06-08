@@ -24,7 +24,7 @@ export async function PUT({ params, request, locals }) {
 		throw error(404, 'Meeting not found');
 	}
 
-	const subject = await subjectService.getById(meeting.subjectId);
+	const subject = await subjectService.getById(params.id);
 
 	if (subject?.userId !== user.id) {
 		throw error(403, 'Forbidden');
@@ -51,7 +51,7 @@ export async function DELETE({ params, locals }) {
 		throw error(404, 'Meeting not found');
 	}
 
-	const subject = await subjectService.getById(meeting.subjectId);
+	const subject = await subjectService.getById(params.id);
 
 	if (subject?.userId !== user.id) {
 		throw error(403, 'Forbidden');
