@@ -1,11 +1,16 @@
 <script lang="ts">
-	import * as Dialog from '$lib/components/ui/dialog';
-
 	import Button from '$lib/components/ui/button/button.svelte';
 	import Input from '$lib/components/ui/input/input.svelte';
 
 	import { createUploader } from '$lib/utils/uploadthing';
 	import { Uploader } from '@uploadthing/svelte';
+	import Dialog from './ui/dialog/dialog.svelte';
+	import DialogTrigger from './ui/dialog/dialog-trigger.svelte';
+	import DialogContent from './ui/dialog/dialog-content.svelte';
+	import DialogHeader from './ui/dialog/dialog-header.svelte';
+	import DialogTitle from './ui/dialog/dialog-title.svelte';
+	import DialogDescription from './ui/dialog/dialog-description.svelte';
+	import DialogFooter from './ui/dialog/dialog-footer.svelte';
 
 	let open = $state(false);
 
@@ -132,23 +137,23 @@
 	}
 </script>
 
-<Dialog.Root bind:open>
-	<Dialog.Trigger>
+<Dialog bind:open>
+	<DialogTrigger>
 		<Button>
 			+ Create
 		</Button>
-	</Dialog.Trigger>
+	</DialogTrigger>
 
-	<Dialog.Content class="max-h-[90vh] overflow-y-auto sm:max-w-4xl p-0">
-		<Dialog.Header class="sticky top-0 z-10 bg-white w-full px-8 pt-8 pb-4">
-			<Dialog.Title class="text-2xl font-semibold">
+	<DialogContent class="max-h-[90vh] overflow-y-auto sm:max-w-4xl p-0">
+		<DialogHeader class="sticky top-0 z-10 bg-white w-full px-8 pt-8 pb-4">
+			<DialogTitle class="text-2xl font-semibold">
 				Quick Create
-			</Dialog.Title>
+			</DialogTitle>
 
-			<Dialog.Description class="text-sm text-innactive">
+			<DialogDescription class="text-sm text-innactive">
 				Create subject, meeting, upload material and notes.
-			</Dialog.Description>
-		</Dialog.Header>
+			</DialogDescription>
+		</DialogHeader>
 
 		<div class="space-y-8 px-8">
 
@@ -269,7 +274,7 @@
 
 		</div>
 
-		<Dialog.Footer class="mx-4 mt-2 pb-6">
+		<DialogFooter class="mx-4 mt-2 pb-6">
 			<Button
 				variant="outline"
 				onclick={() => (open = false)}
@@ -280,6 +285,6 @@
 			<Button onclick={handleSubmit}>
 				Create Resources
 			</Button>
-		</Dialog.Footer>
-	</Dialog.Content>
-</Dialog.Root>
+		</DialogFooter>
+	</DialogContent>
+</Dialog>

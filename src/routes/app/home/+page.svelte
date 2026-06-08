@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
+	import Fab from './../../../lib/components/fab.svelte';
+	// import { enhance } from '$app/forms';
 	import Badge from '$lib/components/ui/badge/badge.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import Card from '$lib/components/ui/card/card.svelte';
@@ -10,7 +11,7 @@
 	import { UploadButton } from '@uploadthing/svelte';
 
 	let { data, form } = $props();
-	let creating = $state(false);
+	// let creating = $state(false);
 
 	const uploader = createUploader('materiUploader', {
 		onClientUploadComplete: (res) => {
@@ -47,7 +48,7 @@
 			</div>
 
 			<div class="flex items-center gap-3">
-				<form
+				<!-- <form
 					method="POST"
 					action="?/createNote"
 					use:enhance={() => {
@@ -62,7 +63,7 @@
 						<i class="ph-bold ph-note-pencil text-lg"></i>
 						<p class="text-sm">{creating ? 'Creating...' : 'Create Note'}</p>
 					</Button>
-				</form>
+				</form> -->
 				{#if form?.message}
 					<p class="text-sm text-destructive">{form.message}</p>
 				{/if}
@@ -122,8 +123,9 @@
 				</Item>
 			</div>
 		</Card>
-		<!-- <div class="fixed right-6 bottom-6">
-			<FormDialog />
-		</div> -->
+		<div class="fixed right-6 bottom-6">
+			<!-- <FormDialog /> -->
+			<Fab/>
+		</div>
 	</div>
 </div>
