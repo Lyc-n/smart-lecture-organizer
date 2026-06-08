@@ -78,6 +78,7 @@
 		"onnxruntime-web": "^1.26.0",
 		"ppu-paddle-ocr": "^5.8.3",
 		"rate-limiter-flexible": "^11.1.0",
+		"svelte-gestures": "^5.2.2",
 		"uploadthing": "^7.7.4",
 		"zod": "^4.4.3"
 	}

@@ -1,8 +1,9 @@
-import { error, fail, redirect } from '@sveltejs/kit';
+import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import { requireAuth } from '$lib/server/require-auth';
 import { NoteService } from '$lib/server/services/note.service';
 import { subjectService } from '$lib/server/services/subject.service';
+import { materialService } from '$lib/server/services/material.service';
 
 export const actions: Actions = {
 	createNote: async ({ locals }) => {
@@ -20,4 +21,29 @@ export const actions: Actions = {
 
 		throw redirect(303, `/app/notes/${note.id}`);
 	}
+};
+
+
+export const load = async ({ locals }) => {
+	const user = locals.user;
+
+	if (!user) {
+		return {
+			user: null,
+			subjects: [],
+			materials: [],
+			totalFileUpload: 0,
+			totalSubject: 0
+		};
+	}
+
+	const materials = await materialService.getByUploadedBy(user.id);
+	const subjects = await subjectService.getAllByUserId(user.id);
+	return {
+		user,
+		subjects,
+		materials,
+		totalFileUpload: materials.length,
+		totalSubject: subjects.length
+	};
 };

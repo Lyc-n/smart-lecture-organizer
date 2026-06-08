@@ -9,9 +9,18 @@
 	import Item from '$lib/components/ui/item/item.svelte';
 	import { createUploader } from '$lib/utils/uploadthing.js';
 	import { UploadButton } from '@uploadthing/svelte';
+	import DatePicker from '$lib/components/date-picker.svelte';
 
 	let { data, form } = $props();
 	// let creating = $state(false);
+
+	const latestSubjects = data.subjects[0];
+	const continueSubjects = data.subjects.slice(1);
+	const date = new Date(latestSubjects.createdAt).toLocaleDateString('id-ID', {
+		day: 'numeric',
+		month: 'long',
+		year: 'numeric'
+	})
 
 	const uploader = createUploader('materiUploader', {
 		onClientUploadComplete: (res) => {
@@ -25,7 +34,7 @@
 </script>
 
 <div class="flex min-h-dvh w-full flex-col bg-background lg:flex-row">
-	<div class="w-full px-4 py-6 sm:px-6 md:px-8 lg:px-11">
+	<div class="w-full px-4 py-6 sm:px-6 md:px-8 lg:px-11 overflow-hidden">
 		<!-- Search Input -->
 		<form action="">
 			<div class="relative w-full">
@@ -79,28 +88,58 @@
 		</div>
 
 		<!-- Main Card -->
-		<Button
-			class="flex h-fit w-full flex-col items-start bg-linear-to-br from-primary via-indigo-600 to-violet-800 bg-size-[200%_200%] bg-position-[0%_0%] px-5 py-5 transition-all duration-500 ease-in-out hover:bg-position-[100%_100%] sm:px-8 sm:py-6"
-		>
-			<Badge class="bg-primaryLight/25">on going</Badge>
-			<h4 class="mt-3 text-2xl sm:text-3xl lg:text-4xl">Advance Algorithms</h4>
-			<span class="mb-4 text-gray-300">Dr. Aisha Rahmah</span>
-		</Button>
+		{#if latestSubjects}
+			<Button
+				class="flex h-fit w-full flex-col items-start bg-linear-to-br from-primary via-indigo-600 to-violet-800 bg-size-[200%_200%] bg-position-[0%_0%] px-5 py-5 transition-all duration-500 ease-in-out hover:bg-position-[100%_100%] sm:px-8 sm:py-6"
+			>
+				<Badge class="bg-primaryLight/25">
+					{date}
+				</Badge>
+
+				<h4 class="mt-3 text-2xl sm:text-3xl lg:text-4xl">
+					{latestSubjects.name}
+				</h4>
+
+				<span class="mb-4 text-gray-300">
+					{latestSubjects.description}
+				</span>
+			</Button>
+		{:else}
+			<Card class="p-6">
+				Belum ada materi.
+			</Card>
+		{/if}
 
 		<!-- Slide Show -->
 		<p class="mt-5 text-lg font-medium">continue</p>
 		<div class="my-2 flex gap-4 overflow-x-auto pb-2">
-			<Button
-				variant="outline"
-				class="flex h-fit min-w-65 flex-col items-start border border-primary p-6 ring-primary/10 transition-all duration-300 hover:bg-white/30 active:scale-98 active:ring-4"
-			>
-				<div class="flex w-full justify-between">
-					<i class="ph-fill ph-sparkle rounded-xl bg-primary/10 p-2 text-2xl text-primary"></i>
-					<Badge class="bg-primary/10 text-primary">on going</Badge>
-				</div>
-				<h4 class="mt-3 text-2xl leading-3">Advance Algorithms</h4>
-				<span class="mb-4 text-xs text-innactive">Dr. Aisha Rahmah</span>
-			</Button>
+			{#each continueSubjects as subjects (subjects.id)}
+				<Button
+					variant="outline"
+					class="flex h-fit min-w-md flex-col items-start border border-primary p-6"
+				>
+					<div class="flex w-full justify-between">
+						<i
+							class="ph-fill ph-file rounded-xl bg-primary/10 p-2 text-2xl text-primary"
+						></i>
+
+						<Badge class="bg-primary/10 text-primary">
+							{date}
+						</Badge>
+					</div>
+
+					<h4 class="mt-3 text-2xl">
+						{subjects.name}
+					</h4>
+
+					<span class="mb-4 text-xs text-innactive">
+						{subjects.description ?? 'No desc'}
+					</span>
+				</Button>
+			{/each}
+		</div>
+		<div class="flex">
+			<DatePicker/>
 		</div>
 	</div>
 	<div class="w-full px-4 pb-6 sm:px-6 md:px-8 lg:w-fit lg:py-6 lg:ps-3 lg:pe-6">
@@ -112,14 +151,14 @@
 						<i class="ph-bold ph-book-open-text rounded-lg bg-primary/10 p-2"></i>
 						<span class="truncate">Total Mata Kuliah</span>
 					</div>
-					<span>4</span>
+					<span>{data.totalSubject}</span>
 				</Item>
 				<Item variant="muted" class="w-full flex-nowrap justify-between rounded-xl bg-divider/25">
 					<div class="flex items-center justify-center gap-3">
 						<i class="ph-bold ph-book-open-text rounded-lg bg-primary/10 p-2"></i>
 						<span class="text-nowrap">FIle Tersimpan</span>
 					</div>
-					<span>14</span>
+					<span>{data.totalFileUpload}</span>
 				</Item>
 			</div>
 		</Card>

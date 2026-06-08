@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { enhance } from "$app/forms";
+	import CreateSubject from "./createSubject.svelte";
 	import Button from "./ui/button/button.svelte";
 
 	let creating = $state(false);
@@ -31,10 +32,7 @@
 				Add Material
 			</Button>
 
-			<Button variant="outline">
-				<i class="ph ph-book"></i>
-				New Subject
-			</Button>
+			<CreateSubject/>
 		</div>
 	{/if}
 
