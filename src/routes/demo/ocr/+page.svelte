@@ -1,74 +1,88 @@
 <script lang="ts">
-	import { PaddleOcrService } from 'ppu-paddle-ocr/web';
-
-	let imageUrl = $state('');
-	let result = $state('');
-	let loading = $state(false);
-
 	let file = $state<File | null>(null);
+	let loading = $state(false);
+	let result = $state('');
 
-	let service: PaddleOcrService | null = null;
+	// let file: File | null = null;
+	let preview = $state('');
 
-	async function handleFile(event: Event) {
-		const input = event.target as HTMLInputElement;
-		const selected = input.files?.[0];
+	function handleFile(e: Event) {
+		const target = e.target as HTMLInputElement;
 
-		if (!selected) return;
-		file = selected;
-		imageUrl = URL.createObjectURL(selected);
+		file = target.files?.[0] ?? null;
+
+		if (file) {
+			preview = URL.createObjectURL(file);
+		}
 	}
 
-	async function runOCR() {
+	async function handleUpload() {
 		if (!file) return;
 
 		loading = true;
 
+		const formData = new FormData();
+		formData.append('file', file);
+
 		try {
-			if (!service) {
-				service = new PaddleOcrService();
-				await service.initialize();
-			}
-
-			const img = new Image();
-			img.src = URL.createObjectURL(file);
-
-			await new Promise((resolve) => {
-				img.onload = resolve;
+			const response = await fetch('/api/ocr', {
+				method: 'POST',
+				body: formData
 			});
 
-			const canvas = document.createElement('canvas');
+			const data = await response.json();
 
-			canvas.width = img.width;
+			console.log(data);
 
-			canvas.height = img.height;
-
-			const ctx = canvas.getContext('2d')!;
-
-			ctx.drawImage(img, 0, 0);
-
-			const ocrResult = await service.recognize(canvas);
-
-			result = ocrResult.text;
-		} catch (error) {
-			console.error(error);
-
-			result = String(error);
-		} finally {
-			loading = false;
+			result =
+				data.ParsedResults?.[0]?.ParsedText ??
+				JSON.stringify(data, null, 2);
+		} catch (err) {
+			console.error(err);
 		}
+
+
+		loading = false;
 	}
 </script>
 
-<h1>OCR Test</h1>
 
-<input type="file" accept="image/*" onchange={handleFile} />
 
-<!-- {#if imageUrl} -->
-<img src={imageUrl} alt="preview" style="max-width:600px" />
 
-<button onclick={runOCR} disabled={loading} class="bg-blue-500 p-1 active:scale-98">
-	{loading ? 'Processing...' : 'Run OCR'}
-</button>
-<!-- {/if} -->
 
-<textarea rows="20" bind:value={result}></textarea>
+<div class="space-y-4">
+	<!-- <input
+	type="file"
+	accept="image/*"
+	onchange={(e) => {
+		file = e.currentTarget.files?.[0] ?? null;
+		}}
+		/> -->
+	{#if preview}
+		<img
+			src={preview}
+			alt="preview"
+			class="max-w-md rounded"
+		/>
+	{/if}
+	<input
+		type="file"
+		accept="image/*"
+		onchange={handleFile}
+	/>
+
+	<button
+		onclick={handleUpload}
+		disabled={!file || loading}
+	>
+		{loading ? 'Memproses...' : 'OCR'}
+	</button>
+
+	{#if result}
+		<textarea
+			rows="10"
+			class="w-full border p-2"
+			bind:value={result}
+		></textarea>
+	{/if}
+</div>
