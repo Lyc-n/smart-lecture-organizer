@@ -10,18 +10,11 @@
 	let show = $state(false);
 
 	const passwordsMatch = $derived(
-		password.length > 0 &&
-		passwordConfirm.length > 0 &&
-		password === passwordConfirm
+		password.length > 0 && passwordConfirm.length > 0 && password === passwordConfirm
 	);
 
 	function setShow() {
-		show = !show
-	}
-
-	async function reload(){
-		await new Promise((resolve) => setTimeout(resolve, 600));
-		window.location.reload()
+		show = !show;
 	}
 
 	let active = $state<'login' | 'register'>('login');
@@ -31,54 +24,44 @@
 	<Card
 		class={`
 			overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]
-			${active === 'login'
-				? 'w-md scale-x-100 opacity-100 p-8'
-				: 'w-1 h-112 scale-x-95 opacity-80 p-1 cursor-default'}
+			${
+				active === 'login'
+					? 'w-md scale-x-100 p-8 opacity-100'
+					: 'h-112 w-1 scale-x-95 cursor-default p-1 opacity-80'
+			}
 		`}
 	>
 		{#if active === 'login'}
-			<h1 class="mb-6 text-4xl font-medium">
-				Login
-			</h1>
+			<h1 class="mb-6 text-4xl font-medium">Login</h1>
 
-			<form
-				action="/api/auth/sign-in/email"
-				method="POST"
-				use:enhance
-			>
+			<form action="?/signInEmail" method="POST" use:enhance>
 				<div class="space-y-4">
 					<label class="block text-xs">
 						Email
-						<Input
-							type="email"
-							name="email"
-							class="mt-2 bg-white ring ring-innactive"
-						/>
+						<Input type="email" name="email" class="mt-2 bg-white ring ring-innactive" />
 					</label>
 
-					<label class="block text-xs relative">
+					<label class="relative block text-xs">
 						Password
 						<Input
 							type={show ? 'text' : 'password'}
 							name="password"
 							class="mt-2 bg-white ring ring-innactive"
 						/>
-						<button onclick={setShow} aria-label="show" class="absolute right-3 bottom-1.5 h-fit w-fit flex">
-							<i class={`ph ${show ? 'ph-eye':'ph-eye-slash'} text-innactive text-2xl`}></i>
+						<button
+							onclick={setShow}
+							aria-label="show"
+							class="absolute right-3 bottom-1.5 flex h-fit w-fit"
+						>
+							<i class={`ph ${show ? 'ph-eye' : 'ph-eye-slash'} text-2xl text-innactive`}></i>
 						</button>
 					</label>
 				</div>
 
 				<div class="mt-8 flex flex-col gap-2">
-					<Button type="submit" onclick={reload}>
-						Login
-					</Button>
+					<Button type="submit">Login</Button>
 
-					<Button
-						type="button"
-						variant="outline"
-						onclick={() => (active = 'register')}
-					>
+					<Button type="button" variant="outline" onclick={() => (active = 'register')}>
 						Create Account
 					</Button>
 				</div>
@@ -87,22 +70,18 @@
 	</Card>
 	<Card
 		class={`
-			overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] min-h-fit h-140
-			${active === 'register'
-				? 'w-md scale-x-100 opacity-100 p-8'
-				: 'w-1 scale-y-60 scale-x-95 opacity-80 p-1 cursor-default'}
+			h-140 min-h-fit overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]
+			${
+				active === 'register'
+					? 'w-md scale-x-100 p-8 opacity-100'
+					: 'w-1 scale-x-95 scale-y-60 cursor-default p-1 opacity-80'
+			}
 		`}
 	>
 		{#if active === 'register'}
-			<h1 class="mb-6 text-4xl font-medium">
-				Register
-			</h1>
+			<h1 class="mb-6 text-4xl font-medium">Register</h1>
 
-			<form
-				action="/api/auth/sign-up/email"
-				method="POST"
-				use:enhance
-			>
+			<form action="?/signUpEmail" method="POST" use:enhance>
 				<div class="space-y-4">
 					<label class="block text-xs">
 						Username
@@ -124,7 +103,7 @@
 						/>
 					</label>
 
-					<label class="block text-xs relative">
+					<label class="relative block text-xs">
 						Password
 						<Input
 							required={true}
@@ -133,8 +112,13 @@
 							bind:value={password}
 							class="mt-2 bg-white ring ring-innactive"
 						/>
-						<button onclick={setShow} aria-label="show" class="absolute right-3 bottom-1.5 h-fit w-fit flex">
-							<i class={`ph ${show ? 'ph-eye':'ph-eye-slash'} text-innactive text-2xl`}></i>
+						<button
+							type="button"
+							onclick={setShow}
+							aria-label="show"
+							class="absolute right-3 bottom-1.5 flex h-fit w-fit"
+						>
+							<i class={`ph ${show ? 'ph-eye' : 'ph-eye-slash'} text-2xl text-innactive`}></i>
 						</button>
 					</label>
 
@@ -151,28 +135,18 @@
 					{#if passwordConfirm.length > 0}
 						<p
 							class={`absolute -translate-y-3 text-xs ${
-								passwordsMatch
-									? 'text-green-600'
-									: 'text-red-600'
+								passwordsMatch ? 'text-green-600' : 'text-red-600'
 							}`}
 						>
-							{passwordsMatch
-								? 'Password cocok'
-								: 'Password tidak cocok'}
+							{passwordsMatch ? 'Password cocok' : 'Password tidak cocok'}
 						</p>
 					{/if}
 				</div>
 
 				<div class="mt-8 flex flex-col gap-2">
-					<Button type="submit" disabled={!passwordsMatch} onclick={reload}>
-						Register
-					</Button>
+					<Button type="submit" disabled={!passwordsMatch} >Register</Button>
 
-					<Button
-						type="button"
-						variant="outline"
-						onclick={() => (active = 'login')}
-					>
+					<Button type="button" variant="outline" onclick={() => (active = 'login')}>
 						Back to Login
 					</Button>
 				</div>

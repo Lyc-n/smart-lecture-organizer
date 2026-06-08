@@ -16,99 +16,188 @@
 	// let { data } = $props();
 </script>
 
-<div class="flex min-h-dvh w-full bg-background">
-	<div class="w-full px-11 py-8">
+<div class="flex min-h-dvh w-full flex-col bg-background lg:flex-row">
+	<div class="w-full px-4 py-6 sm:px-6 md:px-8 lg:px-11 lg:py-8">
 		<!-- Header -->
-		<div class="flex w-full items-center justify-between pb-7">
-			<div class="">
-				<h1 class="text-2xl leading-11 font-semibold">Categories</h1>
+		<div class="flex flex-col gap-4 pb-6 sm:flex-row sm:items-center sm:justify-between sm:pb-7">
+			<div>
+				<h1 class="text-xl font-semibold sm:text-2xl">Categories</h1>
 			</div>
 
-			<Button type="button" class="hover:bg-blue-600 active:scale-97 ">
+			<Button type="button" class="w-full hover:bg-blue-600 active:scale-97 sm:w-auto">
 				<i class="ph-bold ph-plus text-lg"></i>
 				<p class="text-sm">Add New</p>
 			</Button>
 		</div>
 
 		<!-- Main Card -->
-		<div class="grid grid-cols-[10fr_2fr_10fr] grid-rows-[1fr_1fr] gap-4 px-4">
+		<div
+			class="
+				grid auto-rows-auto grid-cols-1 gap-4 px-0
+
+				sm:px-2
+				md:grid-cols-2
+				lg:grid-cols-[10fr_2fr_10fr]
+
+				lg:grid-rows-[1fr_1fr]
+				lg:px-4
+			"
+		>
 			<Button
 				variant="ghost"
-				class="col-span-1 flex h-fit w-full flex-col items-start bg-primary p-6 ring-primary/10 transition-all duration-300 hover:bg-blue-600 active:scale-98 active:ring-4"
+				class="
+					col-span-1
+					flex h-fit w-full flex-col items-start
+					bg-primary p-5 ring-primary/10
+					transition-all
+					duration-300 hover:bg-blue-600
+					active:scale-98
+					active:ring-4 sm:p-6
+				"
 			>
 				<div class="flex w-full justify-between">
-					<i class="ph-fill ph-sparkle rounded-xl text-3xl text-background"></i>
+					<i class="ph-fill ph-sparkle rounded-xl text-2xl text-background sm:text-3xl"></i>
 				</div>
-				<h4 class="mt-3 text-2xl leading-3 text-background">Advance Algorithms</h4>
-				<span class="mt-4 text-xs text-gray-200">Dr. Aisha Rahmah</span>
+
+				<h4 class="mt-3 text-xl text-background sm:text-2xl">Advance Algorithms</h4>
+
+				<span class="mt-4 text-xs text-gray-200"> Dr. Aisha Rahmah </span>
 			</Button>
+
 			<Button
 				variant="ghost"
-				class="col-span-2 flex h-fit w-full flex-col items-start bg-primary p-6 ring-primary/10 transition-all duration-300 hover:bg-blue-600 active:scale-98 active:ring-4"
+				class="
+					col-span-1
+					flex
+					h-fit w-full flex-col items-start bg-primary
+					p-5 ring-primary/10 transition-all
+					duration-300
+					hover:bg-blue-600 active:scale-98
+					active:ring-4
+					sm:p-6 lg:col-span-2
+				"
 			>
 				<div class="flex w-full justify-between">
-					<i class="ph-fill ph-sparkle rounded-xl text-3xl text-background"></i>
+					<i class="ph-fill ph-sparkle rounded-xl text-2xl text-background sm:text-3xl"></i>
 				</div>
-				<h4 class="mt-3 text-2xl leading-3 text-background">Advance Algorithms</h4>
-				<span class="mt-4 text-xs text-gray-200">Dr. Aisha Rahmah</span>
+
+				<h4 class="mt-3 text-xl text-background sm:text-2xl">Advance Algorithms</h4>
+
+				<span class="mt-4 text-xs text-gray-200"> Dr. Aisha Rahmah </span>
 			</Button>
+
 			<Button
 				variant="ghost"
-				class="col-span-2 flex h-fit w-full flex-col items-start bg-primary p-6 ring-primary/10 transition-all duration-300 hover:bg-blue-600 active:scale-98 active:ring-4"
+				class="
+					col-span-1
+					flex
+					h-fit w-full flex-col items-start bg-primary
+					p-5 ring-primary/10 transition-all
+					duration-300
+					hover:bg-blue-600 active:scale-98
+					active:ring-4
+					sm:p-6 lg:col-span-2
+				"
 			>
 				<div class="flex w-full justify-between">
-					<i class="ph-fill ph-sparkle rounded-xl text-3xl text-background"></i>
+					<i class="ph-fill ph-sparkle rounded-xl text-2xl text-background sm:text-3xl"></i>
 				</div>
-				<h4 class="mt-3 text-2xl leading-3 text-background">Advance Algorithms</h4>
-				<span class="mt-4 text-xs text-gray-200">Dr. Aisha Rahmah</span>
+
+				<h4 class="mt-3 text-xl text-background sm:text-2xl">Advance Algorithms</h4>
+
+				<span class="mt-4 text-xs text-gray-200"> Dr. Aisha Rahmah </span>
 			</Button>
+
 			<Button
 				variant="ghost"
-				class="col-span-1 flex h-fit w-full flex-col items-start bg-primary p-6 ring-primary/10 transition-all duration-300 hover:bg-blue-600 active:scale-98 active:ring-4"
+				class="
+					col-span-1
+					flex h-fit w-full flex-col items-start
+					bg-primary p-5 ring-primary/10
+					transition-all
+					duration-300 hover:bg-blue-600
+					active:scale-98
+					active:ring-4 sm:p-6
+				"
 			>
 				<div class="flex w-full justify-between">
-					<i class="ph-fill ph-sparkle rounded-xl text-3xl text-background"></i>
+					<i class="ph-fill ph-sparkle rounded-xl text-2xl text-background sm:text-3xl"></i>
 				</div>
-				<h4 class="mt-3 text-2xl leading-3 text-background">Advance Algorithms</h4>
-				<span class="mt-4 text-xs text-gray-200">Dr. Aisha Rahmah</span>
+
+				<h4 class="mt-3 text-xl text-background sm:text-2xl">Advance Algorithms</h4>
+
+				<span class="mt-4 text-xs text-gray-200"> Dr. Aisha Rahmah </span>
 			</Button>
 		</div>
 
-		<!-- Slide Show -->
-		<p class="mt-5 text-lg">Recent Saved</p>
-		<div class="my-2 flex gap-4 overscroll-x-auto px-4">
-			<Item variant="muted" class="justify-between border-warning">
-				<div class="flex items-center gap-3">
-					<i class="ph-bold ph-file-text rounded-xl bg-warning/10 p-2 text-2xl text-warning"></i>
-					<div class="h-fit">
-						<p class="text-sm leading-3 font-medium">Contract Belajar</p>
-						<span class="text-xs text-innactive">TXT | 2 hours ago</span>
+		<!-- Recent Saved -->
+		<p class="mt-5 text-base sm:text-lg">Recent Saved</p>
+
+		<div class="my-2 overflow-x-auto px-0 sm:px-2 lg:px-4">
+			<div class="flex min-w-max gap-4">
+				<Item variant="muted" class="min-w-[320px] justify-between border-warning sm:min-w-[500px]">
+					<div class="flex items-center gap-3">
+						<i
+							class="ph-bold ph-file-text rounded-xl bg-warning/10 p-2 text-xl text-warning sm:text-2xl"
+						></i>
+
+						<div class="h-fit">
+							<p class="text-sm leading-4 font-medium">Contract Belajar</p>
+
+							<span class="text-xs text-innactive"> TXT | 2 hours ago </span>
+						</div>
 					</div>
-				</div>
-				<div class="flex gap-4">
-					<Button class="bg-transparent p-2 hover:bg-divider/25"
-						><i class="ph-bold ph-pencil-simple-line text-xl text-innactive"></i></Button
-					>
-					<Button class="bg-transparent p-2 hover:bg-divider/25"
-						><i class="ph-bold ph-trash-simple text-xl text-innactive"></i></Button
-					>
-					<Button class="bg-transparent p-2 hover:bg-divider/25"
-						><i class="ph-bold ph-bookmark-simple text-xl text-innactive"></i></Button
-					>
-				</div>
-			</Item>
+
+					<div class="flex gap-1 sm:gap-2 md:gap-4">
+						<Button class="bg-transparent p-2 hover:bg-divider/25">
+							<i class="ph-bold ph-pencil-simple-line text-lg text-innactive sm:text-xl"></i>
+						</Button>
+
+						<Button class="bg-transparent p-2 hover:bg-divider/25">
+							<i class="ph-bold ph-trash-simple text-lg text-innactive sm:text-xl"></i>
+						</Button>
+
+						<Button class="bg-transparent p-2 hover:bg-divider/25">
+							<i class="ph-bold ph-bookmark-simple text-lg text-innactive sm:text-xl"></i>
+						</Button>
+					</div>
+				</Item>
+			</div>
 		</div>
 	</div>
-	<div class="w-fit py-6 ps-3 pe-6">
-		<Card class="flex w-68 min-w-fit cursor-default gap-4 p-7">
-			<CardTitle class="flex items-center text-xs tracking-wider"
-				><i class="ph-bold ph-cloud-check me-2 text-lg text-primary"></i>Storage Usage</CardTitle
-			>
+
+	<!-- Storage -->
+	<div
+		class="
+			w-full
+			px-4 pb-6
+			sm:px-6
+			md:px-8
+			lg:w-fit
+			lg:py-6
+			lg:ps-3
+			lg:pe-6
+		"
+	>
+		<Card
+			class="
+				flex w-full
+				cursor-default gap-4
+				p-5 sm:p-6 lg:w-68
+			"
+		>
+			<CardTitle class="flex items-center text-xs tracking-wider">
+				<i class="ph-bold ph-cloud-check me-2 text-lg text-primary"></i>
+				Storage Usage
+			</CardTitle>
+
 			<div class="flex w-full flex-col gap-1">
 				<div class="flex items-center justify-between gap-3">
-					<span class="text-xs text-nowrap text-innactive/70">Used 1 GB of 2 GB</span>
-					<span class="text-sm font-semibold text-primary">50%</span>
+					<span class="text-xs text-innactive/70"> Used 1 GB of 2 GB </span>
+
+					<span class="text-sm font-semibold text-primary"> 50% </span>
 				</div>
+
 				<Progress {value} max={100} class="max-h-1.5" />
 			</div>
 		</Card>

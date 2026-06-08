@@ -9,10 +9,11 @@ export const NoteService = {
 		return NoteRepository.findByMaterialId(materialId);
 	},
 
-	create(userId: string, materialId: string, content: string) {
+	create(userId: string, materialId: string | null | undefined, title: string, content: string) {
 		return NoteRepository.create({
 			userId,
-			materialId,
+			materialId: materialId ?? null,
+			title,
 			content
 		});
 	},

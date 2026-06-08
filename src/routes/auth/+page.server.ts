@@ -23,7 +23,8 @@ export const actions: Actions = {
 					email,
 					password,
 					callbackURL: '/auth/verification-success'
-				}
+				},
+				headers: event.request.headers
 			});
 		} catch (error) {
 			if (error instanceof APIError) {
@@ -32,7 +33,7 @@ export const actions: Actions = {
 			return fail(500, { message: 'Unexpected error' });
 		}
 
-		return redirect(302, '/auth');
+		throw redirect(302, '/auth');
 	},
 	signUpEmail: async (event) => {
 		const formData = await event.request.formData();
@@ -41,14 +42,18 @@ export const actions: Actions = {
 		const name = formData.get('name')?.toString() ?? '';
 
 		try {
+			console.log('REGISTER START');
 			await auth.api.signUpEmail({
 				body: {
 					email,
 					password,
 					name,
 					callbackURL: '/auth/verification-success'
-				}
+				},
+				headers: event.request.headers,
+				returnHeaders: true
 			});
+			console.log('REGISTER SUCCESS');
 		} catch (error) {
 			if (error instanceof APIError) {
 				return fail(400, { message: error.message || 'Registration failed' });
@@ -56,6 +61,6 @@ export const actions: Actions = {
 			return fail(500, { message: 'Unexpected error' });
 		}
 
-		return redirect(302, '/auth');
+		throw redirect(302, '/auth');
 	}
 };

@@ -15,7 +15,7 @@ export const NoteRepository = {
 		});
 	},
 
-	async create(data: { materialId: string; userId: string; content: string }) {
+	async create(data: { userId: string; materialId?: string | null; title: string; content: string }) {
 		return await db.insert(notes).values(data).returning();
 	},
 

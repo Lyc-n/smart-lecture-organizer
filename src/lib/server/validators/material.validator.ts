@@ -3,8 +3,8 @@ import { z } from 'zod';
 export const CreateMaterialSchema = z.object({
 	title: z.string().min(3).max(255),
 	description: z.string().optional(),
-	subjectId: z.string(),
-	meetingId: z.string(),
+	subjectId: z.string().nullable().optional(),
+	meetingId: z.string().nullable().optional(),
 	status: z.enum(['pending', 'processed', 'failed']).optional(),
 	category: z.string().optional(),
 	fileName: z.string().min(3).max(255),

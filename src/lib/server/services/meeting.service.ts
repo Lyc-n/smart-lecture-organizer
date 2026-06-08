@@ -14,11 +14,8 @@ export const meetingService = {
 		return MeetingRepository.findBySubjectId(subjectId);
 	},
 
-	create(subjectId: string, data: CreateMeetingInput) {
-		return MeetingRepository.create({
-			subjectId,
-			...data
-		});
+	create(data: CreateMeetingInput) {
+		return MeetingRepository.create(data);
 	},
 
 	update(id: string, data: UpdateMeetingInput) {
