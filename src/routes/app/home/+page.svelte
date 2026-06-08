@@ -68,8 +68,8 @@
 					<span slot="button-content" let:state>
 						{state.isUploading ? 'Uploading...' : 'Add New'}
 					</span>
-					<span slot="clear-btn" let:state> Clear uploads </span>
-					<span slot="allowed-content" let:state>
+					<span slot="clear-btn"> Clear uploads </span>
+					<span slot="allowed-content">
 					</span>
 				</UploadButton>
 			</div>

@@ -69,6 +69,8 @@
 		"vitest-browser-svelte": "^2.1.0"
 	},
 	"dependencies": {
+		"@codemirror/commands": "^6.10.3",
+		"@codemirror/lang-markdown": "^6.5.0",
 		"@napi-rs/canvas-linux-x64-gnu": "^1.0.0",
 		"@phosphor-icons/web": "^2.1.2",
 		"@uploadthing/svelte": "^7.3.3",
