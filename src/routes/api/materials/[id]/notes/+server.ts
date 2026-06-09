@@ -22,12 +22,7 @@ export async function POST({ params, request, locals }) {
 		throw error(404, 'Material not found');
 	}
 
-	const note = await NoteService.createForMaterial(
-		user.id,
-		params.id,
-		material.subjectId,
-		data
-	);
+	const note = await NoteService.createForMaterial(user.id, params.id, material.subjectId, data);
 
 	return json(note, { status: 201 });
 }

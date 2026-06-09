@@ -29,8 +29,7 @@
 		deletingKey = key;
 
 		try {
-			const endpoint =
-				item.kind === 'note' ? `/api/notes/${item.id}` : `/api/materials/${item.id}`;
+			const endpoint = item.kind === 'note' ? `/api/notes/${item.id}` : `/api/materials/${item.id}`;
 			const response = await fetch(endpoint, { method: 'DELETE' });
 			if (response.ok) {
 				await invalidateAll();
@@ -167,9 +166,13 @@
 					<Item variant="muted" class="justify-between border-warning">
 						<div class="flex min-w-0 items-center gap-3">
 							{#if item.kind === 'note'}
-								<i class="ph-bold ph-note-pencil shrink-0 rounded-xl bg-warning/10 p-2 text-2xl text-warning"></i>
+								<i
+									class="ph-bold ph-note-pencil shrink-0 rounded-xl bg-warning/10 p-2 text-2xl text-warning"
+								></i>
 							{:else}
-								<i class="ph-bold ph-file-text shrink-0 rounded-xl bg-warning/10 p-2 text-2xl text-warning"></i>
+								<i
+									class="ph-bold ph-file-text shrink-0 rounded-xl bg-warning/10 p-2 text-2xl text-warning"
+								></i>
 							{/if}
 							<div class="min-w-0">
 								<p class="truncate text-sm leading-5 font-medium">{item.title}</p>

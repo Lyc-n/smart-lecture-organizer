@@ -1,14 +1,10 @@
 <script lang="ts">
-	import { fly } from "svelte/transition";
+	import { fly } from 'svelte/transition';
 
 	const today = new Date();
 
 	const dates = Array.from({ length: 30 }, (_, i) => {
-		return new Date(
-			today.getFullYear(),
-			today.getMonth(),
-			today.getDate() - 15 + i
-		);
+		return new Date(today.getFullYear(), today.getMonth(), today.getDate() - 15 + i);
 	});
 
 	let currentIndex = $state(15);
@@ -23,7 +19,7 @@
 
 	function next() {
 		direction = 'right';
-		
+
 		if (currentIndex < dates.length - 2) {
 			currentIndex++;
 		}
@@ -57,11 +53,7 @@
 				<i class="ph ph-caret-left text-lg"></i>
 			</button>
 
-			<button
-				aria-label="next date"
-				class="rounded-full border p-2 hover:bg-muted"
-				onclick={next}
-			>
+			<button aria-label="next date" class="rounded-full border p-2 hover:bg-muted" onclick={next}>
 				<i class="ph ph-caret-right text-lg"></i>
 			</button>
 		</div>
@@ -70,7 +62,7 @@
 	<!-- Date Cards -->
 	<div class="">
 		{#key currentIndex}
-			<div class="grid grid-cols-3 gap-3 min-w-56">
+			<div class="grid min-w-56 grid-cols-3 gap-3">
 				{#each visibleDates as date, index (date.getTime())}
 					<div
 						in:fly={{
@@ -82,16 +74,10 @@
 							duration: 550
 						}}
 						class={`flex h-22 w-full flex-col items-center justify-center rounded-4xl border transition-all duration-300 ${
-							index === 1
-								? 'bg-primary scale-105 shadow-md text-white'
-								: 'opacity-50 scale-95'
+							index === 1 ? 'scale-105 bg-primary text-white shadow-md' : 'scale-95 opacity-50'
 						}`}
 					>
-						<div class={`text-sm ${
-								index === 1
-									? 'text-white'
-									: 'text-muted-foreground'
-							}`}>
+						<div class={`text-sm ${index === 1 ? 'text-white' : 'text-muted-foreground'}`}>
 							{date.toLocaleDateString('id-ID', {
 								weekday: 'short'
 							})}

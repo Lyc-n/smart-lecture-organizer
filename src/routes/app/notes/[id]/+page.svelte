@@ -122,7 +122,10 @@
 
 		<div class="flex min-h-0 flex-1 flex-col space-y-2">
 			<Label>Content</Label>
-			<MarkdownEditor bind:value={content} placeholder="Write in Markdown — headings, **bold**, *italic*, lists, and more format as you type." />
+			<MarkdownEditor
+				bind:value={content}
+				placeholder="Write in Markdown — headings, **bold**, *italic*, lists, and more format as you type."
+			/>
 		</div>
 	</div>
 </div>

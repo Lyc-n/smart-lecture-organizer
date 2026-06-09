@@ -90,10 +90,7 @@
 			/*
 			 * NOTE
 			 */
-			if (
-				formData.noteTitle.trim() &&
-				formData.noteContent.trim()
-			) {
+			if (formData.noteTitle.trim() && formData.noteContent.trim()) {
 				const response = await fetch('/api/notes', {
 					method: 'POST',
 					headers: {
@@ -139,16 +136,12 @@
 
 <Dialog bind:open>
 	<DialogTrigger>
-		<Button>
-			+ Create
-		</Button>
+		<Button>+ Create</Button>
 	</DialogTrigger>
 
-	<DialogContent class="max-h-[90vh] overflow-y-auto sm:max-w-4xl p-0">
-		<DialogHeader class="sticky top-0 z-10 bg-white w-full px-8 pt-8 pb-4">
-			<DialogTitle class="text-2xl font-semibold">
-				Quick Create
-			</DialogTitle>
+	<DialogContent class="max-h-[90vh] overflow-y-auto p-0 sm:max-w-4xl">
+		<DialogHeader class="sticky top-0 z-10 w-full bg-white px-8 pt-8 pb-4">
+			<DialogTitle class="text-2xl font-semibold">Quick Create</DialogTitle>
 
 			<DialogDescription class="text-sm text-innactive">
 				Create subject, meeting, upload material and notes.
@@ -156,24 +149,16 @@
 		</DialogHeader>
 
 		<div class="space-y-8 px-8">
-
 			<!-- SUBJECT -->
 
 			<section class="space-y-4">
 				<div>
-					<h3 class="text-lg font-semibold">
-						Subject
-					</h3>
+					<h3 class="text-lg font-semibold">Subject</h3>
 
-					<p class="text-sm text-innactive">
-						Basic information about your course.
-					</p>
+					<p class="text-sm text-innactive">Basic information about your course.</p>
 				</div>
 
-				<Input
-					bind:value={formData.subjectName}
-					placeholder="Subject Name"
-				/>
+				<Input bind:value={formData.subjectName} placeholder="Subject Name" />
 
 				<textarea
 					bind:value={formData.subjectDescription}
@@ -186,22 +171,14 @@
 
 			<section class="space-y-4">
 				<div>
-					<h3 class="text-lg font-semibold">
-						Meeting
-					</h3>
+					<h3 class="text-lg font-semibold">Meeting</h3>
 
-					<p class="text-sm text-innactive">
-						Create a lecture meeting.
-					</p>
+					<p class="text-sm text-innactive">Create a lecture meeting.</p>
 				</div>
 
 				<div class="grid gap-3 md:grid-cols-4">
-
 					<div class="md:col-span-3">
-						<Input
-							bind:value={formData.meetingTitle}
-							placeholder="Meeting Title"
-						/>
+						<Input bind:value={formData.meetingTitle} placeholder="Meeting Title" />
 					</div>
 
 					<Input
@@ -211,7 +188,6 @@
 						bind:value={formData.weekNumber}
 						placeholder="Week"
 					/>
-
 				</div>
 
 				<textarea
@@ -225,13 +201,9 @@
 
 			<section class="space-y-4">
 				<div>
-					<h3 class="text-lg font-semibold">
-						Material Upload
-					</h3>
+					<h3 class="text-lg font-semibold">Material Upload</h3>
 
-					<p class="text-sm text-innactive">
-						Upload PDF, Image or Audio material.
-					</p>
+					<p class="text-sm text-innactive">Upload PDF, Image or Audio material.</p>
 				</div>
 
 				<div class="rounded-xl border p-4">
@@ -251,19 +223,12 @@
 
 			<section class="space-y-4">
 				<div>
-					<h3 class="text-lg font-semibold">
-						Notes
-					</h3>
+					<h3 class="text-lg font-semibold">Notes</h3>
 
-					<p class="text-sm text-innactive">
-						Add your lecture notes.
-					</p>
+					<p class="text-sm text-innactive">Add your lecture notes.</p>
 				</div>
 
-				<Input
-					bind:value={formData.noteTitle}
-					placeholder="Note Title"
-				/>
+				<Input bind:value={formData.noteTitle} placeholder="Note Title" />
 
 				<textarea
 					bind:value={formData.noteContent}
@@ -271,20 +236,12 @@
 					class="min-h-48 w-full rounded-lg border bg-background px-3 py-2 text-sm"
 				></textarea>
 			</section>
-
 		</div>
 
 		<DialogFooter class="mx-4 mt-2 pb-6">
-			<Button
-				variant="outline"
-				onclick={() => (open = false)}
-			>
-				Cancel
-			</Button>
+			<Button variant="outline" onclick={() => (open = false)}>Cancel</Button>
 
-			<Button onclick={handleSubmit}>
-				Create Resources
-			</Button>
+			<Button onclick={handleSubmit}>Create Resources</Button>
 		</DialogFooter>
 	</DialogContent>
 </Dialog>

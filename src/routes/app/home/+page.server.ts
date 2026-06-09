@@ -23,7 +23,6 @@ export const actions: Actions = {
 	}
 };
 
-
 export const load = async ({ locals }) => {
 	const user = locals.user;
 

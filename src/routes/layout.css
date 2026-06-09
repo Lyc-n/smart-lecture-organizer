@@ -13,9 +13,8 @@
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
 
-
-@import "uploadthing/tw/v4";
-@source "../../node_modules/@uploadthing/svelte/dist"; /** <-- depends on your project structure */
+@import 'uploadthing/tw/v4';
+@source '../../node_modules/@uploadthing/svelte/dist'; /** <-- depends on your project structure */
 /* Microsoft Edge */
 input[type='password']::-ms-reveal,
 input[type='password']::-ms-clear {
@@ -135,7 +134,7 @@ input[type='password']::-ms-reveal {
 	--radius-md: calc(var(--radius) * 0.6);
 	--radius-lg: calc(var(--radius) * 0.8);
 	--radius-xl: calc(var(--radius) * 1);
-	--radius-2xl: calc(var(--radius) * 1.0);
+	--radius-2xl: calc(var(--radius) * 1);
 	--radius-3xl: calc(var(--radius) * 1.4);
 	--radius-4xl: calc(var(--radius) * 1.8);
 }

@@ -144,7 +144,7 @@
 				</div>
 
 				<div class="mt-8 flex flex-col gap-2">
-					<Button type="submit" disabled={!passwordsMatch} >Register</Button>
+					<Button type="submit" disabled={!passwordsMatch}>Register</Button>
 
 					<Button type="button" variant="outline" onclick={() => (active = 'login')}>
 						Back to Login

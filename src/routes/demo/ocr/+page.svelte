@@ -34,21 +34,14 @@
 
 			console.log(data);
 
-			result =
-				data.ParsedResults?.[0]?.ParsedText ??
-				JSON.stringify(data, null, 2);
+			result = data.ParsedResults?.[0]?.ParsedText ?? JSON.stringify(data, null, 2);
 		} catch (err) {
 			console.error(err);
 		}
 
-
 		loading = false;
 	}
 </script>
-
-
-
-
 
 <div class="space-y-4">
 	<!-- <input
@@ -59,30 +52,15 @@
 		}}
 		/> -->
 	{#if preview}
-		<img
-			src={preview}
-			alt="preview"
-			class="max-w-md rounded"
-		/>
+		<img src={preview} alt="preview" class="max-w-md rounded" />
 	{/if}
-	<input
-		type="file"
-		accept="image/*"
-		onchange={handleFile}
-	/>
+	<input type="file" accept="image/*" onchange={handleFile} />
 
-	<button
-		onclick={handleUpload}
-		disabled={!file || loading}
-	>
+	<button onclick={handleUpload} disabled={!file || loading}>
 		{loading ? 'Memproses...' : 'OCR'}
 	</button>
 
 	{#if result}
-		<textarea
-			rows="10"
-			class="w-full border p-2"
-			bind:value={result}
-		></textarea>
+		<textarea rows="10" class="w-full border p-2" bind:value={result}></textarea>
 	{/if}
 </div>

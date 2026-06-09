@@ -16,11 +16,14 @@
 
 	const latestSubjects = data.subjects[0];
 	const continueSubjects = data.subjects.slice(1);
-	const date = new Date(latestSubjects.createdAt).toLocaleDateString('id-ID', {
-		day: 'numeric',
-		month: 'long',
-		year: 'numeric'
-	})
+	// const date = latestSubjects.createdAt
+	// 	? new Date(latestSubjects.createdAt).toLocaleDateString('id-ID', {
+	// 			day: 'numeric',
+	// 			month: 'long',
+	// 			year: 'numeric'
+	// 	})
+	// 	: '-';
+	const date = 'ongoing'
 
 	const uploader = createUploader('materiUploader', {
 		onClientUploadComplete: (res) => {
@@ -34,7 +37,7 @@
 </script>
 
 <div class="flex min-h-dvh w-full flex-col bg-background lg:flex-row">
-	<div class="w-full px-4 py-6 sm:px-6 md:px-8 lg:px-11 overflow-hidden">
+	<div class="w-full overflow-hidden px-4 py-6 sm:px-6 md:px-8 lg:px-11">
 		<!-- Search Input -->
 		<form action="">
 			<div class="relative w-full">
@@ -81,8 +84,7 @@
 						{state.isUploading ? 'Uploading...' : 'Add New'}
 					</span>
 					<span slot="clear-btn"> Clear uploads </span>
-					<span slot="allowed-content">
-					</span>
+					<span slot="allowed-content"> </span>
 				</UploadButton>
 			</div>
 		</div>
@@ -105,9 +107,7 @@
 				</span>
 			</Button>
 		{:else}
-			<Card class="p-6">
-				Belum ada materi.
-			</Card>
+			<Card class="p-6">Belum ada materi.</Card>
 		{/if}
 
 		<!-- Slide Show -->
@@ -119,9 +119,7 @@
 					class="flex h-fit min-w-md flex-col items-start border border-primary p-6"
 				>
 					<div class="flex w-full justify-between">
-						<i
-							class="ph-fill ph-file rounded-xl bg-primary/10 p-2 text-2xl text-primary"
-						></i>
+						<i class="ph-fill ph-file rounded-xl bg-primary/10 p-2 text-2xl text-primary"></i>
 
 						<Badge class="bg-primary/10 text-primary">
 							{date}
@@ -139,7 +137,7 @@
 			{/each}
 		</div>
 		<div class="flex">
-			<DatePicker/>
+			<DatePicker />
 		</div>
 	</div>
 	<div class="w-full px-4 pb-6 sm:px-6 md:px-8 lg:w-fit lg:py-6 lg:ps-3 lg:pe-6">
@@ -164,7 +162,7 @@
 		</Card>
 		<div class="fixed right-6 bottom-6">
 			<!-- <FormDialog /> -->
-			<Fab/>
+			<Fab />
 		</div>
 	</div>
 </div>

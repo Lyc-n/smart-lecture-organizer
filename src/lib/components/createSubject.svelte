@@ -52,43 +52,31 @@
 
 <Dialog bind:open>
 	<DialogTrigger>
-        <Button variant="outline">
-            <i class="ph ph-book"></i>
-            New Subject
-        </Button>
+		<Button variant="outline">
+			<i class="ph ph-book"></i>
+			New Subject
+		</Button>
 	</DialogTrigger>
 
 	<DialogContent class="sm:max-w-lg">
 		<DialogHeader>
-			<DialogTitle>
-				Create Subject
-			</DialogTitle>
+			<DialogTitle>Create Subject</DialogTitle>
 
-			<DialogDescription>
-				Add a new course to your lecture organizer.
-			</DialogDescription>
+			<DialogDescription>Add a new course to your lecture organizer.</DialogDescription>
 		</DialogHeader>
 
 		<div class="space-y-4 py-4">
 			<div class="flex flex-col gap-1">
-				<label for="title" class="text-sm font-medium">
-					Subject Name
-				</label>
+				<label for="title" class="text-sm font-medium"> Subject Name </label>
 
-				<Input
-                    id='title'
-					bind:value={formData.name}
-					placeholder="Example: Advanced Algorithms"
-				/>
+				<Input id="title" bind:value={formData.name} placeholder="Example: Advanced Algorithms" />
 			</div>
 
 			<div class="flex flex-col gap-1">
-				<label for='desc' class="text-sm font-medium">
-					Description
-				</label>
+				<label for="desc" class="text-sm font-medium"> Description </label>
 
 				<textarea
-                    id='desc'
+					id="desc"
 					bind:value={formData.description}
 					placeholder="Brief description..."
 					class="min-h-32 w-full rounded-lg border bg-background px-3 py-2 text-sm"
@@ -97,18 +85,9 @@
 		</div>
 
 		<DialogFooter>
-			<Button
-				variant="outline"
-				onclick={() => (open = false)}
-				disabled={loading}
-			>
-				Cancel
-			</Button>
+			<Button variant="outline" onclick={() => (open = false)} disabled={loading}>Cancel</Button>
 
-			<Button
-				onclick={handleSubmit}
-				disabled={!formData.name.trim() || loading}
-			>
+			<Button onclick={handleSubmit} disabled={!formData.name.trim() || loading}>
 				{loading ? 'Creating...' : 'Create Subject'}
 			</Button>
 		</DialogFooter>

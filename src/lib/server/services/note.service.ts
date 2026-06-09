@@ -36,7 +36,12 @@ export const NoteService = {
 		});
 	},
 
-	createForMaterial(userId: string, materialId: string, subjectId: string | null, data: CreateMaterialNoteInput) {
+	createForMaterial(
+		userId: string,
+		materialId: string,
+		subjectId: string | null,
+		data: CreateMaterialNoteInput
+	) {
 		return NoteRepository.create({
 			userId,
 			materialId,

@@ -7,11 +7,7 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import Card from '$lib/components/ui/card/card.svelte';
 
-	type ResourceType =
-		| 'subject'
-		| 'meeting'
-		| 'material'
-		| 'note';
+	type ResourceType = 'subject' | 'meeting' | 'material' | 'note';
 
 	let type = $state<ResourceType>('subject');
 
@@ -114,11 +110,9 @@
 
 <div class="mx-auto flex w-full max-w-5xl flex-col gap-6 p-6">
 	<div>
-		<h1 class="text-3xl font-bold">
-			Quick Create
-		</h1>
+		<h1 class="text-3xl font-bold">Quick Create</h1>
 
-		<p class="text-muted-foreground mt-2">
+		<p class="mt-2 text-muted-foreground">
 			Create subjects, meetings, materials and notes from one place.
 		</p>
 	</div>
@@ -128,9 +122,7 @@
 			type="button"
 			onclick={() => (type = 'subject')}
 			class={`rounded-xl border p-4 transition-all ${
-				type === 'subject'
-					? 'border-primary bg-primary/10'
-					: 'hover:bg-muted'
+				type === 'subject' ? 'border-primary bg-primary/10' : 'hover:bg-muted'
 			}`}
 		>
 			<div class="text-2xl">📚</div>
@@ -141,9 +133,7 @@
 			type="button"
 			onclick={() => (type = 'meeting')}
 			class={`rounded-xl border p-4 transition-all ${
-				type === 'meeting'
-					? 'border-primary bg-primary/10'
-					: 'hover:bg-muted'
+				type === 'meeting' ? 'border-primary bg-primary/10' : 'hover:bg-muted'
 			}`}
 		>
 			<div class="text-2xl">🗓️</div>
@@ -154,9 +144,7 @@
 			type="button"
 			onclick={() => (type = 'material')}
 			class={`rounded-xl border p-4 transition-all ${
-				type === 'material'
-					? 'border-primary bg-primary/10'
-					: 'hover:bg-muted'
+				type === 'material' ? 'border-primary bg-primary/10' : 'hover:bg-muted'
 			}`}
 		>
 			<div class="text-2xl">📄</div>
@@ -167,9 +155,7 @@
 			type="button"
 			onclick={() => (type = 'note')}
 			class={`rounded-xl border p-4 transition-all ${
-				type === 'note'
-					? 'border-primary bg-primary/10'
-					: 'hover:bg-muted'
+				type === 'note' ? 'border-primary bg-primary/10' : 'hover:bg-muted'
 			}`}
 		>
 			<div class="text-2xl">📝</div>
@@ -183,9 +169,7 @@
 				Create {type}
 			</h2>
 
-			<p class="text-muted-foreground mt-1 text-sm">
-				Fill in the information below.
-			</p>
+			<p class="mt-1 text-sm text-muted-foreground">Fill in the information below.</p>
 		</div>
 
 		{#if type === 'subject'}

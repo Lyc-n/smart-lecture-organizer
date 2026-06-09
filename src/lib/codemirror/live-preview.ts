@@ -58,10 +58,17 @@ function addInlineDecorations(decs: Dec[], view: EditorView, line: string, lineF
 			apply: (match) => {
 				const start = lineFrom + match.index!;
 				const end = start + match[0].length;
-				applyPreview(decs, view, start, end, [
-					{ from: start, to: start + 2 },
-					{ from: end - 2, to: end }
-				], [{ from: start + 2, to: end - 2, class: 'cm-md-bold' }]);
+				applyPreview(
+					decs,
+					view,
+					start,
+					end,
+					[
+						{ from: start, to: start + 2 },
+						{ from: end - 2, to: end }
+					],
+					[{ from: start + 2, to: end - 2, class: 'cm-md-bold' }]
+				);
 			}
 		},
 		{
@@ -69,10 +76,17 @@ function addInlineDecorations(decs: Dec[], view: EditorView, line: string, lineF
 			apply: (match) => {
 				const start = lineFrom + match.index!;
 				const end = start + match[0].length;
-				applyPreview(decs, view, start, end, [
-					{ from: start, to: start + 1 },
-					{ from: end - 1, to: end }
-				], [{ from: start + 1, to: end - 1, class: 'cm-md-italic' }]);
+				applyPreview(
+					decs,
+					view,
+					start,
+					end,
+					[
+						{ from: start, to: start + 1 },
+						{ from: end - 1, to: end }
+					],
+					[{ from: start + 1, to: end - 1, class: 'cm-md-italic' }]
+				);
 			}
 		},
 		{
@@ -80,10 +94,17 @@ function addInlineDecorations(decs: Dec[], view: EditorView, line: string, lineF
 			apply: (match) => {
 				const start = lineFrom + match.index!;
 				const end = start + match[0].length;
-				applyPreview(decs, view, start, end, [
-					{ from: start, to: start + 2 },
-					{ from: end - 2, to: end }
-				], [{ from: start + 2, to: end - 2, class: 'cm-md-strike' }]);
+				applyPreview(
+					decs,
+					view,
+					start,
+					end,
+					[
+						{ from: start, to: start + 2 },
+						{ from: end - 2, to: end }
+					],
+					[{ from: start + 2, to: end - 2, class: 'cm-md-strike' }]
+				);
 			}
 		},
 		{
@@ -91,10 +112,17 @@ function addInlineDecorations(decs: Dec[], view: EditorView, line: string, lineF
 			apply: (match) => {
 				const start = lineFrom + match.index!;
 				const end = start + match[0].length;
-				applyPreview(decs, view, start, end, [
-					{ from: start, to: start + 1 },
-					{ from: end - 1, to: end }
-				], [{ from: start + 1, to: end - 1, class: 'cm-md-code' }]);
+				applyPreview(
+					decs,
+					view,
+					start,
+					end,
+					[
+						{ from: start, to: start + 1 },
+						{ from: end - 1, to: end }
+					],
+					[{ from: start + 1, to: end - 1, class: 'cm-md-code' }]
+				);
 			}
 		},
 		{
@@ -104,10 +132,17 @@ function addInlineDecorations(decs: Dec[], view: EditorView, line: string, lineF
 				const textStart = start + 1;
 				const textEnd = textStart + match[1].length;
 				const end = start + match[0].length;
-				applyPreview(decs, view, start, end, [
-					{ from: start, to: textStart },
-					{ from: textEnd, to: end }
-				], [{ from: textStart, to: textEnd, class: 'cm-md-link' }]);
+				applyPreview(
+					decs,
+					view,
+					start,
+					end,
+					[
+						{ from: start, to: textStart },
+						{ from: textEnd, to: end }
+					],
+					[{ from: textStart, to: textEnd, class: 'cm-md-link' }]
+				);
 			}
 		}
 	];
@@ -140,9 +175,7 @@ function buildLivePreviewDecorations(view: EditorView): DecorationSet {
 				lineFrom,
 				lineTo || syntaxEnd,
 				[{ from: lineFrom, to: syntaxEnd }],
-				headingMatch[3]
-					? [{ from: syntaxEnd, to: lineTo, class: headingStyles[level - 1] }]
-					: []
+				headingMatch[3] ? [{ from: syntaxEnd, to: lineTo, class: headingStyles[level - 1] }] : []
 			);
 		} else {
 			const bulletMatch = line.match(/^(\s*[-*+]\s+)(.*)$/);
