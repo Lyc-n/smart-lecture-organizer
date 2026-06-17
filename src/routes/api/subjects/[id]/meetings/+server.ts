@@ -40,7 +40,7 @@ export async function POST({ params, request, locals }) {
 
 	const body = await request.json();
 	const data = CreateMeetingSchema.parse(body);
-	const meeting = await meetingService.create(params.id, data);
+	const meeting = await meetingService.create({ ...data, subjectId: params.id });
 
 	return json({ success: true, data: meeting }, { status: 201 });
 }

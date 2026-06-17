@@ -1,6 +1,8 @@
 import { env } from '$env/dynamic/private';
+import { requireAuth } from '$lib/server/require-auth';
 
-export async function POST({ request }) {
+export async function POST({ request, locals }) {
+	requireAuth(locals);
 	const form = await request.formData();
 	const file = form.get('file') as File;
 

@@ -6,7 +6,7 @@ export async function POST({ params, locals }) {
 	const user = requireAuth(locals);
 	const bookmark = await BookmarkService.create(user.id, params.id);
 
-	return json(bookmark, { status: 201 });
+	return json({ success: true, data: bookmark }, { status: 201 });
 }
 
 export async function DELETE({ params, locals }) {

@@ -9,10 +9,24 @@
 
 	let { data }: { data: PageData } = $props();
 
+	// svelte-ignore state_referenced_locally
 	let title = $state(data.note.title);
+	// svelte-ignore state_referenced_locally
 	let content = $state(data.note.content);
+	// svelte-ignore state_referenced_locally
 	let subjectId = $state(data.note.subjectId ?? data.subjects[0]?.id ?? '');
+	// svelte-ignore state_referenced_locally
+	let currentNoteId = $state(data.note.id);
 	let saving = $state(false);
+
+	$effect(() => {
+		if (data.note.id !== currentNoteId) {
+			title = data.note.title;
+			content = data.note.content;
+			subjectId = data.note.subjectId ?? data.subjects[0]?.id ?? '';
+			currentNoteId = data.note.id;
+		}
+	});
 	let saveMessage = $state('');
 	let errorMessage = $state('');
 

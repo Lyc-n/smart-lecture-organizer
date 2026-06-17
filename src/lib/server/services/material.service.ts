@@ -21,7 +21,7 @@ export const materialService = {
 		return MaterialRepository.findByUploadedBy(userId);
 	},
 
-	create(userId: string, meetingId: string, data: CreateMaterialInput) {
+	create(userId: string, meetingId: string | null | undefined, data: CreateMaterialInput) {
 		return MaterialRepository.create({
 			uploadedBy: userId,
 			...data,

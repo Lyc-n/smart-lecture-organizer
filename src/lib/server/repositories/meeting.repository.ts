@@ -1,37 +1,16 @@
-import { eq } from 'drizzle-orm';
-import { db } from '../db';
 import { meetings } from '../db/schema';
+import { createRepository } from './base';
+import { db } from '../db';
+import { eq } from 'drizzle-orm';
 
+const base = createRepository<typeof meetings.$inferSelect, typeof meetings.$inferInsert>(meetings);
+
+/** Repository untuk tabel `meetings` — CRUD standar + query by subjectId. */
 export const MeetingRepository = {
-	async findById(id: string) {
-		return await db.query.meetings.findFirst({
-			where: eq(meetings.id, id)
-		});
-	},
+	...base,
 
+	/** Ambil semua meeting dalam suatu subject. */
 	async findBySubjectId(subjectId: string) {
-		return await db.query.meetings.findMany({
-			where: eq(meetings.subjectId, subjectId)
-		});
-	},
-
-	async create(data: {
-		subjectId?: string | null;
-		weekNumber: number;
-		title: string;
-		description?: string | null;
-	}) {
-		return await db.insert(meetings).values(data).returning();
-	},
-
-	async update(
-		id: string,
-		updates: { weekNumber?: number; title?: string; description?: string | null }
-	) {
-		return await db.update(meetings).set(updates).where(eq(meetings.id, id)).returning();
-	},
-
-	async delete(id: string) {
-		return await db.delete(meetings).where(eq(meetings.id, id)).returning();
+		return db.select().from(meetings).where(eq(meetings.subjectId, subjectId));
 	}
 };

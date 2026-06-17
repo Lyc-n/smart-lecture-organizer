@@ -9,7 +9,7 @@ export async function GET({ params, locals }) {
 
 	const notes = await NoteService.getByMaterialId(params.id);
 
-	return json(notes);
+	return json({ success: true, data: notes });
 }
 
 export async function POST({ params, request, locals }) {
@@ -24,5 +24,5 @@ export async function POST({ params, request, locals }) {
 
 	const note = await NoteService.createForMaterial(user.id, params.id, material.subjectId, data);
 
-	return json(note, { status: 201 });
+	return json({ success: true, data: note }, { status: 201 });
 }

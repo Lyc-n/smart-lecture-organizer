@@ -14,8 +14,8 @@
 	let { data, form } = $props();
 	// let creating = $state(false);
 
-	const latestSubjects = data.subjects[0];
-	const continueSubjects = data.subjects.slice(1);
+	let latestSubjects = $derived(data.subjects[0]);
+	let continueSubjects = $derived(data.subjects.slice(1));
 	// const date = latestSubjects.createdAt
 	// 	? new Date(latestSubjects.createdAt).toLocaleDateString('id-ID', {
 	// 			day: 'numeric',

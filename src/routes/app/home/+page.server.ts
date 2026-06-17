@@ -14,7 +14,7 @@ export const actions: Actions = {
 			return fail(400, { message: 'Create a subject before adding notes.' });
 		}
 
-		const [note] = await NoteService.createDraft(user.id, subjects[0].id);
+		const note = await NoteService.createDraft(user.id, subjects[0].id);
 		if (!note) {
 			return fail(500, { message: 'Failed to create note.' });
 		}

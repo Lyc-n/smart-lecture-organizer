@@ -5,64 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1780509009105,
-      "tag": "0000_mysterious_randall",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1780548700657,
-      "tag": "0001_quick_snowbird",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1780551854036,
-      "tag": "0002_fair_mentallo",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1780555085143,
-      "tag": "0003_careful_vermin",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1780555537806,
-      "tag": "0004_dark_mister_sinister",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "7",
-      "when": 1780579826670,
-      "tag": "0005_complex_whistler",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "7",
-      "when": 1780633120016,
-      "tag": "0006_lush_loki",
-      "breakpoints": true
-    },
-    {
-      "idx": 7,
-      "version": "7",
-      "when": 1780648219451,
-      "tag": "0007_glamorous_lionheart",
-      "breakpoints": true
-    },
-    {
-      "idx": 8,
-      "version": "7",
-      "when": 1780829759172,
-      "tag": "0008_bright_dragon_man",
+      "when": 1781695340324,
+      "tag": "0000_faulty_snowbird",
       "breakpoints": true
     }
   ]

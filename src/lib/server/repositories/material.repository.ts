@@ -1,73 +1,47 @@
-import { eq } from 'drizzle-orm';
-import { db } from '../db';
 import { materials } from '../db/schema';
+import { createRepository } from './base';
+import { db } from '../db';
+import { eq, or, ilike, and } from 'drizzle-orm';
 
-type newMaterial = typeof materials.$inferInsert;
-type updateMaterial = Partial<newMaterial>;
+const base = createRepository<typeof materials.$inferSelect, typeof materials.$inferInsert>(materials);
 
+/** Repository untuk tabel `materials` — CRUD standar + query & search. */
 export const MaterialRepository = {
-	// Find all materials
-	async findAll() {
-		return await db.query.materials.findMany();
-	},
+	...base,
 
-	// Find by ID
-	async findById(id: string) {
-		return await db.query.materials.findFirst({
-			where: eq(materials.id, id)
-		});
-	},
-
-	// Find all materials inside a specific Meeting
+	/** Ambil semua material dalam suatu meeting. */
 	async findByMeetingId(meetingId: string) {
-		return await db.query.materials.findMany({
-			where: eq(materials.meetingId, meetingId)
-		});
+		return db.select().from(materials).where(eq(materials.meetingId, meetingId));
 	},
 
-	// Find all materials inside a specific Subject
+	/** Ambil semua material dalam suatu subject. */
 	async findBySubjectId(subjectId: string) {
-		return await db.query.materials.findMany({
-			where: eq(materials.subjectId, subjectId)
-		});
+		return db.select().from(materials).where(eq(materials.subjectId, subjectId));
 	},
 
-	// Create new material
-	async create(material: newMaterial) {
-		return await db.insert(materials).values(material).returning();
-	},
-
-	// Update material metadata
-	async update(id: string, updates: updateMaterial) {
-		return await db.update(materials).set(updates).where(eq(materials.id, id)).returning();
-	},
-
-	// Delete material
-	async delete(id: string) {
-		return await db.delete(materials).where(eq(materials.id, id)).returning();
-	},
-
-	// Find all materials uploaded by a user
+	/** Ambil semua material milik user, berikut relasi subject. */
 	async findByUploadedBy(userId: string) {
-		return await db.query.materials.findMany({
+		return db.query.materials.findMany({
 			where: eq(materials.uploadedBy, userId),
 			with: { subject: true },
 			orderBy: (materials, { desc }) => [desc(materials.createdAt)]
 		});
 	},
 
-	// Search materials
-	async search(id: string, keyword: string) {
-		return db.query.materials.findMany({
-			where: (material, { and, or, ilike }) =>
+	/** Cari material milik user berdasarkan keyword (title/description/fileName). */
+	async search(userId: string, keyword: string) {
+		return db
+			.select()
+			.from(materials)
+			.where(
 				and(
-					eq(material.uploadedBy, id),
+					eq(materials.uploadedBy, userId),
 					or(
-						ilike(material.title, `%${keyword}%`),
-						ilike(material.description, `%${keyword}%`),
-						ilike(material.fileName, `%${keyword}%`)
+						ilike(materials.title, `%${keyword}%`),
+						ilike(materials.description, `%${keyword}%`),
+						ilike(materials.fileName, `%${keyword}%`)
 					)
 				)
-		});
+			);
 	}
 };

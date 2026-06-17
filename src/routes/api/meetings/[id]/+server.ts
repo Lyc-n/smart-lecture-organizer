@@ -24,9 +24,13 @@ export async function PUT({ params, request, locals }) {
 		throw error(404, 'Meeting not found');
 	}
 
-	const subject = await subjectService.getById(params.id);
+	if (!meeting.subjectId) {
+		throw error(400, 'Meeting has no subject');
+	}
 
-	if (subject?.userId !== user.id) {
+	const subject = await subjectService.getById(meeting.subjectId);
+
+	if (!subject || subject.userId !== user.id) {
 		throw error(403, 'Forbidden');
 	}
 
@@ -51,9 +55,13 @@ export async function DELETE({ params, locals }) {
 		throw error(404, 'Meeting not found');
 	}
 
-	const subject = await subjectService.getById(params.id);
+	if (!meeting.subjectId) {
+		throw error(400, 'Meeting has no subject');
+	}
 
-	if (subject?.userId !== user.id) {
+	const subject = await subjectService.getById(meeting.subjectId);
+
+	if (!subject || subject.userId !== user.id) {
 		throw error(403, 'Forbidden');
 	}
 

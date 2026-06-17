@@ -18,7 +18,7 @@ export async function GET({ params, locals }) {
 		throw error(403, 'Forbidden');
 	}
 
-	return json(note);
+	return json({ success: true, data: note });
 }
 
 export async function PUT({ params, request, locals }) {
@@ -44,12 +44,12 @@ export async function PUT({ params, request, locals }) {
 			}
 		}
 
-		const [updated] = await NoteService.update(params.id, data);
+		const updated = await NoteService.update(params.id, data);
 		if (!updated) {
 			throw error(500, 'Failed to update note');
 		}
 
-		return json(updated);
+		return json({ success: true, data: updated });
 	} catch (err) {
 		if (err instanceof ZodError) {
 			throw error(400, err.issues[0]?.message ?? 'Invalid note data');

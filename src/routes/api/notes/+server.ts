@@ -24,7 +24,7 @@ export async function POST({ request, locals }) {
 			throw error(403, 'Forbidden');
 		}
 
-		const [note] = await NoteService.createStandalone(user.id, data);
+		const note = await NoteService.createStandalone(user.id, data);
 		if (!note) {
 			throw error(500, 'Failed to create note');
 		}

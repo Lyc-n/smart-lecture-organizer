@@ -19,7 +19,7 @@ export async function GET({ params, locals }) {
 		throw error(403, 'Forbidden');
 	}
 
-	return json(material);
+	return json({ success: true, data: material });
 }
 
 export async function POST({ params, request, locals }) {
@@ -51,7 +51,7 @@ export async function PUT({ params, request, locals }) {
 
 	const updated = await materialService.update(params.id, data);
 
-	return json(updated);
+	return json({ success: true, data: updated });
 }
 
 export async function DELETE({ params, locals }) {

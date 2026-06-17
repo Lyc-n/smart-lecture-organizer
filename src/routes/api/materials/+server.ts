@@ -7,7 +7,7 @@ export async function POST({ request, locals }) {
 	const user = requireAuth(locals);
 	const body = await request.json();
 	const data = CreateMaterialSchema.parse(body);
-	const material = await materialService.create(user.id, data.meetingId, data);
+	const material = await materialService.create(user.id, data.meetingId ?? null, data);
 
 	return json(
 		{

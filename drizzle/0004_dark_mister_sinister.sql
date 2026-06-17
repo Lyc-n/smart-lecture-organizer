@@ -1,1 +1,0 @@
-ALTER TABLE "materials" ALTER COLUMN "uploaded_by" SET DATA TYPE text;

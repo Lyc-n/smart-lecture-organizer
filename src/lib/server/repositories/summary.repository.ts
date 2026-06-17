@@ -1,19 +1,21 @@
-import { eq } from 'drizzle-orm';
-import { db } from '../db';
 import { materialSummaries } from '../db/schema';
+import { createRepository } from './base';
+import { db } from '../db';
+import { eq } from 'drizzle-orm';
 
+const base = createRepository<typeof materialSummaries.$inferSelect, typeof materialSummaries.$inferInsert>(materialSummaries);
+
+/** Repository untuk tabel `material_summaries` — CRUD standar + cari by materialId. */
 export const SummaryRepository = {
+	...base,
+
+	/** Ambil ringkasan untuk suatu material (max 1). */
 	async findByMaterialId(materialId: string) {
-		return await db.query.materialSummaries.findFirst({
-			where: eq(materialSummaries.materialId, materialId)
-		});
-	},
-
-	async create(data: { materialId: string; summaryText: string }) {
-		return await db.insert(materialSummaries).values(data).returning();
-	},
-
-	async delete(id: string) {
-		return await db.delete(materialSummaries).where(eq(materialSummaries.id, id)).returning();
+		const [result] = await db
+			.select()
+			.from(materialSummaries)
+			.where(eq(materialSummaries.materialId, materialId))
+			.limit(1);
+		return result ?? null;
 	}
 };
