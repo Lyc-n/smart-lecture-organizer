@@ -1,4 +1,4 @@
-import { OCR_SPACE_API_KEY } from '$env/static/private';
+import { env } from '$env/dynamic/private';
 import { db } from '$lib/server/db';
 import { items, ocrNotes } from '$lib/server/db/schema';
 import { and, eq } from 'drizzle-orm';
@@ -37,7 +37,7 @@ export async function processOcr(itemId: string, userId: string): Promise<{ note
 	}
 
 	const formData = new FormData();
-	formData.append('apikey', OCR_SPACE_API_KEY);
+	formData.append('apikey', env.OCR_SPACE_API_KEY);
 	formData.append('language', 'id');
 	formData.append('OCREngine', '2');
 	formData.append('url', item.fileUrl);
