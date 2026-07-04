@@ -1,16 +1,11 @@
-import { drizzle } from 'drizzle-orm/neon-http';
-import { neon } from '@neondatabase/serverless';
-import * as appSchema from './schema';
-import * as authSchema from '../../../../auth-schema';
-import { env } from '$env/dynamic/private';
+import { drizzle } from 'drizzle-orm/node-postgres';
+import pg from 'pg';
+import { DATABASE_URL } from '$env/static/private';
 
-if (!env.DATABASE_URL) throw new Error('DATABASE_URL is not set');
+import * as schema from './schema';
 
-const client = neon(env.DATABASE_URL);
+const client = new pg.Pool({
+	connectionString: DATABASE_URL
+});
 
-const schema = {
-	...appSchema,
-	...authSchema
-};
-
-export const db = drizzle(client, { schema });
+export const db = drizzle({ client, schema });

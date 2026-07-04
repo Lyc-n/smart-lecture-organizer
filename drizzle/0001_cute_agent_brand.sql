@@ -1,0 +1,2 @@
+ALTER TABLE "ocr_notes" drop column "content_tsv";--> statement-breakpoint
+ALTER TABLE "ocr_notes" ADD COLUMN "content_tsv" text GENERATED ALWAYS AS (to_tsvector('indonesian', coalesce(content, ''))) STORED;

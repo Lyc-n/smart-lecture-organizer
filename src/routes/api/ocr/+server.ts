@@ -1,28 +1,29 @@
-import { env } from '$env/dynamic/private';
-import { requireAuth } from '$lib/server/require-auth';
+import { auth } from '$lib/server/auth';
+import { processOcr } from '$lib/server/services/ocr';
+import { json, error } from '@sveltejs/kit';
+import type { RequestHandler } from './$types';
 
-export async function POST({ request, locals }) {
-	requireAuth(locals);
-	const form = await request.formData();
-	const file = form.get('file') as File;
-
-	console.log('file:', file?.name);
-
-	const ocrForm = new FormData();
-	ocrForm.append('file', file);
-	// ocrForm.append('language', 'ind');
-
-	const response = await fetch('https://api.ocr.space/parse/image', {
-		method: 'POST',
-		headers: {
-			apikey: env.OCR!
-		},
-		body: ocrForm
+export const POST: RequestHandler = async (event) => {
+	const session = await auth.api.getSession({
+		headers: event.request.headers
 	});
 
-	const result = await response.json();
+	if (!session) {
+		error(401, 'Unauthorized');
+	}
 
-	console.log(result);
+	const body = await event.request.json();
+	const itemId = typeof body.itemId === 'string' ? body.itemId.trim() : '';
 
-	return Response.json(result);
-}
+	if (!itemId) {
+		error(400, 'itemId diperlukan');
+	}
+
+	try {
+		const result = await processOcr(itemId, session.user.id);
+		return json(result);
+	} catch (e) {
+		const message = e instanceof Error ? e.message : 'OCR gagal';
+		error(500, message);
+	}
+};

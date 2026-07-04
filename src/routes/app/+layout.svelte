@@ -1,13 +1,12 @@
 <script lang="ts">
-	import AppSidebar from '$lib/components/app-sidebar.svelte';
+	import { page } from '$app/stores';
+	import AppShell from '$lib/components/organisms/AppShell.svelte';
 
-	let { children } = $props();
+	let { children }: { children: import('svelte').Snippet } = $props();
+
+	const overdueCount = $derived($page.data.overdueCount ?? 0);
 </script>
 
-<div class="flex h-screen">
-	<AppSidebar />
-	<!-- <p>{data.user.name}</p> -->
-	<main class="min-w-0 flex-1 overflow-y-auto">
-		{@render children()}
-	</main>
-</div>
+<AppShell {overdueCount}>
+	{@render children()}
+</AppShell>

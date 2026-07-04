@@ -1,0 +1,22 @@
+{
+	"name": "Smart Lecture Organizer",
+	"short_name": "SLO",
+	"description": "Atur materi belajarmu dengan rapi. Organizer dokumen, rekaman, video, dan gambar untuk mahasiswa.",
+	"start_url": "/onboarding",
+	"display": "standalone",
+	"background_color": "#f8fafc",
+	"theme_color": "#f8fafc",
+	"orientation": "portrait",
+	"icons": [
+		{
+			"src": "/icon-192.png",
+			"sizes": "192x192",
+			"type": "image/png"
+		},
+		{
+			"src": "/icon-512.png",
+			"sizes": "512x512",
+			"type": "image/png"
+		}
+	]
+}

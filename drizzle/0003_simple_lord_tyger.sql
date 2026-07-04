@@ -1,0 +1,1 @@
+ALTER TABLE "ocr_notes" ALTER COLUMN "content_tsv" SET DATA TYPE "undefined"."tsvector";

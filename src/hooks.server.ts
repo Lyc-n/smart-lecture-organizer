@@ -1,31 +1,24 @@
-import type { Handle, HandleServerError } from '@sveltejs/kit';
-import { building } from '$app/environment';
+import { isAuthPath } from 'better-auth/svelte-kit';
 import { auth } from '$lib/server/auth';
-import { svelteKitHandler } from 'better-auth/svelte-kit';
+import { redirect } from '@sveltejs/kit';
 
-const handleBetterAuth: Handle = async ({ event, resolve }) => {
-	const session = await auth.api.getSession({ headers: event.request.headers });
-
-	if (session) {
-		event.locals.session = session.session;
-		event.locals.user = session.user;
+export const handle = async ({ event, resolve }) => {
+	if (isAuthPath(event.url.toString(), auth.options)) {
+		return auth.handler(event.request);
 	}
 
-	return svelteKitHandler({ event, resolve, auth, building });
-};
+	if (event.url.pathname.startsWith('/app')) {
+		const sessionData = await auth.api.getSession({
+			headers: event.request.headers
+		});
 
-export const handle: Handle = handleBetterAuth;
+		if (!sessionData) {
+			redirect(302, '/auth/login');
+		}
 
-export const handleError: HandleServerError = async ({ error, event, status, message }) => {
-	const err = error instanceof Error ? error : new Error(String(error));
+		event.locals.user = sessionData.user;
+		event.locals.session = sessionData.session;
+	}
 
-	console.error(`[${status}] ${event.request.method} ${event.url.pathname}:`, {
-		message: err.message,
-		status,
-		userId: event.locals.user?.id ?? null
-	});
-
-	return {
-		message: status === 404 ? message : 'An unexpected error occurred'
-	};
+	return resolve(event);
 };

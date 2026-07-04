@@ -7,10 +7,17 @@ node_modules
 .wrangler
 /.svelte-kit
 /build
-/out
+
 # OS
 .DS_Store
 Thumbs.db
+
+# AI development artifacts
+AGENTS.md
+docs
+
+# Database
+/drizzle/meta
 
 # Env
 .env
@@ -18,11 +25,6 @@ Thumbs.db
 !.env.example
 !.env.test
 
-# pnpm
-pnpm-lock.yaml
-pnpm-workspace.yaml
-
 # Vite
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
-
