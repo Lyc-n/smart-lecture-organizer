@@ -1,7 +1,2 @@
 {
-	"functions": {
-		"api/ocr": {
-			"maxDuration": 30
-		}
-	}
 }

@@ -3,6 +3,10 @@ import { processOcr } from '$lib/server/services/ocr';
 import { json, error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 
+export const config = {
+	maxDuration: 30
+};
+
 export const POST: RequestHandler = async (event) => {
 	const session = await auth.api.getSession({
 		headers: event.request.headers
