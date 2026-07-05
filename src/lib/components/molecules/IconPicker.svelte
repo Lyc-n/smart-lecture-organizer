@@ -30,7 +30,7 @@
 		<button
 			type="button"
 			onclick={() => select(ic)}
-			class="flex items-center justify-center rounded-lg border p-2 transition {value === ic ? 'border-indigo-500' : 'border-slate-700 light:border-slate-300'}"
+			class="flex items-center justify-center rounded-lg border p-2 transition {value === ic ? 'border-primary' : 'border-border-hover'}"
 			style={value === ic ? 'background-color: rgb(99 102 241 / 0.1)' : ''}
 			aria-label={ic}
 		>

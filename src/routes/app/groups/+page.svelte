@@ -44,28 +44,28 @@
 	<title>Grup — Smart Lecture Organizer</title>
 </svelte:head>
 
-<div class="min-h-screen bg-slate-950 light:bg-slate-50 text-slate-100 light:text-slate-900 p-8">
+<div class="min-h-screen bg-bg-surface text-text-base p-8">
 	<div class="mx-auto max-w-2xl">
 		<div class="mb-6 flex items-center justify-between">
 			<h1 class="text-2xl font-bold">Grup</h1>
 			<button
 				type="button"
 				onclick={() => (showForm = true)}
-				class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-indigo-500"
+				class="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white transition hover:bg-primary-hover"
 			>
 				Buat Grup
 			</button>
 		</div>
 
 		{#if recommendations.length > 0}
-			<div class="mb-4 rounded-xl bg-slate-900 light:bg-white border border-slate-800 light:border-slate-200 p-4">
-				<p class="mb-2 text-sm text-slate-400 light:text-slate-500">Grup yang disarankan:</p>
+			<div class="mb-4 rounded-xl bg-bg-elevated border border-border-main p-4">
+				<p class="mb-2 text-sm text-text-secondary">Grup yang disarankan:</p>
 				<div class="flex flex-wrap gap-2">
 					{#each recommendations as name (name)}
 						<button
 							type="button"
 							onclick={() => handleRecommendation(name)}
-							class="rounded-lg bg-indigo-600/20 border border-indigo-500/30 px-3 py-1.5 text-sm text-indigo-400 light:text-indigo-600 transition hover:bg-indigo-600/30"
+							class="rounded-lg bg-primary/20 border border-primary/30 px-3 py-1.5 text-sm text-primary transition hover:bg-primary/30"
 						>
 							+ {name}
 						</button>
@@ -77,22 +77,22 @@
 		{#if $navigating && groups.length === 0}
 			<div class="space-y-3">
 				{#each [1, 2, 3, 4] as _}
-					<div class="h-16 animate-pulse rounded-xl bg-slate-900 light:bg-white border-slate-800 light:border-slate-200"></div>
+					<div class="h-16 animate-pulse rounded-xl bg-bg-elevated border-border-main"></div>
 				{/each}
 			</div>
 		{:else if groups.length === 0}
-			<div class="rounded-xl bg-slate-900 light:bg-white border-slate-800 light:border-slate-200 p-8 text-center">
+			<div class="rounded-xl bg-bg-elevated border-border-main p-8 text-center">
 				<div
-					class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-800 light:bg-slate-100"
+					class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-bg-hover"
 				>
-					<svg class="h-7 w-7 text-slate-500" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+					<svg class="h-7 w-7 text-text-muted" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
 						<path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" />
 					</svg>
 				</div>
-				<p class="text-slate-400 light:text-slate-500">Belum ada grup. Buat grup pertama untuk mulai mengatur materi belajar.</p>
+				<p class="text-text-secondary">Belum ada grup. Buat grup pertama untuk mulai mengatur materi belajar.</p>
 			</div>
 		{:else}
-			<div class="rounded-xl bg-slate-900 light:bg-white border-slate-800 light:border-slate-200 p-4">
+			<div class="rounded-xl bg-bg-elevated border-border-main p-4">
 				<GroupTree {groups} onSelect={handleSelect} />
 			</div>
 		{/if}

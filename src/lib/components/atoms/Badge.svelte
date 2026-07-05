@@ -12,10 +12,10 @@
 	let { variant = 'default', children, class: className = '' }: Props = $props();
 
 	const variants: Record<Variant, string> = {
-		default: 'bg-slate-800 light:bg-slate-100 text-slate-400 light:text-slate-500',
-		success: 'bg-emerald-500/10 text-emerald-400',
-		warning: 'bg-amber-500/10 text-amber-400',
-		danger: 'bg-red-500/10 text-red-400'
+		default: 'bg-bg-elevated text-text-secondary',
+		success: 'bg-success/10 text-success',
+		warning: 'bg-tertiary/10 text-tertiary',
+		danger: 'bg-danger/10 text-danger'
 	};
 </script>
 

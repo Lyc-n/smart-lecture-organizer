@@ -74,7 +74,7 @@
 </svelte:head>
 
 <div
-	class="h-dvh w-full bg-slate-950 light:bg-slate-50 text-slate-100 light:text-slate-900 flex flex-col overflow-hidden select-none"
+	class="h-dvh w-full bg-bg-surface text-text-base flex flex-col overflow-hidden select-none"
 	role="region"
 	aria-label="Onboarding"
 	ontouchstart={handleTouchStart}
@@ -85,7 +85,7 @@
 		{#if currentStep < steps.length - 1}
 			<a
 				href="/app"
-				class="text-sm text-slate-500 light:text-slate-400 hover:text-slate-300 light:hover:text-slate-600 transition-colors px-4 py-2"
+				class="text-sm text-text-muted hover:text-text-secondary transition-colors px-4 py-2"
 			>
 				Skip
 			</a>
@@ -100,9 +100,9 @@
 			{#each steps as step, i}
 				{#if i === currentStep}
 					<div class="flex flex-col items-center text-center max-w-sm">
-						<div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-indigo-600/30 to-violet-600/30 border border-indigo-500/20 flex items-center justify-center mb-8">
+						<div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-indigo-600/30 to-violet-600/30 border border-primary/20 flex items-center justify-center mb-8">
 							<svg
-								class="w-10 h-10 text-indigo-400"
+								class="w-10 h-10 text-primary"
 								fill="none"
 								stroke="currentColor"
 								stroke-width="1.5"
@@ -112,7 +112,7 @@
 							</svg>
 						</div>
 						<h1 class="text-2xl font-bold mb-3">{step.title}</h1>
-						<p class="text-slate-400 light:text-slate-500 leading-relaxed">{step.description}</p>
+						<p class="text-text-secondary leading-relaxed">{step.description}</p>
 					</div>
 				{/if}
 			{/each}
@@ -125,7 +125,7 @@
 			{#each steps as _, i}
 				<button
 					onclick={() => (currentStep = i)}
-					class="h-2 rounded-full transition-all duration-300 cursor-pointer {i === currentStep ? 'bg-indigo-500' : 'bg-slate-700 light:!bg-slate-200'}"
+					class="h-2 rounded-full transition-all duration-300 cursor-pointer {i === currentStep ? 'bg-primary' : 'bg-bg-hover'}"
 					style:width={i === currentStep ? '24px' : '8px'}
 					aria-label="Langkah {i + 1}"
 				></button>

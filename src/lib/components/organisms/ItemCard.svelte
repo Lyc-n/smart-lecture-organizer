@@ -70,14 +70,14 @@
 </script>
 
 <div
-	class="flex w-full cursor-pointer items-center gap-3 rounded-xl bg-slate-900 light:bg-white border border-slate-800 light:border-slate-200 p-3 text-left transition hover:border-slate-700 light:hover:border-slate-300 hover:bg-slate-800/80 light:hover:bg-slate-100/80"
+	class="flex w-full cursor-pointer items-center gap-3 rounded-xl bg-bg-elevated border border-border-main p-3 text-left transition hover:border-border-hover hover:bg-bg-hover/80"
 	onclick={onclick}
 	onkeydown={(e) => e.key === 'Enter' && onclick?.()}
 	role="button"
 	tabindex="0"
 >
 	<div
-		class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-800 light:bg-slate-100 text-slate-500 light:text-slate-400"
+		class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-bg-hover text-text-muted"
 	>
 		{#if item.type === 'image'}
 			{#if item.fileUrl}
@@ -95,8 +95,8 @@
 	</div>
 
 	<div class="min-w-0 flex-1">
-		<div class="truncate text-sm font-medium text-slate-100 light:text-slate-900">{item.name}</div>
-		<div class="truncate text-xs text-slate-500 light:text-slate-400">
+		<div class="truncate text-sm font-medium text-text-base">{item.name}</div>
+		<div class="truncate text-xs text-text-muted">
 			{formatSize(item.fileSize)} &middot; {formatDate(item.createdAt)}
 		</div>
 	</div>
@@ -106,7 +106,7 @@
 			type="button"
 			onclick={handleDownload}
 			disabled={downloadLoading}
-			class="shrink-0 rounded-md p-1.5 text-slate-600 light:text-slate-400 transition hover:text-indigo-400 light:hover:text-indigo-600 disabled:opacity-50"
+			class="shrink-0 rounded-md p-1.5 text-text-muted transition hover:text-primary disabled:opacity-50"
 			aria-label="Simpan offline"
 		>
 			{#if downloadLoading}
@@ -123,7 +123,7 @@
 	<button
 		type="button"
 		onclick={togglePin}
-		class="shrink-0 rounded-md p-1.5 text-slate-600 light:text-slate-400 transition hover:text-yellow-400 light:hover:text-yellow-600"
+		class="shrink-0 rounded-md p-1.5 text-text-muted transition hover:text-tertiary"
 		aria-label={pinned ? 'Unpin' : 'Pin'}
 	>
 		{#if pinned}

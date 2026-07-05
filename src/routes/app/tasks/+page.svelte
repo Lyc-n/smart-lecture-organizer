@@ -85,14 +85,14 @@
 	<title>Tugas — Smart Lecture Organizer</title>
 </svelte:head>
 
-<div class="min-h-screen bg-slate-950 light:bg-slate-50 text-slate-100 light:text-slate-900 p-8">
+<div class="min-h-screen bg-bg-surface text-text-base p-8">
 	<div class="mx-auto max-w-2xl">
 		<div class="mb-6 flex items-center justify-between">
 			<h1 class="text-2xl font-bold">Tugas</h1>
 			<button
 				type="button"
 				onclick={() => (showForm = true)}
-				class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-indigo-500"
+				class="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white transition hover:bg-primary-hover"
 			>
 				Tambah Tugas
 			</button>
@@ -102,32 +102,32 @@
 			<button
 				type="button"
 				onclick={() => setFilter({ status: undefined, groupId: undefined })}
-				class="rounded-lg px-3 py-1.5 text-sm transition {currentStatus === 'all' ? 'bg-indigo-600 text-white' : 'bg-slate-800 light:bg-slate-200 text-slate-400 light:text-slate-500 hover:text-slate-200 light:hover:text-slate-700'}"
+				class="rounded-lg px-3 py-1.5 text-sm transition {currentStatus === 'all' ? 'bg-primary text-white' : 'bg-bg-hover text-text-secondary hover:text-text-secondary'}"
 			>
 				Semua
 			</button>
 			<button
 				type="button"
 				onclick={() => setFilter({ status: 'pending' })}
-				class="rounded-lg px-3 py-1.5 text-sm transition {currentStatus === 'pending' ? 'bg-indigo-600 text-white' : 'bg-slate-800 light:bg-slate-200 text-slate-400 light:text-slate-500 hover:text-slate-200 light:hover:text-slate-700'}"
+				class="rounded-lg px-3 py-1.5 text-sm transition {currentStatus === 'pending' ? 'bg-primary text-white' : 'bg-bg-hover text-text-secondary hover:text-text-secondary'}"
 			>
 				Pending
 			</button>
 			<button
 				type="button"
 				onclick={() => setFilter({ status: 'completed' })}
-				class="rounded-lg px-3 py-1.5 text-sm transition {currentStatus === 'completed' ? 'bg-indigo-600 text-white' : 'bg-slate-800 light:bg-slate-200 text-slate-400 light:text-slate-500 hover:text-slate-200 light:hover:text-slate-700'}"
+				class="rounded-lg px-3 py-1.5 text-sm transition {currentStatus === 'completed' ? 'bg-primary text-white' : 'bg-bg-hover text-text-secondary hover:text-text-secondary'}"
 			>
 				Selesai
 			</button>
 			<button
 				type="button"
 				onclick={() => setFilter({ status: 'overdue' })}
-				class="relative rounded-lg px-3 py-1.5 text-sm transition {currentStatus === 'overdue' ? 'bg-red-600 text-white' : 'bg-slate-800 light:bg-slate-200 text-slate-400 light:text-slate-500 hover:text-slate-200 light:hover:text-slate-700'}"
+				class="relative rounded-lg px-3 py-1.5 text-sm transition {currentStatus === 'overdue' ? 'bg-danger text-white' : 'bg-bg-hover text-text-secondary hover:text-text-secondary'}"
 			>
 				Terlambat
 				{#if overdueCount > 0 && currentStatus !== 'overdue'}
-					<span class="absolute -right-1.5 -top-1.5 flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-red-500 px-1 text-xs font-bold text-white">
+					<span class="absolute -right-1.5 -top-1.5 flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-danger px-1 text-xs font-bold text-white">
 						{overdueCount}
 					</span>
 				{/if}
@@ -140,7 +140,7 @@
 						const val = (e.target as HTMLSelectElement).value;
 						setFilter({ groupId: val || undefined });
 					}}
-					class="rounded-lg border border-slate-700 light:border-slate-300 bg-slate-900 light:bg-white px-2 py-1.5 text-xs text-slate-400 light:text-slate-500 focus:outline-none"
+					class="rounded-lg border border-border-hover bg-bg-elevated px-2 py-1.5 text-xs text-text-secondary focus:outline-none"
 				>
 					<option value="">Semua Grup</option>
 					{#each dataGroups as g}
@@ -153,19 +153,19 @@
 		{#if $navigating && dataTasks.length === 0}
 			<div class="flex flex-col gap-2">
 				{#each [1, 2, 3, 4] as _}
-					<div class="h-16 animate-pulse rounded-xl bg-slate-900 light:bg-white border border-slate-800 light:border-slate-200"></div>
+					<div class="h-16 animate-pulse rounded-xl bg-bg-elevated border border-border-main"></div>
 				{/each}
 			</div>
 		{:else if dataTasks.length === 0}
-			<div class="rounded-xl bg-slate-900 light:bg-white border border-slate-800 light:border-slate-200 p-8 text-center">
+			<div class="rounded-xl bg-bg-elevated border border-border-main p-8 text-center">
 				<div
-					class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-800 light:bg-slate-100"
+					class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-bg-hover"
 				>
-					<svg class="h-7 w-7 text-slate-500" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+					<svg class="h-7 w-7 text-text-muted" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
 					</svg>
 				</div>
-				<p class="text-slate-400 light:text-slate-500">Belum ada tugas.</p>
+				<p class="text-text-secondary">Belum ada tugas.</p>
 			</div>
 		{:else}
 			<div class="flex flex-col gap-2">

@@ -54,11 +54,11 @@
 						}
 					}}
 					ondblclick={() => onSelect?.(group.id)}
-					class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm transition hover:bg-slate-800 light:hover:bg-slate-100"
+					class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm transition hover:bg-bg-hover"
 				>
 					{#if hasChildren(group.id)}
 						<svg
-							class="h-3.5 w-3.5 shrink-0 text-slate-500 light:text-slate-400 transition"
+							class="h-3.5 w-3.5 shrink-0 text-text-muted transition"
 							class:rotate-90={expanded.has(group.id)}
 							fill="none"
 							stroke="currentColor"
@@ -76,7 +76,7 @@
 					>
 						<Icon name={group.icon} size={16} color={group.color} />
 					</div>
-					<span class="truncate text-slate-200 light:text-slate-700">{group.name}</span>
+					<span class="truncate text-text-secondary">{group.name}</span>
 				</button>
 
 				{#if expanded.has(group.id)}

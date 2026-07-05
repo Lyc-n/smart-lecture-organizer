@@ -60,7 +60,7 @@
 </script>
 
 <div
-	class="flex cursor-pointer items-start gap-3 rounded-xl bg-slate-900 light:bg-white border border-slate-800 light:border-slate-200 p-3 transition hover:border-slate-700 light:hover:border-slate-300 {task.isCompleted ? 'opacity-60' : ''}"
+	class="flex cursor-pointer items-start gap-3 rounded-xl bg-bg-elevated border border-border-main p-3 transition hover:border-border-hover {task.isCompleted ? 'opacity-60' : ''}"
 	onclick={onclick}
 	onkeydown={(e) => e.key === 'Enter' && onclick?.()}
 	role="button"
@@ -70,7 +70,7 @@
 
 	<div class="min-w-0 flex-1">
 		<div class="flex items-center gap-2">
-			<p class="truncate text-sm font-medium {completed ? 'text-slate-500 light:text-slate-400 line-through' : 'text-slate-100 light:text-slate-900'}">
+			<p class="truncate text-sm font-medium {completed ? 'text-text-muted line-through' : 'text-text-base'}">
 				{task.title}
 			</p>
 			{#if groupName}
@@ -79,11 +79,11 @@
 		</div>
 
 		{#if task.description}
-			<p class="mt-1 truncate text-xs text-slate-500 light:text-slate-400">{task.description}</p>
+			<p class="mt-1 truncate text-xs text-text-muted">{task.description}</p>
 		{/if}
 
 		{#if dl.text}
-			<p class="mt-1 text-xs {dl.overdue ? 'text-red-400 light:text-red-500' : dl.urgent ? 'text-yellow-400 light:text-yellow-600' : 'text-slate-500 light:text-slate-400'}">
+			<p class="mt-1 text-xs {dl.overdue ? 'text-danger' : dl.urgent ? 'text-tertiary' : 'text-text-muted'}">
 				{dl.text}
 			</p>
 		{/if}

@@ -45,7 +45,7 @@
 	></div>
 {/if}
 
-<div class="flex h-dvh bg-slate-950 light:bg-slate-50">
+<div class="flex h-dvh bg-bg-base">
 	<Sidebar open={sidebarOpen} {collapsed} {overdueCount} onToggleCollapse={toggleCollapse} />
 
 	<div class="flex flex-1 flex-col min-w-0">

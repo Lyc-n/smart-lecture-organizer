@@ -33,10 +33,10 @@
 
 	const variantStyles: Record<string, string> = {
 		default: active
-			? 'bg-indigo-600/10 text-indigo-400'
-			: 'text-slate-400 light:text-slate-500 hover:bg-slate-800 light:hover:bg-slate-100 hover:text-slate-200 light:hover:text-slate-700',
-		danger: 'text-red-400 light:text-red-600 hover:bg-red-500/10 light:hover:bg-red-50',
-		warning: 'text-amber-400 light:text-amber-600 hover:bg-amber-500/10 light:hover:bg-amber-50'
+			? 'bg-primary/10 text-primary'
+			: 'text-text-muted hover:bg-bg-hover hover:text-text-secondary',
+		danger: 'text-danger hover:bg-danger/10',
+		warning: 'text-tertiary hover:bg-tertiary/10'
 	};
 </script>
 
@@ -64,12 +64,12 @@
 	{#if !collapsed}
 		{label}
 		{#if badge > 0}
-			<span class="ml-auto flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-red-500 px-1 text-xs font-bold text-white">
+			<span class="ml-auto flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-danger px-1 text-xs font-bold text-white">
 				{badge}
 			</span>
 		{/if}
 	{:else if badge > 0}
-		<span class="absolute -right-0.5 -top-0.5 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-red-500 px-0.5 text-[10px] font-bold text-white">
+		<span class="absolute -right-0.5 -top-0.5 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-danger px-0.5 text-[10px] font-bold text-white">
 			{badge}
 		</span>
 	{/if}

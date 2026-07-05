@@ -14,13 +14,13 @@
 
 <div>
 	{#if label}
-		<label for={id} class="mb-1 block text-sm font-medium text-slate-300 light:text-slate-700">
+		<label for={id} class="mb-1 block text-sm font-medium text-text-secondary">
 			{label}
-			{#if required}<span class="text-red-400">*</span>{/if}
+			{#if required}<span class="text-danger">*</span>{/if}
 		</label>
 	{/if}
 	{@render children()}
 	{#if error}
-		<p class="mt-1 text-xs text-red-400">{error}</p>
+		<p class="mt-1 text-xs text-danger">{error}</p>
 	{/if}
 </div>

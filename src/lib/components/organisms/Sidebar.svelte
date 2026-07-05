@@ -30,10 +30,10 @@
 </script>
 
 <nav
-	class="fixed inset-y-0 left-0 z-40 flex flex-col bg-slate-950 light:bg-white border-r border-slate-800 light:border-slate-200 transition-all duration-200 {collapsed ? 'w-16' : 'w-60'} {open ? 'translate-x-0' : '-translate-x-full'} lg:static lg:translate-x-0"
+	class="fixed inset-y-0 left-0 z-40 flex flex-col bg-bg-surface border-r border-border-main transition-all duration-200 {collapsed ? 'w-16' : 'w-60'} {open ? 'translate-x-0' : '-translate-x-full'} lg:static lg:translate-x-0"
 >
 	<!-- Header: Logo + Toggle -->
-	<div class="flex h-14 items-center {collapsed ? 'justify-center' : 'gap-2 px-4'} border-b border-slate-800 light:border-slate-200">
+	<div class="flex h-14 items-center {collapsed ? 'justify-center' : 'gap-2 px-4'} border-b border-border-main">
 		<button
 			type="button"
 			onclick={onToggleCollapse}
@@ -43,7 +43,7 @@
 			<img src="/favicon.svg" alt="SLO" class="h-7 w-7" />
 		</button>
 		{#if !collapsed}
-			<span class="text-sm font-bold text-slate-100 light:text-slate-900">Smart Lecture Organizer</span>
+			<span class="text-sm font-bold text-text-base">Smart Lecture Organizer</span>
 		{/if}
 	</div>
 
@@ -64,7 +64,7 @@
 	</div>
 
 	<!-- Bottom Actions -->
-	<div class="{collapsed ? 'p-2' : 'p-3'} space-y-1 border-t border-slate-800 light:border-slate-200">
+	<div class="{collapsed ? 'p-2' : 'p-3'} space-y-1 border-t border-border-main">
 		<NavItem
 			label="Bantuan"
 			icon="help"

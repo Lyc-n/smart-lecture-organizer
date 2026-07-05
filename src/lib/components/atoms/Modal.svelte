@@ -29,18 +29,18 @@
 		onclick={handleBackdrop}
 	>
 		<div
-			class="w-full max-w-lg rounded-2xl bg-slate-900 light:bg-white border border-slate-800 light:border-slate-200 p-6 shadow-2xl"
+			class="w-full max-w-lg rounded-2xl bg-bg-elevated border border-border-main p-6 shadow-2xl"
 			role="dialog"
 			aria-modal="true"
 		>
 			{#if title}
 				<div class="mb-6 flex items-center justify-between">
-					<h2 class="text-lg font-semibold text-slate-100 light:text-slate-900">{title}</h2>
+					<h2 class="text-lg font-semibold text-text-base">{title}</h2>
 					<button
 						type="button"
 						onclick={onclose}
 						aria-label="Tutup"
-						class="text-slate-500 light:text-slate-400 hover:text-slate-300 light:hover:text-slate-600"
+						class="text-text-muted hover:text-text-secondary"
 					>
 						<XIcon size={20} />
 					</button>

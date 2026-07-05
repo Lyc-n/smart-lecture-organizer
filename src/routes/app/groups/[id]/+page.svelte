@@ -102,12 +102,12 @@
 	<title>{group.name} — Smart Lecture Organizer</title>
 </svelte:head>
 
-<div class="min-h-screen bg-slate-950 light:bg-slate-50 text-slate-100 light:text-slate-900 p-8">
+<div class="min-h-screen bg-bg-surface text-text-base p-8">
 	<div class="mx-auto max-w-2xl">
 		<button
 			type="button"
 			onclick={() => goto('/app/groups')}
-			class="mb-4 flex items-center gap-1 text-sm text-slate-500 light:text-slate-400 hover:text-slate-300 transition"
+			class="mb-4 flex items-center gap-1 text-sm text-text-muted hover:text-text-secondary transition"
 		>
 			<svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
 				<path d="M15 18l-6-6 6-6" />
@@ -115,7 +115,7 @@
 			Kembali
 		</button>
 
-		<div class="rounded-xl bg-slate-900 light:bg-white border border-slate-800 light:border-slate-200 p-6">
+		<div class="rounded-xl bg-bg-elevated border border-border-main p-6">
 			<div class="flex items-start gap-4">
 				<div
 					class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl"
@@ -126,17 +126,17 @@
 				<div class="min-w-0 flex-1">
 					<h1 class="text-xl font-bold">{group.name}</h1>
 					{#if group.subtitle}
-						<p class="text-sm text-slate-400 light:text-slate-500">{group.subtitle}</p>
+						<p class="text-sm text-text-secondary">{group.subtitle}</p>
 					{/if}
 					{#if group.description}
-						<p class="mt-2 text-sm text-slate-500 light:text-slate-400">{group.description}</p>
+						<p class="mt-2 text-sm text-text-muted">{group.description}</p>
 					{/if}
 				</div>
 				<div class="flex gap-2">
 					<button
 						type="button"
 						onclick={() => (showForm = true)}
-						class="rounded-lg border border-slate-700 light:border-slate-300 px-3 py-1.5 text-sm text-slate-300 light:text-slate-700 transition hover:bg-slate-800 light:hover:bg-slate-100"
+						class="rounded-lg border border-border-hover px-3 py-1.5 text-sm text-text-secondary transition hover:bg-bg-hover"
 					>
 						Edit
 					</button>
@@ -144,7 +144,7 @@
 						type="button"
 						onclick={handleDelete}
 						disabled={deleting}
-						class="rounded-lg border border-red-800 px-3 py-1.5 text-sm text-red-400 transition hover:bg-red-950 disabled:opacity-50"
+						class="rounded-lg border border-danger px-3 py-1.5 text-sm text-danger transition hover:bg-danger disabled:opacity-50"
 					>
 						{deleting ? 'Menghapus...' : 'Hapus'}
 					</button>
@@ -153,14 +153,14 @@
 		</div>
 
 		{#if recommendations.length > 0}
-			<div class="mt-6 rounded-xl bg-slate-900 light:bg-white border border-slate-800 light:border-slate-200 p-4">
-				<p class="mb-2 text-sm text-slate-400 light:text-slate-500">Grup yang disarankan:</p>
+			<div class="mt-6 rounded-xl bg-bg-elevated border border-border-main p-4">
+				<p class="mb-2 text-sm text-text-secondary">Grup yang disarankan:</p>
 				<div class="flex flex-wrap gap-2">
 					{#each recommendations as name (name)}
 						<button
 							type="button"
 							onclick={() => handleRecommendation(name)}
-							class="rounded-lg bg-indigo-600/20 border border-indigo-500/30 px-3 py-1.5 text-sm text-indigo-400 light:text-indigo-600 transition hover:bg-indigo-600/30"
+							class="rounded-lg bg-primary/20 border border-primary/30 px-3 py-1.5 text-sm text-primary transition hover:bg-primary/30"
 						>
 							+ {name}
 						</button>
@@ -172,7 +172,7 @@
 		<section class="mt-6">
 			<h2 class="mb-3 text-lg font-semibold">Sub-Grup</h2>
 			{#if children.length === 0}
-				<div class="rounded-xl bg-slate-900 light:bg-white border border-slate-800 light:border-slate-200 p-6 text-center text-sm text-slate-500 light:text-slate-400">
+				<div class="rounded-xl bg-bg-elevated border border-border-main p-6 text-center text-sm text-text-muted">
 					Belum ada sub-grup.
 				</div>
 			{:else}
@@ -193,17 +193,17 @@
 				<div class="flex items-center gap-2">
 					<select
 						bind:value={sortBy}
-						class="rounded-lg border border-slate-700 light:border-slate-300 bg-slate-900 light:bg-white px-2 py-1.5 text-xs text-slate-400 light:text-slate-500 focus:outline-none"
+						class="rounded-lg border border-border-hover bg-bg-elevated px-2 py-1.5 text-xs text-text-secondary focus:outline-none"
 					>
 						<option value="created_at">Terbaru</option>
 						<option value="file_size">Ukuran</option>
 						<option value="type">Tipe</option>
 					</select>
-					<div class="flex rounded-lg border border-slate-700 light:border-slate-300 overflow-hidden">
+					<div class="flex rounded-lg border border-border-hover overflow-hidden">
 						<button
 							type="button"
 							onclick={() => (viewMode = 'grid')}
-							class="p-1.5 transition {viewMode === 'grid' ? 'bg-slate-700 text-slate-200' : 'text-slate-500 light:text-slate-400 hover:text-slate-300'}"
+							class="p-1.5 transition {viewMode === 'grid' ? 'bg-bg-hover text-text-secondary' : 'text-text-muted hover:text-text-secondary'}"
 							aria-label="Grid view"
 						>
 							<svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -213,7 +213,7 @@
 						<button
 							type="button"
 							onclick={() => (viewMode = 'list')}
-							class="p-1.5 transition {viewMode === 'list' ? 'bg-slate-700 text-slate-200' : 'text-slate-500 light:text-slate-400 hover:text-slate-300'}"
+							class="p-1.5 transition {viewMode === 'list' ? 'bg-bg-hover text-text-secondary' : 'text-text-muted hover:text-text-secondary'}"
 							aria-label="List view"
 						>
 							<svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -227,11 +227,11 @@
 			{#if $navigating && groupItems.length === 0}
 				<div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
 					{#each [1, 2, 3, 4] as _}
-						<div class="h-16 animate-pulse rounded-xl bg-slate-900 light:bg-white border border-slate-800 light:border-slate-200"></div>
+						<div class="h-16 animate-pulse rounded-xl bg-bg-elevated border border-border-main"></div>
 					{/each}
 				</div>
 			{:else if sortedItems.length === 0}
-				<div class="rounded-xl bg-slate-900 light:bg-white border border-slate-800 light:border-slate-200 p-6 text-center text-sm text-slate-500 light:text-slate-400">
+				<div class="rounded-xl bg-bg-elevated border border-border-main p-6 text-center text-sm text-text-muted">
 					Belum ada item di grup ini.
 				</div>
 			{:else if viewMode === 'grid'}

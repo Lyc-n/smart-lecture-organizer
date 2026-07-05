@@ -106,12 +106,12 @@
 		</FormField>
 
 		<div>
-			<span class="mb-2 block text-sm font-medium text-slate-300 light:text-slate-700">Warna</span>
+			<span class="mb-2 block text-sm font-medium text-text-secondary">Warna</span>
 			<ColorPicker bind:value={color} />
 		</div>
 
 		<div>
-			<span class="mb-2 block text-sm font-medium text-slate-300 light:text-slate-700">Ikon</span>
+			<span class="mb-2 block text-sm font-medium text-text-secondary">Ikon</span>
 			<IconPicker bind:value={icon} />
 		</div>
 

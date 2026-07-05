@@ -11,6 +11,6 @@
 	const initial = $derived((name || '?').charAt(0).toUpperCase());
 </script>
 
-<div class="flex items-center justify-center rounded-full bg-indigo-600 font-medium text-white {sizes[size]} {className}">
+<div class="flex items-center justify-center rounded-full bg-primary font-medium text-white {sizes[size]} {className}">
 	{initial}
 </div>

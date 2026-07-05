@@ -29,10 +29,10 @@
 	const base = 'inline-flex items-center justify-center gap-2 rounded-lg font-medium transition disabled:opacity-50 disabled:cursor-not-allowed';
 
 	const variants: Record<Variant, string> = {
-		primary: 'bg-indigo-600 text-white hover:bg-indigo-500',
-		secondary: 'border border-slate-700 light:border-slate-300 text-slate-300 light:text-slate-700 hover:bg-slate-800 light:hover:bg-slate-100',
-		ghost: 'text-slate-300 light:text-slate-700 hover:bg-slate-800 light:hover:bg-slate-100',
-		danger: 'bg-red-600 text-white hover:bg-red-500'
+		primary: 'bg-primary text-white hover:bg-primary-hover',
+		secondary: 'border border-border-hover text-text-secondary hover:bg-bg-hover',
+		ghost: 'text-text-secondary hover:bg-bg-hover',
+		danger: 'bg-danger text-white hover:bg-danger/80'
 	};
 
 	const sizes: Record<Size, string> = {

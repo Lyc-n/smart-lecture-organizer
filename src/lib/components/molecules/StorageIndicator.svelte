@@ -38,5 +38,5 @@
 
 <div class="hidden items-center gap-2 sm:flex">
 	<ProgressBar value={storagePct} size="sm" class="w-20" />
-	<span class="text-xs text-slate-500 light:text-slate-400">{formatBytes(storageUsed)}</span>
+	<span class="text-xs text-text-muted">{formatBytes(storageUsed)}</span>
 </div>
