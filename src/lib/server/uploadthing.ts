@@ -55,14 +55,16 @@ export const fileRouter = {
 				.returning();
 
 			if (itemType === 'image') {
-				try {
-					const response = await fetch(file.ufsUrl ?? file.url);
-					const buffer = Buffer.from(await response.arrayBuffer());
-					const hexHash = await imghash.hash(buffer);
-					await db.update(items).set({ fileHash: hexHash }).where(eq(items.id, item.id));
-				} catch (e) {
-					console.error('Failed to compute image hash:', e);
-				}
+				setTimeout(async () => {
+					try {
+						const response = await fetch(file.ufsUrl ?? file.url);
+						const buffer = Buffer.from(await response.arrayBuffer());
+						const hexHash = await imghash.hash(buffer);
+						await db.update(items).set({ fileHash: hexHash }).where(eq(items.id, item.id));
+					} catch (e) {
+						console.error('Failed to compute image hash:', e);
+					}
+				}, 0);
 			}
 
 			return { itemId: item.id };

@@ -1,4 +1,4 @@
-import { auth } from '$lib/server/auth';
+import { requireSession } from '$lib/server/auth/session';
 import { db } from '$lib/server/db';
 import { groups } from '$lib/server/db/schema';
 import { json, error } from '@sveltejs/kit';
@@ -50,13 +50,7 @@ function parseBody(body: unknown): {
 }
 
 export const GET: RequestHandler = async (event) => {
-	const session = await auth.api.getSession({
-		headers: event.request.headers
-	});
-
-	if (!session) {
-		error(401, 'Unauthorized');
-	}
+	const session = await requireSession(event.request);
 
 	const userGroups = await db
 		.select()
@@ -68,13 +62,7 @@ export const GET: RequestHandler = async (event) => {
 };
 
 export const POST: RequestHandler = async (event) => {
-	const session = await auth.api.getSession({
-		headers: event.request.headers
-	});
-
-	if (!session) {
-		error(401, 'Unauthorized');
-	}
+	const session = await requireSession(event.request);
 
 	const body = await event.request.json();
 	const { name, color, icon, subtitle, description, parentId } = parseBody(body);

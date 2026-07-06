@@ -1,4 +1,4 @@
-import { auth } from '$lib/server/auth';
+import { requireSession } from '$lib/server/auth/session';
 import { db } from '$lib/server/db';
 import { groups } from '$lib/server/db/schema';
 import { json, error } from '@sveltejs/kit';
@@ -75,13 +75,7 @@ function validatePatchBody(body: unknown) {
 }
 
 export const GET: RequestHandler = async (event) => {
-	const session = await auth.api.getSession({
-		headers: event.request.headers
-	});
-
-	if (!session) {
-		error(401, 'Unauthorized');
-	}
+	const session = await requireSession(event.request);
 
 	const group = await getGroupOrThrow(event.params.id, session.user.id);
 
@@ -100,13 +94,7 @@ export const GET: RequestHandler = async (event) => {
 };
 
 export const PATCH: RequestHandler = async (event) => {
-	const session = await auth.api.getSession({
-		headers: event.request.headers
-	});
-
-	if (!session) {
-		error(401, 'Unauthorized');
-	}
+	const session = await requireSession(event.request);
 
 	const group = await getGroupOrThrow(event.params.id, session.user.id);
 	const body = await event.request.json();
@@ -163,13 +151,7 @@ export const PATCH: RequestHandler = async (event) => {
 };
 
 export const DELETE: RequestHandler = async (event) => {
-	const session = await auth.api.getSession({
-		headers: event.request.headers
-	});
-
-	if (!session) {
-		error(401, 'Unauthorized');
-	}
+	const session = await requireSession(event.request);
 
 	await getGroupOrThrow(event.params.id, session.user.id);
 

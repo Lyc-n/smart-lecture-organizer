@@ -4,6 +4,7 @@
 	import Icon from '$lib/components/atoms/Icon.svelte';
 	import { api } from '$lib/utils/api';
 	import { computeImageHash } from '$lib/utils/hash';
+	import { formatSize } from '$lib/utils/format';
 
 	type Tab = 'text' | 'image';
 	let activeTab: Tab = $state('text');
@@ -94,13 +95,6 @@
 		} finally {
 			loading = false;
 		}
-	}
-
-	function formatSize(bytes: number | null): string {
-		if (!bytes) return '';
-		if (bytes < 1024) return `${bytes} B`;
-		if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-		return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 	}
 
 	const totalCount = $derived(results.items.length + results.groups.length + results.notes.length);

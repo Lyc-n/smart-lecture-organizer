@@ -4,6 +4,8 @@ import { items, ocrNotes } from '$lib/server/db/schema';
 import { and, eq } from 'drizzle-orm';
 
 const OCR_SPACE_URL = 'https://api.ocr.space/parse/image';
+const MAX_RETRIES = 3;
+const INITIAL_DELAY = 1000;
 
 interface OcrSpaceResponse {
 	OCRExitCode: number;
@@ -15,6 +17,15 @@ interface OcrSpaceResponse {
 	}>;
 	ErrorMessage?: string;
 	ErrorDetails?: string;
+}
+
+async function fetchWithRetry(url: string, formData: FormData, retries: number): Promise<Response> {
+	for (let attempt = 0; attempt < retries; attempt++) {
+		const response = await fetch(url, { method: 'POST', body: formData });
+		if (response.ok || attempt === retries - 1) return response;
+		await new Promise((r) => setTimeout(r, INITIAL_DELAY * Math.pow(2, attempt)));
+	}
+	throw new Error('Max retries exceeded');
 }
 
 export async function processOcr(itemId: string, userId: string): Promise<{ noteId: string; content: string }> {
@@ -42,10 +53,7 @@ export async function processOcr(itemId: string, userId: string): Promise<{ note
 	formData.append('OCREngine', '2');
 	formData.append('url', item.fileUrl);
 
-	const response = await fetch(OCR_SPACE_URL, {
-		method: 'POST',
-		body: formData
-	});
+	const response = await fetchWithRetry(OCR_SPACE_URL, formData, MAX_RETRIES);
 
 	if (!response.ok) {
 		throw new Error(`OCR.space API error: ${response.status} ${response.statusText}`);

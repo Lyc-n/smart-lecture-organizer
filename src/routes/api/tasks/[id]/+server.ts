@@ -1,4 +1,4 @@
-import { auth } from '$lib/server/auth';
+import { requireSession } from '$lib/server/auth/session';
 import { db } from '$lib/server/db';
 import { tasks } from '$lib/server/db/schema';
 import { json, error } from '@sveltejs/kit';
@@ -22,13 +22,7 @@ async function getTaskOrThrow(id: string, userId: string) {
 }
 
 export const PATCH: RequestHandler = async (event) => {
-	const session = await auth.api.getSession({
-		headers: event.request.headers
-	});
-
-	if (!session) {
-		error(401, 'Unauthorized');
-	}
+	const session = await requireSession(event.request);
 
 	const task = await getTaskOrThrow(event.params.id, session.user.id);
 	const body = await event.request.json();
@@ -70,13 +64,7 @@ export const PATCH: RequestHandler = async (event) => {
 };
 
 export const DELETE: RequestHandler = async (event) => {
-	const session = await auth.api.getSession({
-		headers: event.request.headers
-	});
-
-	if (!session) {
-		error(401, 'Unauthorized');
-	}
+	const session = await requireSession(event.request);
 
 	await getTaskOrThrow(event.params.id, session.user.id);
 

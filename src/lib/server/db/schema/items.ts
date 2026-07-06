@@ -37,7 +37,8 @@ export const items = pgTable(
 		check('items_type_check', sql`${table.type} IN ('document', 'audio', 'video', 'image', 'note')`),
 		index('idx_items_user_id').on(table.userId),
 		index('idx_items_type').on(table.type),
-		index('idx_items_is_pinned').on(table.isPinned).where(sql`${table.isPinned} = true`)
+		index('idx_items_is_pinned').on(table.isPinned).where(sql`${table.isPinned} = true`),
+		index('idx_items_file_hash').on(table.fileHash)
 	]
 );
 

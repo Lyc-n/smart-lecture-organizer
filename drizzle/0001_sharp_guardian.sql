@@ -1,0 +1,2 @@
+CREATE INDEX "idx_items_file_hash" ON "items" USING btree ("file_hash");--> statement-breakpoint
+CREATE INDEX "idx_tasks_user_completed_deadline" ON "tasks" USING btree ("user_id","is_completed","deadline");

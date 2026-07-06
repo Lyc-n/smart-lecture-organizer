@@ -1,4 +1,4 @@
-import { auth } from '$lib/server/auth';
+import { requireSession } from '$lib/server/auth/session';
 import { db } from '$lib/server/db';
 import { items, groups, ocrNotes, itemGroups } from '$lib/server/db/schema';
 import { findSimilarImages } from '$lib/server/services/image-search';
@@ -7,13 +7,7 @@ import { eq, and, or, sql, ilike } from 'drizzle-orm';
 import type { RequestHandler } from './$types';
 
 export const POST: RequestHandler = async (event) => {
-	const session = await auth.api.getSession({
-		headers: event.request.headers
-	});
-
-	if (!session) {
-		error(401, 'Unauthorized');
-	}
+	const session = await requireSession(event.request);
 
 	const body = await event.request.json();
 	const query = typeof body.query === 'string' ? body.query.trim() : '';

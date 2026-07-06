@@ -4,6 +4,7 @@
 	import { invalidate } from '$app/navigation';
 	import Icon from '$lib/components/atoms/Icon.svelte';
 	import { downloadForOffline } from '$lib/stores/offline';
+	import { formatSize, formatDateTime } from '$lib/utils/format';
 
 	const item = $derived($page.data.item);
 	const groups = $derived($page.data.groups ?? []);
@@ -26,23 +27,6 @@
 			});
 		}
 	});
-
-	function formatSize(bytes: number | null): string {
-		if (!bytes) return '-';
-		if (bytes < 1024) return `${bytes} B`;
-		if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-		return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-	}
-
-	function formatDate(date: string | Date): string {
-		return new Date(date).toLocaleDateString('id-ID', {
-			year: 'numeric',
-			month: 'short',
-			day: 'numeric',
-			hour: '2-digit',
-			minute: '2-digit'
-		});
-	}
 
 	const typeLabels: Record<string, string> = {
 		image: 'Gambar',
@@ -122,9 +106,9 @@
 
 				<div class="mt-4 flex flex-wrap gap-4 text-xs text-text-muted">
 					<span>Ukuran: {formatSize(item.fileSize)}</span>
-					<span>Diupload: {formatDate(item.createdAt)}</span>
+					<span>Diupload: {formatDateTime(item.createdAt)}</span>
 					{#if item.updatedAt && String(item.updatedAt) !== String(item.createdAt)}
-						<span>Diubah: {formatDate(item.updatedAt)}</span>
+						<span>Diubah: {formatDateTime(item.updatedAt)}</span>
 					{/if}
 				</div>
 			</div>

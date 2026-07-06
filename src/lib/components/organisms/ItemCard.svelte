@@ -1,12 +1,8 @@
 <script lang="ts">
 	import { api } from '$lib/utils/api';
 	import { downloadForOffline } from '$lib/stores/offline';
-	import ImageIcon from 'phosphor-svelte/lib/ImageIcon';
-	import VideoIcon from 'phosphor-svelte/lib/VideoIcon';
-	import MusicNotesIcon from 'phosphor-svelte/lib/MusicNotesIcon';
-	import FileTextIcon from 'phosphor-svelte/lib/FileTextIcon';
-	import PushPinIcon from 'phosphor-svelte/lib/PushPinIcon';
-	import DownloadIcon from 'phosphor-svelte/lib/DownloadIcon';
+	import Icon from '$lib/components/atoms/Icon.svelte';
+	import { formatSize, formatDate } from '$lib/utils/format';
 
 	type Item = {
 		id: string;
@@ -26,6 +22,14 @@
 		item: Item;
 		onclick?: () => void;
 	} = $props();
+
+	const typeIcons: Record<string, string> = {
+		image: 'image',
+		video: 'video',
+		audio: 'music',
+		document: 'file-text',
+		note: 'file-text'
+	};
 
 	let pinned = $state(item.isPinned);
 	let downloadLoading = $state(false);
@@ -52,21 +56,6 @@
 			downloadLoading = false;
 		}
 	}
-
-	function formatSize(bytes: number | null): string {
-		if (!bytes) return '-';
-		if (bytes < 1024) return `${bytes} B`;
-		if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-		return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-	}
-
-	function formatDate(date: string | Date): string {
-		return new Date(date).toLocaleDateString('id-ID', {
-			year: 'numeric',
-			month: 'short',
-			day: 'numeric'
-		});
-	}
 </script>
 
 <div
@@ -79,18 +68,10 @@
 	<div
 		class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-bg-hover text-text-muted"
 	>
-		{#if item.type === 'image'}
-			{#if item.fileUrl}
-				<img src={item.fileUrl} alt={item.name} class="h-9 w-9 rounded-lg object-cover" />
-			{:else}
-				<ImageIcon size={20} />
-			{/if}
-		{:else if item.type === 'video'}
-			<VideoIcon size={20} />
-		{:else if item.type === 'audio'}
-			<MusicNotesIcon size={20} />
+		{#if item.type === 'image' && item.fileUrl}
+			<img src={item.fileUrl} alt={item.name} class="h-9 w-9 rounded-lg object-cover" />
 		{:else}
-			<FileTextIcon size={20} />
+			<Icon name={typeIcons[item.type] ?? 'file-text'} size={20} />
 		{/if}
 	</div>
 
@@ -115,7 +96,7 @@
 					<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
 				</svg>
 			{:else}
-				<DownloadIcon size={16} />
+				<Icon name="download" size={16} />
 			{/if}
 		</button>
 	{/if}
@@ -126,10 +107,6 @@
 		class="shrink-0 rounded-md p-1.5 text-text-muted transition hover:text-tertiary"
 		aria-label={pinned ? 'Unpin' : 'Pin'}
 	>
-		{#if pinned}
-			<PushPinIcon size={16} weight="fill" class="text-yellow-400" />
-		{:else}
-			<PushPinIcon size={16} />
-		{/if}
+		<Icon name="pin" size={16} class={pinned ? 'text-yellow-400' : ''} />
 	</button>
 </div>

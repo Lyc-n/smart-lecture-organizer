@@ -1,4 +1,4 @@
-import { auth } from '$lib/server/auth';
+import { requireSession } from '$lib/server/auth/session';
 import { db } from '$lib/server/db';
 import { items, itemGroups, groups } from '$lib/server/db/schema';
 import { json, error } from '@sveltejs/kit';
@@ -6,13 +6,7 @@ import { and, eq, inArray } from 'drizzle-orm';
 import type { RequestHandler } from './$types';
 
 export const POST: RequestHandler = async (event) => {
-	const session = await auth.api.getSession({
-		headers: event.request.headers
-	});
-
-	if (!session) {
-		error(401, 'Unauthorized');
-	}
+	const session = await requireSession(event.request);
 
 	const itemId = event.params.id;
 

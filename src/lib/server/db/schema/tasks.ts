@@ -29,7 +29,8 @@ export const tasks = pgTable(
 	(table) => [
 		index('idx_tasks_user_id').on(table.userId),
 		index('idx_tasks_pending').on(table.userId).where(sql`${table.isCompleted} = false`),
-		index('idx_tasks_deadline').on(table.deadline).where(sql`${table.deadline} IS NOT NULL AND ${table.isCompleted} = false`)
+		index('idx_tasks_deadline').on(table.deadline).where(sql`${table.deadline} IS NOT NULL AND ${table.isCompleted} = false`),
+		index('idx_tasks_user_completed_deadline').on(table.userId, table.isCompleted, table.deadline)
 	]
 );
 

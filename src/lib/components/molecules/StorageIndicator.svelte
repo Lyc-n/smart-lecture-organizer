@@ -1,5 +1,6 @@
 <script lang="ts">
 	import ProgressBar from '$lib/components/atoms/ProgressBar.svelte';
+	import { formatSize } from '$lib/utils/format';
 
 	type Props = {
 		used?: number;
@@ -13,16 +14,11 @@
 
 	let storagePct = $derived(Math.min(Math.round((storageUsed / storageLimit) * 100), 100));
 
-	function formatBytes(bytes: number): string {
-		if (bytes === 0) return '0';
-		const units = ['B', 'KB', 'MB', 'GB'];
-		const i = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), units.length - 1);
-		const value = bytes / Math.pow(1024, i);
-		return `${value.toFixed(i === 0 ? 0 : 1)} ${units[i]}`;
-	}
+	let fetched = $state(false);
 
 	$effect(() => {
-		if (used === 0 && limit === 52428800) {
+		if (!fetched && used === 0 && limit === 52428800) {
+			fetched = true;
 			fetch('/api/storage')
 				.then((r) => r.json())
 				.then((data) => {
@@ -38,5 +34,5 @@
 
 <div class="hidden items-center gap-2 sm:flex">
 	<ProgressBar value={storagePct} size="sm" class="w-20" />
-	<span class="text-xs text-text-muted">{formatBytes(storageUsed)}</span>
+	<span class="text-xs text-text-muted">{formatSize(storageUsed)}</span>
 </div>

@@ -1,10 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
-	import ListIcon from 'phosphor-svelte/lib/ListIcon';
-	import GearIcon from 'phosphor-svelte/lib/GearIcon';
-	import SignOutIcon from 'phosphor-svelte/lib/SignOutIcon';
-	import CaretDownIcon from 'phosphor-svelte/lib/CaretDownIcon';
+	import Icon from '$lib/components/atoms/Icon.svelte';
 	import Avatar from '$lib/components/atoms/Avatar.svelte';
 	import SearchBar from '$lib/components/molecules/SearchBar.svelte';
 	import StorageIndicator from '$lib/components/molecules/StorageIndicator.svelte';
@@ -30,7 +27,7 @@
 			class="rounded-md p-1.5 text-text-secondary transition hover:bg-bg-hover hover:text-text-base lg:hidden"
 			aria-label="Toggle menu"
 		>
-			<ListIcon size={20} />
+			<Icon name="menu" size={20} />
 		</button>
 
 		<SearchBar />
@@ -49,7 +46,7 @@
 				<span class="hidden max-w-[120px] truncate sm:inline">
 					{$page.data.user?.name ?? $page.data.user?.email}
 				</span>
-				<CaretDownIcon size={16} class="hidden text-text-muted sm:block" />
+				<Icon name="chevron-down" size={16} class="hidden text-text-muted sm:block" />
 			</button>
 
 			{#if userMenuOpen}
@@ -61,7 +58,7 @@
 						onclick={() => { goto('/app/settings'); userMenuOpen = false; }}
 						class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-text-secondary transition hover:bg-bg-hover"
 					>
-						<GearIcon size={16} />
+						<Icon name="settings" size={16} />
 						Pengaturan
 					</button>
 					<form action="/auth/logout" method="POST">
@@ -69,7 +66,7 @@
 							type="submit"
 							class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-text-secondary transition hover:bg-bg-hover"
 						>
-							<SignOutIcon size={16} />
+							<Icon name="logout" size={16} />
 							Keluar
 						</button>
 					</form>

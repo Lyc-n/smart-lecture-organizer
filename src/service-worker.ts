@@ -79,22 +79,24 @@ sw.addEventListener('fetch', (event) => {
 	}
 
 	if (isApiUrl(url)) {
-		event.respondWith(
-			caches.open(CACHE_API).then((cache) =>
-				fetch(event.request)
-					.then((response) => {
-						if (response.ok) cache.put(event.request, response.clone());
-						return response;
-					})
-					.catch(() => cache.match(event.request).then((cached) => {
-						if (cached) return cached;
-						return new Response(JSON.stringify({ error: 'Anda sedang offline' }), {
-							status: 503,
-							headers: { 'Content-Type': 'application/json' }
-						});
-					}))
-			)
-		);
+		if (event.request.method === 'GET') {
+			event.respondWith(
+				caches.open(CACHE_API).then((cache) =>
+					fetch(event.request)
+						.then((response) => {
+							if (response.ok) cache.put(event.request, response.clone());
+							return response;
+						})
+						.catch(() => cache.match(event.request).then((cached) => {
+							if (cached) return cached;
+							return new Response(JSON.stringify({ error: 'Anda sedang offline' }), {
+								status: 503,
+								headers: { 'Content-Type': 'application/json' }
+							});
+						}))
+				)
+			);
+		}
 		return;
 	}
 

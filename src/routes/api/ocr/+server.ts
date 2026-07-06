@@ -1,4 +1,4 @@
-import { auth } from '$lib/server/auth';
+import { requireSession } from '$lib/server/auth/session';
 import { processOcr } from '$lib/server/services/ocr';
 import { json, error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
@@ -8,13 +8,7 @@ export const config = {
 };
 
 export const POST: RequestHandler = async (event) => {
-	const session = await auth.api.getSession({
-		headers: event.request.headers
-	});
-
-	if (!session) {
-		error(401, 'Unauthorized');
-	}
+	const session = await requireSession(event.request);
 
 	const body = await event.request.json();
 	const itemId = typeof body.itemId === 'string' ? body.itemId.trim() : '';

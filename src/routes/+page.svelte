@@ -186,7 +186,7 @@
 
 	<!-- CTA Install -->
 	<section class="px-6 py-20 max-w-full text-center page-with-pattern">
-		<div class="p-10 md:p-14 w-4xl mx-auto rounded-3xl bg-linear-to-br from-bg-elevated to-primary/20 from-40% light:to-bg-base border border-border-main">
+		<div class="p-10 md:p-14 md:w-4xl mx-auto rounded-3xl bg-linear-to-br from-bg-elevated to-primary/20 from-40% light:to-bg-base border border-border-main">
 			<h2 class="text-3xl md:text-4xl font-semibold mb-4">
 				Siap belajar lebih rapi?
 			</h2>
