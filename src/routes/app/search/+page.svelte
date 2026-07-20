@@ -7,26 +7,19 @@
 	import { api } from '$lib/utils/api';
 	import { computeImageHash } from '$lib/utils/hash';
 	import { formatSize } from '$lib/utils/format';
+	import { PAGE_SIZE, type SearchResult } from '$lib/types/search';
 
 	type Tab = 'text' | 'image';
-	type SearchResults = {
-		items: Array<Record<string, unknown>>;
-		groups: Array<Record<string, unknown>>;
-		notes: Array<Record<string, unknown>>;
-		hasMoreItems: boolean;
-		hasMoreGroups: boolean;
-		hasMoreNotes: boolean;
-	};
 
 	let activeTab: Tab = $state('text');
 	let query = $state(($page.data.query as string) ?? '');
-	let results = $state<SearchResults>({
-		items: ($page.data.results as SearchResults['items']) ?? [],
-		groups: ($page.data.results as SearchResults['groups']) ?? [],
-		notes: ($page.data.results as SearchResults['notes']) ?? [],
-		hasMoreItems: ($page.data.hasMoreItems as boolean) ?? false,
-		hasMoreGroups: ($page.data.hasMoreGroups as boolean) ?? false,
-		hasMoreNotes: ($page.data.hasMoreNotes as boolean) ?? false
+	let results = $state<SearchResult>({
+		items: $page.data.items ?? [],
+		groups: $page.data.groups ?? [],
+		notes: $page.data.notes ?? [],
+		hasMoreItems: $page.data.hasMoreItems ?? false,
+		hasMoreGroups: $page.data.hasMoreGroups ?? false,
+		hasMoreNotes: $page.data.hasMoreNotes ?? false
 	});
 
 	let loading = $state(false);
@@ -48,7 +41,7 @@
 		results = { items: [], groups: [], notes: [], hasMoreItems: false, hasMoreGroups: false, hasMoreNotes: false };
 	}
 
-	function mergeResults(newData: SearchResults, append: boolean, section?: 'items' | 'groups' | 'notes') {
+	function mergeResults(newData: SearchResult, append: boolean, section?: 'items' | 'groups' | 'notes') {
 		if (append && section) {
 			results = {
 				items: section === 'items' ? [...results.items, ...newData.items] : results.items,
@@ -78,7 +71,7 @@
 		error = '';
 
 		try {
-			const res = await api.post<SearchResults>('/api/search', {
+			const res = await api.post<SearchResult>('/api/search', {
 				query: q,
 				page: opts.page ?? 0,
 				section: opts.appendSection ?? null
@@ -122,7 +115,7 @@
 
 		try {
 			const hash = await computeImageHash(file);
-			const res = await api.post<SearchResults>('/api/search', { imageHash: hash, threshold: 10 });
+			const res = await api.post<SearchResult>('/api/search', { imageHash: hash, threshold: 10 });
 			results = res;
 		} catch (e) {
 			error = (e as Error).message;
@@ -133,17 +126,17 @@
 	}
 
 	function loadMoreItems() {
-		const page = Math.floor(results.items.length / 20);
+		const page = Math.floor(results.items.length / PAGE_SIZE);
 		doSearch(query, { page, appendSection: 'items' });
 	}
 
 	function loadMoreGroups() {
-		const page = Math.floor(results.groups.length / 20);
+		const page = Math.floor(results.groups.length / PAGE_SIZE);
 		doSearch(query, { page, appendSection: 'groups' });
 	}
 
 	function loadMoreNotes() {
-		const page = Math.floor(results.notes.length / 20);
+		const page = Math.floor(results.notes.length / PAGE_SIZE);
 		doSearch(query, { page, appendSection: 'notes' });
 	}
 
@@ -265,7 +258,7 @@
 
 		{#if results.items.length > 0 && activeTab === 'image'}
 			<div class="grid grid-cols-2 gap-3 sm:grid-cols-3">
-				{#each results.items as item (item.id as string)}
+				{#each results.items as item (item.id)}
 					<button
 						type="button"
 						onclick={() => goto(`/app/items/${item.id}`)}
@@ -273,17 +266,17 @@
 					>
 						<div class="aspect-square bg-bg-hover">
 							<img
-								src={item.fileUrl as string}
-								alt={item.name as string}
+								src={item.fileUrl ?? ''}
+								alt={item.name}
 								class="h-full w-full object-cover"
 								loading="lazy"
 							/>
 						</div>
 						<div class="p-2">
-							<div class="truncate text-xs font-medium text-text-secondary">{item.name as string}</div>
-							{#if (item as { distance?: number }).distance !== undefined}
+							<div class="truncate text-xs font-medium text-text-secondary">{item.name}</div>
+							{#if item.distance !== undefined}
 								<div class="text-xs text-primary">
-									{(100 - ((item as { distance: number }).distance / 64) * 100).toFixed(0)}% mirip
+									{(100 - (item.distance / 64) * 100).toFixed(0)}% mirip
 								</div>
 							{/if}
 						</div>

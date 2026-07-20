@@ -17,6 +17,7 @@
 	} = $props();
 
 	let lightboxOpen = $state(false);
+	// Title persists across OCR re-runs. Hidden after first OCR, but state retains value for "OCR Ulang".
 	let ocrTitle = $state('');
 </script>
 
@@ -33,14 +34,23 @@
 		</div>
 
 		{#if lightboxOpen}
+			<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 			<div
 				class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
 				onclick={() => (lightboxOpen = false)}
 				onkeydown={(e) => e.key === 'Escape' && (lightboxOpen = false)}
 				role="dialog"
+				aria-modal="true"
+				aria-label="Gambar full screen"
 				tabindex="-1"
 			>
-				<img src={item.fileUrl} alt={item.name} class="max-h-[90vh] max-w-[90vw] object-contain" />
+				<img
+					src={item.fileUrl}
+					alt={item.name}
+					class="max-h-[90vh] max-w-[90vw] object-contain"
+					onclick={(e) => e.stopPropagation()}
+					onkeydown={(e) => e.stopPropagation()}
+				/>
 			</div>
 		{/if}
 

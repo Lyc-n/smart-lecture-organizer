@@ -1,5 +1,5 @@
 import { sql } from 'drizzle-orm';
-import { check, pgTable, text, timestamp, uuid, uniqueIndex } from 'drizzle-orm/pg-core';
+import { check, index, pgTable, text, timestamp, uuid, uniqueIndex } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 import { users } from './users';
 import { items } from './items';
@@ -26,6 +26,7 @@ export const bookmarks = pgTable(
 		uniqueIndex('idx_bookmarks_unique_group')
 			.on(table.userId, table.groupId)
 			.where(sql`${table.groupId} IS NOT NULL`),
+		index('idx_bookmarks_user_created').on(table.userId, table.createdAt.desc()),
 		check('bookmark_target', sql`${table.itemId} IS NOT NULL OR ${table.groupId} IS NOT NULL`)
 	]
 );

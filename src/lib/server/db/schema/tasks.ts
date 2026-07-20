@@ -30,7 +30,10 @@ export const tasks = pgTable(
 		index('idx_tasks_user_id').on(table.userId),
 		index('idx_tasks_pending').on(table.userId).where(sql`${table.isCompleted} = false`),
 		index('idx_tasks_deadline').on(table.deadline).where(sql`${table.deadline} IS NOT NULL AND ${table.isCompleted} = false`),
-		index('idx_tasks_user_completed_deadline').on(table.userId, table.isCompleted, table.deadline)
+		index('idx_tasks_user_completed_deadline').on(table.userId, table.isCompleted, table.deadline),
+		index('idx_tasks_user_group').on(table.userId, table.groupId),
+		index('idx_tasks_user_item').on(table.userId, table.itemId),
+		index('idx_tasks_user_completed_sort').on(table.userId, table.isCompleted, table.sortOrder, table.createdAt)
 	]
 );
 

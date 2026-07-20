@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import type { SearchNote } from '$lib/types/search';
 
 	let { notes, hasMore, loadingMore, onLoadMore }: {
-		notes: Array<Record<string, unknown>>;
+		notes: SearchNote[];
 		hasMore: boolean;
 		loadingMore: boolean;
 		onLoadMore: () => void;
@@ -12,8 +13,7 @@
 <section class="mb-6">
 	<h2 class="mb-3 text-sm font-semibold text-text-secondary uppercase tracking-wider">Catatan OCR ({notes.length})</h2>
 	<div class="flex flex-col gap-2">
-		{#each notes as entryRaw, i (i)}
-			{@const entry = entryRaw as unknown as { note: { id: string; content: string }; itemId: string; itemName: string }}
+		{#each notes as entry (entry.itemId + entry.note.id)}
 			<button
 				type="button"
 				onclick={() => goto(`/app/items/${entry.itemId}`)}

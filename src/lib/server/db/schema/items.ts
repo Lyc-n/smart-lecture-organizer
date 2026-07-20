@@ -38,6 +38,8 @@ export const items = pgTable(
 		index('idx_items_user_id').on(table.userId),
 		index('idx_items_type').on(table.type),
 		index('idx_items_is_pinned').on(table.isPinned).where(sql`${table.isPinned} = true`),
+		index('idx_items_user_pinned').on(table.userId).where(sql`${table.isPinned} = true`),
+		index('idx_items_user_type').on(table.userId, table.type),
 		index('idx_items_file_hash').on(table.fileHash)
 	]
 );

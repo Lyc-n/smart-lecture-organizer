@@ -1,21 +1,16 @@
 <script lang="ts">
 	import Icon from '$lib/components/atoms/Icon.svelte';
+	import { VALID_ICONS } from '$lib/constants';
 
 	type Props = {
 		value?: string;
-		icons?: string[];
+		icons?: readonly string[];
 		onchange?: (icon: string) => void;
 	};
 
 	let {
 		value = $bindable('folder'),
-		icons = [
-			'folder', 'book', 'graduation-cap', 'calculator',
-			'flask', 'globe', 'music', 'image',
-			'file-text', 'video', 'code', 'pen-tool',
-			'bar-chart', 'heart', 'star', 'archive',
-			'briefcase', 'compass', 'cpu', 'database'
-		],
+		icons = VALID_ICONS,
 		onchange
 	}: Props = $props();
 

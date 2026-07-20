@@ -1,6 +1,7 @@
 import { requireSession } from '$lib/server/auth/session';
 import { db } from '$lib/server/db';
 import { items, itemGroups, groups } from '$lib/server/db/schema';
+import { getOrThrow } from '$lib/server/db/helpers';
 import { json, error } from '@sveltejs/kit';
 import { and, eq, inArray } from 'drizzle-orm';
 import type { RequestHandler } from './$types';
@@ -8,20 +9,7 @@ import type { RequestHandler } from './$types';
 export const POST: RequestHandler = async (event) => {
 	const session = await requireSession(event.request);
 
-	const itemId = event.params.id;
-
-	const item = await db
-		.select({ id: items.id, userId: items.userId })
-		.from(items)
-		.where(eq(items.id, itemId))
-		.then((r) => r[0]);
-
-	if (!item) {
-		error(404, 'Item not found');
-	}
-	if (item.userId !== session.user.id) {
-		error(403, 'Item does not belong to you');
-	}
+	const item = await getOrThrow(items, event.params.id, session.user.id);
 
 	const body = await event.request.json();
 	const groupIds: string[] = body.groupIds ?? [];
@@ -40,11 +28,11 @@ export const POST: RequestHandler = async (event) => {
 	}
 
 	await db.transaction(async (tx) => {
-		await tx.delete(itemGroups).where(eq(itemGroups.itemId, itemId));
+		await tx.delete(itemGroups).where(eq(itemGroups.itemId, item.id));
 
 		if (groupIds.length > 0) {
 			await tx.insert(itemGroups).values(
-				groupIds.map((groupId) => ({ itemId, groupId }))
+				groupIds.map((groupId) => ({ itemId: item.id, groupId }))
 			);
 		}
 	});

@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import Icon from '$lib/components/atoms/Icon.svelte';
+	import type { SearchGroup } from '$lib/types/search';
 
 	let { groups, hasMore, loadingMore, onLoadMore }: {
-		groups: Array<Record<string, unknown>>;
+		groups: SearchGroup[];
 		hasMore: boolean;
 		loadingMore: boolean;
 		onLoadMore: () => void;
@@ -13,7 +14,7 @@
 <section class="mb-6">
 	<h2 class="mb-3 text-sm font-semibold text-text-secondary uppercase tracking-wider">Grup ({groups.length})</h2>
 	<div class="flex flex-col gap-2">
-		{#each groups as group (group.id as string)}
+		{#each groups as group (group.id)}
 			<button
 				type="button"
 				onclick={() => goto(`/app/groups/${group.id}`)}
@@ -21,14 +22,14 @@
 			>
 				<div
 					class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg"
-					style="background-color: {(group.color as string) ?? '#6366f1'}20"
+					style="background-color: {group.color ?? '#6366f1'}20"
 				>
-					<Icon name={(group.icon as string) ?? 'Folder'} color={(group.color as string) ?? '#6366f1'} />
+					<Icon name={group.icon ?? 'Folder'} color={group.color ?? '#6366f1'} />
 				</div>
 				<div class="min-w-0 flex-1">
-					<div class="truncate text-sm font-medium text-text-base">{group.name as string}</div>
+					<div class="truncate text-sm font-medium text-text-base">{group.name}</div>
 					{#if group.subtitle}
-						<div class="text-xs text-text-muted">{group.subtitle as string}</div>
+						<div class="text-xs text-text-muted">{group.subtitle}</div>
 					{/if}
 				</div>
 			</button>

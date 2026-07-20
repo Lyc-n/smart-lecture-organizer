@@ -1,12 +1,16 @@
+import { requireSession } from '$lib/server/auth/session';
 import { checkStorageQuota } from '$lib/server/services/storage';
-import { error } from '@sveltejs/kit';
+import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async (event) => {
-	const userId = event.locals.user?.id;
-	if (!userId) error(401, 'Unauthorized');
+	const session = await requireSession(event.request).catch(() => null);
 
-	const { used, limit } = await checkStorageQuota(userId, 0);
+	if (!session) {
+		redirect(302, '/auth/login');
+	}
+
+	const { used, limit } = await checkStorageQuota(session.user.id, 0);
 
 	return { used, limit };
 };

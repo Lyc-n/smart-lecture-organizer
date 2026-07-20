@@ -21,6 +21,8 @@ export const recentAccess = pgTable(
 	},
 	(table) => [
 		index('idx_recent_user_time').on(table.userId, table.accessedAt.desc()),
+		index('idx_recent_user_item').on(table.userId, table.itemId),
+		index('idx_recent_user_group').on(table.userId, table.groupId),
 		check('recent_target', sql`${table.itemId} IS NOT NULL OR ${table.groupId} IS NOT NULL`)
 	]
 );

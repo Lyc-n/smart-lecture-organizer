@@ -1,7 +1,7 @@
 import { env } from '$env/dynamic/private';
 import { db } from '$lib/server/db';
 import { items, ocrNotes } from '$lib/server/db/schema';
-import { and, eq } from 'drizzle-orm';
+import { getOrThrow } from '$lib/server/db/helpers';
 
 const OCR_SPACE_URL = 'https://api.ocr.space/parse/image';
 const MAX_RETRIES = 3;
@@ -29,15 +29,7 @@ async function fetchWithRetry(url: string, formData: FormData, retries: number):
 }
 
 export async function processOcr(itemId: string, userId: string): Promise<{ noteId: string; content: string }> {
-	const item = await db
-		.select()
-		.from(items)
-		.where(and(eq(items.id, itemId), eq(items.userId, userId)))
-		.then((r) => r[0]);
-
-	if (!item) {
-		throw new Error('Item tidak ditemukan');
-	}
+	const item = await getOrThrow(items, itemId, userId);
 
 	if (item.type !== 'image') {
 		throw new Error('OCR hanya tersedia untuk gambar');

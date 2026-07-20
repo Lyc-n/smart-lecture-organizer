@@ -1,6 +1,6 @@
 import { requireSession } from '$lib/server/auth/session';
 import { checkStorageQuota } from '$lib/server/services/storage';
-import { json } from '@sveltejs/kit';
+import { json, error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 
 export const GET: RequestHandler = async (event) => {
@@ -9,7 +9,8 @@ export const GET: RequestHandler = async (event) => {
 	try {
 		const { used, limit } = await checkStorageQuota(session.user.id, 0);
 		return json({ used, limit, allowed: used < limit });
-	} catch {
-		return json({ used: 0, limit: 52428800, allowed: true }, { status: 503 });
+	} catch (e) {
+		const message = e instanceof Error ? e.message : 'Storage check failed';
+		error(503, message);
 	}
 };

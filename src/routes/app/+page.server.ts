@@ -1,24 +1,29 @@
+import { requireSession } from '$lib/server/auth/session';
 import { db } from '$lib/server/db';
 import { items, groups, tasks, recentAccess } from '$lib/server/db/schema';
+import { getUserGroups } from '$lib/server/db/helpers';
 import { eq, desc, sql } from 'drizzle-orm';
+import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async (event) => {
-	const userId = event.locals.user!.id;
+	const session = await requireSession(event.request).catch(() => null);
 
+	if (!session) {
+		redirect(302, '/auth/login');
+	}
+
+	const userId = session.user.id;
 	const now = new Date().toISOString();
 
-	const [pinnedItems, groupCount, recent, taskStats] = await Promise.all([
+	const [pinnedItems, userGroups, recent, taskStats] = await Promise.all([
 		db
 			.select()
 			.from(items)
 			.where(sql`${items.userId} = ${userId} AND ${items.isPinned} = true`)
-			.orderBy(desc(items.createdAt)),
-		db
-			.select({ count: sql<number>`COUNT(*)` })
-			.from(groups)
-			.where(eq(groups.userId, userId))
-			.then((r) => Number(r[0]?.count ?? 0)),
+			.orderBy(desc(items.createdAt))
+			.limit(20),
+		getUserGroups(userId),
 		db
 			.select({
 				id: recentAccess.id,
@@ -47,5 +52,5 @@ export const load: PageServerLoad = async (event) => {
 			.then((r) => r[0] ?? { pending: 0, overdue: 0 })
 	]);
 
-	return { pinnedItems, groupCount, recentAccess: recent, tasksPending: Number(taskStats.pending), tasksOverdue: Number(taskStats.overdue) };
+	return { pinnedItems, groupCount: userGroups.length, recentAccess: recent, tasksPending: Number(taskStats.pending), tasksOverdue: Number(taskStats.overdue) };
 };

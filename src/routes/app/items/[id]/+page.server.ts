@@ -1,30 +1,19 @@
-import { auth } from '$lib/server/auth';
+import { requireSession } from '$lib/server/auth/session';
 import { db } from '$lib/server/db';
 import { items, itemGroups, groups, ocrNotes } from '$lib/server/db/schema';
-import { eq, and } from 'drizzle-orm';
-import { error, redirect } from '@sveltejs/kit';
+import { getOrThrow } from '$lib/server/db/helpers';
+import { eq } from 'drizzle-orm';
+import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async (event) => {
-	const session = await auth.api.getSession({
-		headers: event.request.headers
-	});
+	const session = await requireSession(event.request).catch(() => null);
 
 	if (!session) {
 		redirect(302, '/auth/login');
 	}
 
-	const itemId = event.params.id;
-
-	const item = await db
-		.select()
-		.from(items)
-		.where(and(eq(items.id, itemId), eq(items.userId, session.user.id)))
-		.then((r) => r[0]);
-
-	if (!item) {
-		error(404, 'Item not found');
-	}
+	const item = await getOrThrow(items, event.params.id, session.user.id);
 
 	const itemGroupsList = await db
 		.select({
@@ -35,12 +24,12 @@ export const load: PageServerLoad = async (event) => {
 		})
 		.from(itemGroups)
 		.innerJoin(groups, eq(itemGroups.groupId, groups.id))
-		.where(eq(itemGroups.itemId, itemId));
+		.where(eq(itemGroups.itemId, item.id));
 
 	const note = await db
 		.select()
 		.from(ocrNotes)
-		.where(eq(ocrNotes.itemId, itemId))
+		.where(eq(ocrNotes.itemId, item.id))
 		.then((r) => r[0] ?? null);
 
 	return { item, groups: itemGroupsList, note };

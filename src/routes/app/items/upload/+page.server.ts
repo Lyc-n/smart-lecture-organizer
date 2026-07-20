@@ -1,24 +1,16 @@
-import { auth } from '$lib/server/auth';
-import { db } from '$lib/server/db';
-import { groups } from '$lib/server/db/schema';
-import { eq, asc } from 'drizzle-orm';
+import { requireSession } from '$lib/server/auth/session';
+import { getUserGroups } from '$lib/server/db/helpers';
 import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async (event) => {
-	const session = await auth.api.getSession({
-		headers: event.request.headers
-	});
+	const session = await requireSession(event.request).catch(() => null);
 
 	if (!session) {
 		redirect(302, '/auth/login');
 	}
 
-	const userGroups = await db
-		.select({ id: groups.id, name: groups.name, color: groups.color, icon: groups.icon })
-		.from(groups)
-		.where(eq(groups.userId, session.user.id))
-		.orderBy(asc(groups.sortOrder), asc(groups.name));
+	const userGroups = await getUserGroups(session.user.id);
 
 	return { groups: userGroups };
 };

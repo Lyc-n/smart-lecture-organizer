@@ -1,7 +1,8 @@
 import { requireSession } from '$lib/server/auth/session';
 import { db } from '$lib/server/db';
 import { recentAccess } from '$lib/server/db/schema';
-import { json, error } from '@sveltejs/kit';
+import { parseTargetId, validateMutualExclusion } from '$lib/server/validators/target';
+import { json } from '@sveltejs/kit';
 import { eq, and, inArray, sql } from 'drizzle-orm';
 import type { RequestHandler } from './$types';
 
@@ -9,15 +10,8 @@ export const POST: RequestHandler = async (event) => {
 	const session = await requireSession(event.request);
 
 	const body = await event.request.json();
-	const itemId = typeof body.item_id === 'string' ? body.item_id : null;
-	const groupId = typeof body.group_id === 'string' ? body.group_id : null;
-
-	if (!itemId && !groupId) {
-		error(400, 'Must provide item_id or group_id');
-	}
-	if (itemId && groupId) {
-		error(400, 'Provide only one of item_id or group_id');
-	}
+	const { itemId, groupId } = parseTargetId(body);
+	validateMutualExclusion(itemId, groupId);
 
 	const userId = session.user.id;
 

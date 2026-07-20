@@ -1,14 +1,13 @@
-import { auth } from '$lib/server/auth';
+import { requireSession } from '$lib/server/auth/session';
 import { db } from '$lib/server/db';
 import { tasks, groups, items } from '$lib/server/db/schema';
+import { getUserGroups, getOverdueCount } from '$lib/server/db/helpers';
 import { eq, and, asc, sql } from 'drizzle-orm';
 import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async (event) => {
-	const session = await auth.api.getSession({
-		headers: event.request.headers
-	});
+	const session = await requireSession(event.request).catch(() => null);
 
 	if (!session) {
 		redirect(302, '/auth/login');
@@ -44,24 +43,16 @@ export const load: PageServerLoad = async (event) => {
 			.select()
 			.from(tasks)
 			.where(and(...conditions))
-			.orderBy(asc(tasks.sortOrder), asc(tasks.createdAt)),
-		db
-			.select({ id: groups.id, name: groups.name })
-			.from(groups)
-			.where(eq(groups.userId, userId))
-			.orderBy(asc(groups.name)),
+			.orderBy(asc(tasks.sortOrder), asc(tasks.createdAt))
+			.limit(100),
+		getUserGroups(userId),
 		db
 			.select({ id: items.id, name: items.name, type: items.type })
 			.from(items)
 			.where(eq(items.userId, userId))
-			.orderBy(asc(items.name)),
-		db
-			.select({ count: sql<number>`COUNT(*)` })
-			.from(tasks)
-			.where(
-				sql`${tasks.userId} = ${userId} AND ${tasks.isCompleted} = false AND ${tasks.deadline} < NOW() AND ${tasks.deadline} IS NOT NULL`
-			)
-			.then((r) => Number(r[0]?.count ?? 0))
+			.orderBy(asc(items.name))
+			.limit(200),
+		getOverdueCount(userId)
 	]);
 
 	return { tasks: userTasks, groups: userGroups, items: userItems, overdueCount };

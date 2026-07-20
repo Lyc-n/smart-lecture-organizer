@@ -1,14 +1,18 @@
 import { requireSession } from '$lib/server/auth/session';
 import { db } from '$lib/server/db';
 import { tasks, groups, items } from '$lib/server/db/schema';
-import { json, error } from '@sveltejs/kit';
-import { eq, and, asc, lte, gte } from 'drizzle-orm';
+import { getOrThrow, invalidateUserCache } from '$lib/server/db/helpers';
+import { parsePagination, getOffset, MAX_PAGE_SIZE } from '$lib/server/pagination';
+import { parseCreateTask } from '$lib/server/validators/task';
+import { json } from '@sveltejs/kit';
+import { eq, and, asc, lte, gte, sql } from 'drizzle-orm';
 import type { RequestHandler } from './$types';
 
 export const GET: RequestHandler = async (event) => {
 	const session = await requireSession(event.request);
 
 	const url = new URL(event.request.url);
+	const { page, limit } = parsePagination(url);
 	const groupId = url.searchParams.get('groupId');
 	const itemId = url.searchParams.get('itemId');
 	const completed = url.searchParams.get('completed');
@@ -35,58 +39,44 @@ export const GET: RequestHandler = async (event) => {
 		conditions.push(gte(tasks.deadline, new Date(deadlineAfter)));
 	}
 
-	const userTasks = await db
-		.select()
-		.from(tasks)
-		.where(and(...conditions))
-		.orderBy(asc(tasks.sortOrder), asc(tasks.createdAt));
+	const offset = getOffset(page, limit);
 
-	return json(userTasks);
+	const [data, countResult] = await Promise.all([
+		db
+			.select()
+			.from(tasks)
+			.where(and(...conditions))
+			.orderBy(asc(tasks.sortOrder), asc(tasks.createdAt))
+			.limit(limit)
+			.offset(offset),
+		db
+			.select({ count: sql<number>`COUNT(*)` })
+			.from(tasks)
+			.where(and(...conditions))
+			.then((r) => Number(r[0]?.count ?? 0))
+	]);
+
+	return json({
+		data,
+		total: countResult,
+		page,
+		limit,
+		hasMore: offset + limit < countResult
+	});
 };
 
 export const POST: RequestHandler = async (event) => {
 	const session = await requireSession(event.request);
 
 	const body = await event.request.json();
-
-	if (!body.title || typeof body.title !== 'string' || body.title.trim().length === 0) {
-		error(400, 'Title is required');
-	}
-
-	const title = body.title.trim();
-	const description = typeof body.description === 'string' ? body.description.trim() || null : null;
-	const groupId = typeof body.group_id === 'string' ? body.group_id : null;
-	const itemId = typeof body.item_id === 'string' ? body.item_id : null;
-	const deadline = typeof body.deadline === 'string' ? new Date(body.deadline) : null;
+	const { title, description, groupId, itemId, deadline } = parseCreateTask(body);
 
 	if (groupId) {
-		const group = await db
-			.select({ id: groups.id, userId: groups.userId })
-			.from(groups)
-			.where(eq(groups.id, groupId))
-			.then((r) => r[0]);
-
-		if (!group) {
-			error(404, 'Group not found');
-		}
-		if (group.userId !== session.user.id) {
-			error(403, 'Group does not belong to you');
-		}
+		await getOrThrow(groups, groupId, session.user.id);
 	}
 
 	if (itemId) {
-		const item = await db
-			.select({ id: items.id, userId: items.userId })
-			.from(items)
-			.where(eq(items.id, itemId))
-			.then((r) => r[0]);
-
-		if (!item) {
-			error(404, 'Item not found');
-		}
-		if (item.userId !== session.user.id) {
-			error(403, 'Item does not belong to you');
-		}
+		await getOrThrow(items, itemId, session.user.id);
 	}
 
 	const [created] = await db
@@ -100,6 +90,8 @@ export const POST: RequestHandler = async (event) => {
 			deadline
 		})
 		.returning();
+
+	invalidateUserCache(session.user.id);
 
 	return json(created, { status: 201 });
 };

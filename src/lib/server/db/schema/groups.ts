@@ -28,7 +28,8 @@ export const groups = pgTable(
 	},
 	(table) => [
 		index('idx_groups_user_id').on(table.userId),
-		index('idx_groups_parent_id').on(table.parentId)
+		index('idx_groups_parent_id').on(table.parentId),
+		index('idx_groups_user_sort').on(table.userId, table.sortOrder, table.name)
 	]
 );
 

@@ -1,25 +1,18 @@
-import { db } from '$lib/server/db';
-import { tasks } from '$lib/server/db/schema';
-import { sql } from 'drizzle-orm';
+import { requireSession } from '$lib/server/auth/session';
+import { getOverdueCount } from '$lib/server/db/helpers';
 import type { LayoutServerLoad } from './$types';
 
 export const load: LayoutServerLoad = async (event) => {
-	const userId = event.locals.user?.id;
+	const session = await requireSession(event.request).catch(() => null);
 
 	let overdueCount = 0;
-	if (userId) {
-		const result = await db
-			.select({ count: sql<number>`COUNT(*)` })
-			.from(tasks)
-			.where(
-				sql`${tasks.userId} = ${userId} AND ${tasks.isCompleted} = false AND ${tasks.deadline} < NOW() AND ${tasks.deadline} IS NOT NULL`
-			);
-		overdueCount = Number(result[0]?.count ?? 0);
+	if (session) {
+		overdueCount = await getOverdueCount(session.user.id);
 	}
 
 	return {
-		user: event.locals.user,
-		session: event.locals.session,
+		user: session?.user ?? null,
+		session: session?.session ?? null,
 		overdueCount
 	};
 };

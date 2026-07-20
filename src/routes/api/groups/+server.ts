@@ -1,64 +1,20 @@
 import { requireSession } from '$lib/server/auth/session';
 import { db } from '$lib/server/db';
 import { groups } from '$lib/server/db/schema';
+import { getUserGroupsPaginated, invalidateUserCache } from '$lib/server/db/helpers';
+import { parsePagination } from '$lib/server/pagination';
+import { parseBody } from '$lib/server/validators/group';
 import { json, error } from '@sveltejs/kit';
-import { eq, asc } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import type { RequestHandler } from './$types';
-
-const HEX_COLOR = /^#[0-9a-fA-F]{6}$/;
-
-const VALID_ICONS = [
-	'folder', 'book', 'graduation-cap', 'calculator', 'flask',
-	'globe', 'music', 'image', 'file-text', 'video',
-	'code', 'pen-tool', 'bar-chart', 'heart', 'star',
-	'archive', 'briefcase', 'compass', 'cpu', 'database'
-];
-
-function parseBody(body: unknown): {
-	name: string;
-	color: string;
-	icon: string;
-	subtitle: string | undefined;
-	description: string | undefined;
-	parentId: string | undefined;
-} {
-	if (!body || typeof body !== 'object') {
-		error(400, 'Invalid request body');
-	}
-
-	const data = body as Record<string, unknown>;
-
-	if (!data.name || typeof data.name !== 'string' || data.name.trim().length === 0) {
-		error(400, 'Name is required');
-	}
-
-	const color = typeof data.color === 'string' ? data.color : '#6366f1';
-	if (color !== '#6366f1' && !HEX_COLOR.test(color)) {
-		error(400, 'Invalid color format (expected hex, e.g. #6366f1)');
-	}
-
-	const icon = typeof data.icon === 'string' ? data.icon : 'folder';
-	if (!VALID_ICONS.includes(icon)) {
-		error(400, `Invalid icon. Valid icons: ${VALID_ICONS.join(', ')}`);
-	}
-
-	const subtitle = typeof data.subtitle === 'string' ? data.subtitle.trim() || undefined : undefined;
-	const description = typeof data.description === 'string' ? data.description.trim() || undefined : undefined;
-	const parentId = typeof data.parent_id === 'string' ? data.parent_id : undefined;
-
-	return { name: data.name.trim(), color, icon, subtitle, description, parentId };
-}
 
 export const GET: RequestHandler = async (event) => {
 	const session = await requireSession(event.request);
+	const { page, limit } = parsePagination(new URL(event.request.url));
 
-	const userGroups = await db
-		.select()
-		.from(groups)
-		.where(eq(groups.userId, session.user.id))
-		.orderBy(asc(groups.sortOrder), asc(groups.name));
+	const result = await getUserGroupsPaginated(session.user.id, page, limit);
 
-	return json(userGroups);
+	return json(result);
 };
 
 export const POST: RequestHandler = async (event) => {
@@ -94,6 +50,8 @@ export const POST: RequestHandler = async (event) => {
 			parentId
 		})
 		.returning();
+
+	invalidateUserCache(session.user.id);
 
 	return json(created, { status: 201 });
 };

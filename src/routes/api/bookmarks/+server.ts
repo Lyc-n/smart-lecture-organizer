@@ -1,70 +1,35 @@
 import { requireSession } from '$lib/server/auth/session';
 import { db } from '$lib/server/db';
 import { bookmarks, items, groups } from '$lib/server/db/schema';
-import { json, error } from '@sveltejs/kit';
-import { eq, and, desc } from 'drizzle-orm';
+import { getOrThrow, getUserBookmarksPaginated, invalidateUserCache } from '$lib/server/db/helpers';
+import { parsePagination } from '$lib/server/pagination';
+import { parseTargetId, validateMutualExclusion } from '$lib/server/validators/target';
+import { json } from '@sveltejs/kit';
+import { eq, and } from 'drizzle-orm';
 import type { RequestHandler } from './$types';
 
 export const GET: RequestHandler = async (event) => {
 	const session = await requireSession(event.request);
-	const userId = session.user.id;
+	const { page, limit } = parsePagination(new URL(event.request.url));
 
-	const userBookmarks = await db
-		.select({
-			id: bookmarks.id,
-			createdAt: bookmarks.createdAt,
-			itemId: bookmarks.itemId,
-			groupId: bookmarks.groupId,
-			itemName: items.name,
-			itemType: items.type,
-			itemFileUrl: items.fileUrl,
-			groupName: groups.name,
-			groupColor: groups.color,
-			groupIcon: groups.icon
-		})
-		.from(bookmarks)
-		.leftJoin(items, eq(bookmarks.itemId, items.id))
-		.leftJoin(groups, eq(bookmarks.groupId, groups.id))
-		.where(eq(bookmarks.userId, userId))
-		.orderBy(desc(bookmarks.createdAt));
+	const result = await getUserBookmarksPaginated(session.user.id, page, limit);
 
-	return json(userBookmarks);
+	return json(result);
 };
 
 export const POST: RequestHandler = async (event) => {
 	const session = await requireSession(event.request);
 
 	const body = await event.request.json();
-	const itemId = typeof body.item_id === 'string' ? body.item_id : null;
-	const groupId = typeof body.group_id === 'string' ? body.group_id : null;
-
-	if (!itemId && !groupId) {
-		error(400, 'Must provide item_id or group_id');
-	}
-	if (itemId && groupId) {
-		error(400, 'Provide only one of item_id or group_id');
-	}
+	const { itemId, groupId } = parseTargetId(body);
+	validateMutualExclusion(itemId, groupId);
 
 	if (itemId) {
-		const item = await db
-			.select({ id: items.id, userId: items.userId })
-			.from(items)
-			.where(eq(items.id, itemId))
-			.then((r) => r[0]);
-
-		if (!item) error(404, 'Item not found');
-		if (item.userId !== session.user.id) error(403, 'Item does not belong to you');
+		await getOrThrow(items, itemId, session.user.id);
 	}
 
 	if (groupId) {
-		const group = await db
-			.select({ id: groups.id, userId: groups.userId })
-			.from(groups)
-			.where(eq(groups.id, groupId))
-			.then((r) => r[0]);
-
-		if (!group) error(404, 'Group not found');
-		if (group.userId !== session.user.id) error(403, 'Group does not belong to you');
+		await getOrThrow(groups, groupId, session.user.id);
 	}
 
 	const existing = await db
@@ -79,6 +44,7 @@ export const POST: RequestHandler = async (event) => {
 
 	if (existing) {
 		await db.delete(bookmarks).where(eq(bookmarks.id, existing.id));
+		invalidateUserCache(session.user.id);
 		return json({ bookmarked: false });
 	}
 
@@ -87,6 +53,8 @@ export const POST: RequestHandler = async (event) => {
 		itemId,
 		groupId
 	});
+
+	invalidateUserCache(session.user.id);
 
 	return json({ bookmarked: true }, { status: 201 });
 };
