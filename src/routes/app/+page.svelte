@@ -2,22 +2,13 @@
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 	import ItemCard from '$lib/components/organisms/ItemCard.svelte';
+	import { formatDateTime } from '$lib/utils/format';
 
 	const pinnedItems = $derived($page.data.pinnedItems ?? []);
 	const groupCount = $derived($page.data.groupCount ?? 0);
 	const recentAccess = $derived($page.data.recentAccess ?? []);
 	const tasksPending = $derived($page.data.tasksPending ?? 0);
 	const tasksOverdue = $derived($page.data.tasksOverdue ?? 0);
-
-	function formatDate(date: string | Date): string {
-		return new Date(date).toLocaleDateString('id-ID', {
-			year: 'numeric',
-			month: 'short',
-			day: 'numeric',
-			hour: '2-digit',
-			minute: '2-digit'
-		});
-	}
 </script>
 
 <svelte:head>
@@ -58,7 +49,7 @@
 									</div>
 									<div class="min-w-0 flex-1">
 										<div class="truncate text-sm text-text-base">{ra.itemName}</div>
-										<div class="text-xs text-text-muted">{formatDate(ra.accessedAt)}</div>
+										<div class="text-xs text-text-muted">{formatDateTime(ra.accessedAt)}</div>
 									</div>
 								</button>
 							{:else if ra.groupId}
@@ -77,7 +68,7 @@
 									</div>
 									<div class="min-w-0 flex-1">
 										<div class="truncate text-sm text-text-base">{ra.groupName}</div>
-										<div class="text-xs text-text-muted">{formatDate(ra.accessedAt)}</div>
+										<div class="text-xs text-text-muted">{formatDateTime(ra.accessedAt)}</div>
 									</div>
 								</button>
 							{/if}

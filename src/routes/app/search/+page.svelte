@@ -1,27 +1,41 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
-	import Icon from '$lib/components/atoms/Icon.svelte';
+	import SearchResultItems from '$lib/components/molecules/SearchResultItems.svelte';
+	import SearchResultGroups from '$lib/components/molecules/SearchResultGroups.svelte';
+	import SearchResultNotes from '$lib/components/molecules/SearchResultNotes.svelte';
 	import { api } from '$lib/utils/api';
 	import { computeImageHash } from '$lib/utils/hash';
 	import { formatSize } from '$lib/utils/format';
 
 	type Tab = 'text' | 'image';
-	let activeTab: Tab = $state('text');
-	let query = $state(($page.data.query as string) ?? '');
-	let results = $state<{
+	type SearchResults = {
 		items: Array<Record<string, unknown>>;
 		groups: Array<Record<string, unknown>>;
 		notes: Array<Record<string, unknown>>;
-	}>($page.data.results as { items: []; groups: []; notes: [] });
+		hasMoreItems: boolean;
+		hasMoreGroups: boolean;
+		hasMoreNotes: boolean;
+	};
+
+	let activeTab: Tab = $state('text');
+	let query = $state(($page.data.query as string) ?? '');
+	let results = $state<SearchResults>({
+		items: ($page.data.results as SearchResults['items']) ?? [],
+		groups: ($page.data.results as SearchResults['groups']) ?? [],
+		notes: ($page.data.results as SearchResults['notes']) ?? [],
+		hasMoreItems: ($page.data.hasMoreItems as boolean) ?? false,
+		hasMoreGroups: ($page.data.hasMoreGroups as boolean) ?? false,
+		hasMoreNotes: ($page.data.hasMoreNotes as boolean) ?? false
+	});
 
 	let loading = $state(false);
+	let loadingMore = $state(false);
 	let error = $state('');
 	let imagePreview: string | undefined = $state();
 	let imageFile: File | undefined = $state();
 
 	let searchInput: HTMLInputElement | undefined = $state();
-
 	let debounceTimer: ReturnType<typeof setTimeout> | undefined;
 
 	$effect(() => {
@@ -30,27 +44,52 @@
 		}
 	});
 
-	async function doSearch(q: string) {
+	function resetResults() {
+		results = { items: [], groups: [], notes: [], hasMoreItems: false, hasMoreGroups: false, hasMoreNotes: false };
+	}
+
+	function mergeResults(newData: SearchResults, append: boolean, section?: 'items' | 'groups' | 'notes') {
+		if (append && section) {
+			results = {
+				items: section === 'items' ? [...results.items, ...newData.items] : results.items,
+				groups: section === 'groups' ? [...results.groups, ...newData.groups] : results.groups,
+				notes: section === 'notes' ? [...results.notes, ...newData.notes] : results.notes,
+				hasMoreItems: section === 'items' ? newData.hasMoreItems : results.hasMoreItems,
+				hasMoreGroups: section === 'groups' ? newData.hasMoreGroups : results.hasMoreGroups,
+				hasMoreNotes: section === 'notes' ? newData.hasMoreNotes : results.hasMoreNotes
+			};
+		} else {
+			results = newData;
+		}
+	}
+
+	async function doSearch(q: string, opts: { page?: number; appendSection?: 'items' | 'groups' | 'notes' } = {}) {
 		if (!q.trim()) {
-			results = { items: [], groups: [], notes: [] };
+			resetResults();
 			return;
 		}
 
-		loading = true;
+		const append = !!opts.appendSection;
+		if (append) {
+			loadingMore = true;
+		} else {
+			loading = true;
+		}
 		error = '';
 
 		try {
-			const res = await api.post<{
-				items: Array<Record<string, unknown>>;
-				groups: Array<Record<string, unknown>>;
-				notes: Array<Record<string, unknown>>;
-			}>('/api/search', { query: q });
-			results = res;
+			const res = await api.post<SearchResults>('/api/search', {
+				query: q,
+				page: opts.page ?? 0,
+				section: opts.appendSection ?? null
+			});
+			mergeResults(res, append, opts.appendSection);
 		} catch (e) {
 			error = (e as Error).message;
-			results = { items: [], groups: [], notes: [] };
+			if (!append) resetResults();
 		} finally {
 			loading = false;
+			loadingMore = false;
 		}
 	}
 
@@ -83,18 +122,29 @@
 
 		try {
 			const hash = await computeImageHash(file);
-			const res = await api.post<{
-				items: Array<Record<string, unknown>>;
-				groups: Array<Record<string, unknown>>;
-				notes: Array<Record<string, unknown>>;
-			}>('/api/search', { imageHash: hash, threshold: 10 });
+			const res = await api.post<SearchResults>('/api/search', { imageHash: hash, threshold: 10 });
 			results = res;
 		} catch (e) {
 			error = (e as Error).message;
-			results = { items: [], groups: [], notes: [] };
+			resetResults();
 		} finally {
 			loading = false;
 		}
+	}
+
+	function loadMoreItems() {
+		const page = Math.floor(results.items.length / 20);
+		doSearch(query, { page, appendSection: 'items' });
+	}
+
+	function loadMoreGroups() {
+		const page = Math.floor(results.groups.length / 20);
+		doSearch(query, { page, appendSection: 'groups' });
+	}
+
+	function loadMoreNotes() {
+		const page = Math.floor(results.notes.length / 20);
+		doSearch(query, { page, appendSection: 'notes' });
 	}
 
 	const totalCount = $derived(results.items.length + results.groups.length + results.notes.length);
@@ -160,7 +210,7 @@
 						</div>
 						<button
 							type="button"
-							onclick={() => { imagePreview = undefined; imageFile = undefined; results = { items: [], groups: [], notes: [] }; }}
+							onclick={() => { imagePreview = undefined; imageFile = undefined; resetResults(); }}
 							class="text-sm text-text-muted hover:text-text-secondary transition"
 						>
 							Ganti gambar
@@ -243,75 +293,15 @@
 		{/if}
 
 		{#if activeTab === 'text' && results.items.length > 0}
-			<section class="mb-6">
-				<h2 class="mb-3 text-sm font-semibold text-text-secondary uppercase tracking-wider">Item ({results.items.length})</h2>
-				<div class="flex flex-col gap-2">
-					{#each results.items as item (item.id as string)}
-						<button
-							type="button"
-							onclick={() => goto(`/app/items/${item.id}`)}
-							class="flex items-center gap-3 rounded-xl bg-bg-elevated border border-border-main p-3 text-left transition hover:border-border-hover"
-						>
-							<div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-bg-hover text-text-muted">
-								<svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-								</svg>
-							</div>
-							<div class="min-w-0 flex-1">
-								<div class="truncate text-sm font-medium text-text-base">{item.name as string}</div>
-								<div class="text-xs text-text-muted">{item.type as string} &middot; {formatSize(item.fileSize as number | null)}</div>
-							</div>
-						</button>
-					{/each}
-				</div>
-			</section>
+			<SearchResultItems items={results.items} hasMore={results.hasMoreItems} {loadingMore} onLoadMore={loadMoreItems} />
 		{/if}
 
 		{#if activeTab === 'text' && results.groups.length > 0}
-			<section class="mb-6">
-				<h2 class="mb-3 text-sm font-semibold text-text-secondary uppercase tracking-wider">Grup ({results.groups.length})</h2>
-				<div class="flex flex-col gap-2">
-					{#each results.groups as group (group.id as string)}
-						<button
-							type="button"
-							onclick={() => goto(`/app/groups/${group.id}`)}
-							class="flex items-center gap-3 rounded-xl bg-bg-elevated border border-border-main p-3 text-left transition hover:border-border-hover"
-						>
-							<div
-								class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg"
-								style="background-color: {(group.color as string) ?? '#6366f1'}20"
-							>
-								<Icon name={(group.icon as string) ?? 'Folder'} color={(group.color as string) ?? '#6366f1'} />
-							</div>
-							<div class="min-w-0 flex-1">
-								<div class="truncate text-sm font-medium text-text-base">{group.name as string}</div>
-								{#if group.subtitle}
-									<div class="text-xs text-text-muted">{group.subtitle as string}</div>
-								{/if}
-							</div>
-						</button>
-					{/each}
-				</div>
-			</section>
+			<SearchResultGroups groups={results.groups} hasMore={results.hasMoreGroups} {loadingMore} onLoadMore={loadMoreGroups} />
 		{/if}
 
 		{#if activeTab === 'text' && results.notes.length > 0}
-			<section class="mb-6">
-				<h2 class="mb-3 text-sm font-semibold text-text-secondary uppercase tracking-wider">Catatan OCR ({results.notes.length})</h2>
-				<div class="flex flex-col gap-2">
-					{#each results.notes as entryRaw, i (i)}
-						{@const entry = entryRaw as unknown as { note: { id: string; content: string }; itemId: string; itemName: string }}
-						<button
-							type="button"
-							onclick={() => goto(`/app/items/${entry.itemId}`)}
-							class="rounded-xl bg-bg-elevated border border-border-main p-3 text-left transition hover:border-border-hover"
-						>
-							<div class="text-sm font-medium text-text-base">{entry.itemName}</div>
-							<div class="mt-1 line-clamp-2 text-xs text-text-muted">{entry.note?.content?.slice(0, 200)}</div>
-						</button>
-					{/each}
-				</div>
-			</section>
+			<SearchResultNotes notes={results.notes} hasMore={results.hasMoreNotes} {loadingMore} onLoadMore={loadMoreNotes} />
 		{/if}
 	</div>
 </div>

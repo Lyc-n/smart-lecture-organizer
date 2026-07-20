@@ -6,6 +6,10 @@ import { json, error } from '@sveltejs/kit';
 import { eq, and, or, sql, ilike } from 'drizzle-orm';
 import type { RequestHandler } from './$types';
 
+const PAGE_SIZE = 20;
+
+type Section = 'items' | 'groups' | 'notes';
+
 export const POST: RequestHandler = async (event) => {
 	const session = await requireSession(event.request);
 
@@ -15,16 +19,20 @@ export const POST: RequestHandler = async (event) => {
 	const typeFilter = typeof body.type === 'string' ? body.type : null;
 	const groupId = typeof body.groupId === 'string' ? body.groupId : null;
 	const threshold = typeof body.threshold === 'number' ? body.threshold : 10;
+	const page = typeof body.page === 'number' && body.page > 0 ? Math.floor(body.page) : 0;
+	const section = (typeof body.section === 'string' && ['items', 'groups', 'notes'].includes(body.section)) ? body.section as Section : null;
+	const offset = page * PAGE_SIZE;
+	const fetchLimit = PAGE_SIZE + 1;
 
 	const userId = session.user.id;
 
 	if (imageHash) {
 		const similar = await findSimilarImages(userId, imageHash, threshold);
-		return json({ items: similar, groups: [], notes: [] });
+		return json({ items: similar, groups: [], notes: [], hasMoreItems: false, hasMoreGroups: false, hasMoreNotes: false });
 	}
 
 	if (!query) {
-		return json({ items: [], groups: [], notes: [] });
+		return json({ items: [], groups: [], notes: [], hasMoreItems: false, hasMoreGroups: false, hasMoreNotes: false });
 	}
 
 	const searchTerm = `%${query}%`;
@@ -64,50 +72,70 @@ export const POST: RequestHandler = async (event) => {
 		itemConditions.push(sql`${items.id} IN (SELECT item_id FROM ${groupItemIds})`);
 	}
 
-	const [matchedItems, matchedGroups, matchedNotes] = await Promise.all([
-		db
-			.select()
-			.from(items)
-			.where(and(...itemConditions))
-			.orderBy(sql`${tsVector} @@ ${tsQuery} DESC, ${items.createdAt} DESC`)
-			.limit(20),
-		db
-			.select()
-			.from(groups)
-			.where(
-				and(
-					eq(groups.userId, userId),
-					or(
-						ilike(groups.name, searchTerm),
-						ilike(groups.subtitle, searchTerm),
-						ilike(groups.description, searchTerm),
-						sql`${groupTsVector} @@ ${tsQuery}`
+	const runItems = !section || section === 'items';
+	const runGroups = !section || section === 'groups';
+	const runNotes = !section || section === 'notes';
+
+	const [rawItems, rawGroups, rawNotes] = await Promise.all([
+		runItems
+			? db
+				.select()
+				.from(items)
+				.where(and(...itemConditions))
+				.orderBy(sql`${tsVector} @@ ${tsQuery} DESC, ${items.createdAt} DESC`)
+				.limit(fetchLimit)
+				.offset(offset)
+			: Promise.resolve([]),
+		runGroups
+			? db
+				.select()
+				.from(groups)
+				.where(
+					and(
+						eq(groups.userId, userId),
+						or(
+							ilike(groups.name, searchTerm),
+							ilike(groups.subtitle, searchTerm),
+							ilike(groups.description, searchTerm),
+							sql`${groupTsVector} @@ ${tsQuery}`
+						)
 					)
 				)
-			)
-			.orderBy(sql`${groupTsVector} @@ ${tsQuery} DESC, ${groups.name} ASC`)
-			.limit(20),
-		db
-			.select({
-				note: ocrNotes,
-				itemName: items.name,
-				itemId: items.id
-			})
-			.from(ocrNotes)
-			.innerJoin(items, eq(ocrNotes.itemId, items.id))
-			.where(
-				and(
-					eq(items.userId, userId),
-					sql`to_tsvector('indonesian', coalesce(${ocrNotes.content}, '')) @@ ${tsQuery}`
+				.orderBy(sql`${groupTsVector} @@ ${tsQuery} DESC, ${groups.name} ASC`)
+				.limit(fetchLimit)
+				.offset(offset)
+			: Promise.resolve([]),
+		runNotes
+			? db
+				.select({
+					note: ocrNotes,
+					itemName: items.name,
+					itemId: items.id
+				})
+				.from(ocrNotes)
+				.innerJoin(items, eq(ocrNotes.itemId, items.id))
+				.where(
+					and(
+						eq(items.userId, userId),
+						sql`to_tsvector('indonesian', coalesce(${ocrNotes.content}, '')) @@ ${tsQuery}`
+					)
 				)
-			)
-			.orderBy(sql`ts_rank(to_tsvector('indonesian', coalesce(${ocrNotes.content}, '')), ${tsQuery}) DESC`)
-			.limit(20)
+				.orderBy(sql`ts_rank(to_tsvector('indonesian', coalesce(${ocrNotes.content}, '')), ${tsQuery}) DESC`)
+				.limit(fetchLimit)
+				.offset(offset)
+			: Promise.resolve([])
 	]);
 
+	const hasMoreItems = rawItems.length > PAGE_SIZE;
+	const hasMoreGroups = rawGroups.length > PAGE_SIZE;
+	const hasMoreNotes = rawNotes.length > PAGE_SIZE;
+
 	return json({
-		items: matchedItems,
-		groups: matchedGroups,
-		notes: matchedNotes
+		items: rawItems.slice(0, PAGE_SIZE),
+		groups: rawGroups.slice(0, PAGE_SIZE),
+		notes: rawNotes.slice(0, PAGE_SIZE),
+		hasMoreItems,
+		hasMoreGroups,
+		hasMoreNotes
 	});
 };

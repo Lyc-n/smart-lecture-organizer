@@ -2,16 +2,9 @@
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 	import Icon from '$lib/components/atoms/Icon.svelte';
+	import { formatDate } from '$lib/utils/format';
 
 	const bookmarks = $derived($page.data.bookmarks ?? []);
-
-	function formatDate(date: string | Date): string {
-		return new Date(date).toLocaleDateString('id-ID', {
-			year: 'numeric',
-			month: 'short',
-			day: 'numeric'
-		});
-	}
 </script>
 
 <svelte:head>

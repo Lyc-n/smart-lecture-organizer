@@ -1,21 +1,10 @@
-import { auth } from '$lib/server/auth';
+import { requireSession } from '$lib/server/auth/session';
 import { checkStorageQuota } from '$lib/server/services/storage';
-import { json, error } from '@sveltejs/kit';
+import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 
 export const GET: RequestHandler = async (event) => {
-	let session;
-	try {
-		session = await auth.api.getSession({
-			headers: event.request.headers
-		});
-	} catch {
-		return json({ error: 'Failed to validate session' }, { status: 503 });
-	}
-
-	if (!session) {
-		error(401, 'Unauthorized');
-	}
+	const session = await requireSession(event.request);
 
 	try {
 		const { used, limit } = await checkStorageQuota(session.user.id, 0);

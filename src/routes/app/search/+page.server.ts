@@ -5,6 +5,8 @@ import { eq, and, or, sql, ilike } from 'drizzle-orm';
 import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
+const PAGE_SIZE = 20;
+
 export const load: PageServerLoad = async (event) => {
 	const session = await auth.api.getSession({
 		headers: event.request.headers
@@ -17,14 +19,16 @@ export const load: PageServerLoad = async (event) => {
 	const query = event.url.searchParams.get('q')?.trim() ?? '';
 
 	if (!query) {
-		return { query: '', results: { items: [], groups: [], notes: [] } };
+		return { query: '', results: { items: [], groups: [], notes: [] }, hasMoreItems: false, hasMoreGroups: false, hasMoreNotes: false };
 	}
 
 	const userId = session.user.id;
 	const searchTerm = `%${query}%`;
 	const tsQuery = sql`plainto_tsquery('indonesian', ${query})`;
 
-	const [matchedItems, matchedGroups, matchedNotes] = await Promise.all([
+	const fetchLimit = PAGE_SIZE + 1;
+
+	const [rawItems, rawGroups, rawNotes] = await Promise.all([
 		db
 			.select()
 			.from(items)
@@ -38,7 +42,7 @@ export const load: PageServerLoad = async (event) => {
 				)
 			)
 			.orderBy(sql`to_tsvector('indonesian', ${items.name}) @@ ${tsQuery} DESC, ${items.createdAt} DESC`)
-			.limit(20),
+			.limit(fetchLimit),
 		db
 			.select()
 			.from(groups)
@@ -53,7 +57,7 @@ export const load: PageServerLoad = async (event) => {
 				)
 			)
 			.orderBy(sql`to_tsvector('indonesian', coalesce(${groups.name}, '')) @@ ${tsQuery} DESC, ${groups.name} ASC`)
-			.limit(20),
+			.limit(fetchLimit),
 		db
 			.select({
 				note: ocrNotes,
@@ -69,11 +73,18 @@ export const load: PageServerLoad = async (event) => {
 				)
 			)
 			.orderBy(sql`ts_rank(to_tsvector('indonesian', coalesce(${ocrNotes.content}, '')), plainto_tsquery('indonesian', ${query})) DESC`)
-			.limit(20)
+			.limit(fetchLimit)
 	]);
 
 	return {
 		query,
-		results: { items: matchedItems, groups: matchedGroups, notes: matchedNotes }
+		results: {
+			items: rawItems.slice(0, PAGE_SIZE),
+			groups: rawGroups.slice(0, PAGE_SIZE),
+			notes: rawNotes.slice(0, PAGE_SIZE)
+		},
+		hasMoreItems: rawItems.length > PAGE_SIZE,
+		hasMoreGroups: rawGroups.length > PAGE_SIZE,
+		hasMoreNotes: rawNotes.length > PAGE_SIZE
 	};
 };

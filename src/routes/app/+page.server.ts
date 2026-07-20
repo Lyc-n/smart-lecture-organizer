@@ -1,20 +1,10 @@
-import { auth } from '$lib/server/auth';
 import { db } from '$lib/server/db';
 import { items, groups, tasks, recentAccess } from '$lib/server/db/schema';
 import { eq, desc, sql } from 'drizzle-orm';
-import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async (event) => {
-	const session = await auth.api.getSession({
-		headers: event.request.headers
-	});
-
-	if (!session) {
-		redirect(302, '/auth/login');
-	}
-
-	const userId = session.user.id;
+	const userId = event.locals.user!.id;
 
 	const now = new Date().toISOString();
 
