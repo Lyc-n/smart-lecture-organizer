@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { api } from '$lib/utils/api';
-	import { downloadForOffline } from '$lib/stores/offline';
 	import Icon from '$lib/components/atoms/Icon.svelte';
 	import { formatSize, formatDate } from '$lib/utils/format';
 
@@ -31,8 +30,9 @@
 		note: 'file-text'
 	};
 
-	let pinned = $state(item.isPinned);
-	let downloadLoading = $state(false);
+	let pinned = $state(false);
+
+	$effect(() => { pinned = item.isPinned; });
 
 	async function togglePin(e: MouseEvent) {
 		e.stopPropagation();
@@ -41,19 +41,6 @@
 			pinned = result.isPinned;
 		} catch (e) {
 			console.error('Failed to toggle pin:', e);
-		}
-	}
-
-	async function handleDownload(e: MouseEvent) {
-		e.stopPropagation();
-		if (!item.fileUrl) return;
-		downloadLoading = true;
-		try {
-			await downloadForOffline(item.fileUrl);
-		} catch (e) {
-			console.error('Failed to download:', e);
-		} finally {
-			downloadLoading = false;
 		}
 	}
 </script>
@@ -81,25 +68,6 @@
 			{formatSize(item.fileSize)} &middot; {formatDate(item.createdAt)}
 		</div>
 	</div>
-
-	{#if item.fileUrl}
-		<button
-			type="button"
-			onclick={handleDownload}
-			disabled={downloadLoading}
-			class="shrink-0 rounded-md p-1.5 text-text-muted transition hover:text-primary disabled:opacity-50"
-			aria-label="Simpan offline"
-		>
-			{#if downloadLoading}
-				<svg class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
-					<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
-					<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-				</svg>
-			{:else}
-				<Icon name="download" size={16} />
-			{/if}
-		</button>
-	{/if}
 
 	<button
 		type="button"

@@ -50,8 +50,7 @@
 			</button>
 
 			{#if userMenuOpen}
-				<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
-				<div class="fixed inset-0 z-10" onclick={closeMenu}></div>
+			<div class="fixed inset-0 z-10" onclick={closeMenu} role="presentation"></div>
 				<div class="absolute right-0 top-full mt-1 z-20 w-48 rounded-xl border border-border-hover bg-bg-elevated p-1 shadow-lg">
 					<button
 						type="button"

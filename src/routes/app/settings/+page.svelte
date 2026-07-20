@@ -1,43 +1,11 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { goto } from '$app/navigation';
-	import {
-		saveDirectoryHandle,
-		getWatcherState,
-		removeWatcherState,
-		startFileWatcher,
-		stopFileWatcher,
-		onNewFile
-	} from '$lib/stores/offline';
 	import { getCurrentMode, setTheme } from '$lib/stores/theme.svelte';
 	import type { ThemeMode } from '$lib/stores/theme.svelte';
 
 	const limit = $derived($page.data.limit ?? 52428800);
 	const used = $derived($page.data.used ?? 0);
 	const percentage = $derived(Math.min(Math.round((used / limit) * 100), 100));
-
-	let folderName = $state('');
-	let watcherActive = $state(false);
-	let watcherSupported = $state(typeof window !== 'undefined' && 'showDirectoryPicker' in (window as unknown as Record<string, unknown>));
-	let detectedFiles = $state<string[]>([]);
-
-	$effect(() => {
-		getWatcherState().then((state) => {
-			if (state?.handle) {
-				folderName = state.folderName;
-				watcherActive = true;
-				startFileWatcher();
-			}
-		});
-
-		const unsub = onNewFile((name) => {
-			detectedFiles = [...detectedFiles, name];
-		});
-		return () => {
-			stopFileWatcher();
-			unsub();
-		};
-	});
 
 	const themeOptions: { label: string; value: ThemeMode }[] = [
 		{ label: 'Terang', value: 'light' },
@@ -51,27 +19,6 @@
 		const i = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), units.length - 1);
 		const value = bytes / Math.pow(1024, i);
 		return `${value.toFixed(i === 0 ? 0 : 1)} ${units[i]}`;
-	}
-
-	async function enableWatcher() {
-		try {
-			const handle = await (window as unknown as { showDirectoryPicker(): Promise<FileSystemDirectoryHandle> }).showDirectoryPicker();
-			await saveDirectoryHandle(handle);
-			folderName = handle.name;
-			watcherActive = true;
-			detectedFiles = [];
-			startFileWatcher();
-		} catch {
-			// user cancelled
-		}
-	}
-
-	async function disableWatcher() {
-		stopFileWatcher();
-		await removeWatcherState();
-		folderName = '';
-		watcherActive = false;
-		detectedFiles = [];
 	}
 </script>
 
@@ -132,60 +79,6 @@
 				<p class="text-xs text-danger mt-2">Penyimpanan hampir penuh. Hapus beberapa item untuk melanjutkan upload.</p>
 			{:else if percentage >= 80}
 				<p class="text-xs text-tertiary mt-2">Penyimpanan hampir habis. Pertimbangkan untuk menghapus item yang tidak diperlukan.</p>
-			{/if}
-		</section>
-
-		<section class="mt-6 rounded-xl bg-bg-elevated border border-border-main p-6">
-			<h2 class="text-lg font-semibold mb-1">Folder Download</h2>
-			<p class="text-sm text-text-secondary mb-4">Pantau folder untuk upload otomatis</p>
-
-			{#if !watcherSupported}
-				<div class="rounded-lg bg-tertiary/30 border border-tertiary p-3 text-sm text-tertiary">
-					Fitur ini hanya tersedia di browser Chromium (Google Chrome, Edge, dll).
-				</div>
-			{:else if watcherActive}
-				<div class="flex items-center justify-between">
-					<div>
-						<p class="text-sm text-text-secondary">{folderName}</p>
-						<p class="text-xs text-text-muted">Dipantau setiap 30 detik</p>
-					</div>
-					<button
-						type="button"
-						onclick={disableWatcher}
-						class="rounded-lg border border-danger px-3 py-1.5 text-sm text-danger transition hover:bg-danger/30"
-					>
-						Nonaktifkan
-					</button>
-				</div>
-
-				{#if detectedFiles.length > 0}
-					<div class="mt-4 space-y-2">
-						<p class="text-xs text-text-muted">File baru terdeteksi:</p>
-						{#each detectedFiles as name}
-							<div class="flex items-center justify-between rounded-lg bg-bg-hover p-2">
-								<span class="truncate text-sm text-text-secondary">{name}</span>
-								<button
-									type="button"
-									onclick={() => goto(`/app/items/upload`)}
-									class="shrink-0 rounded-md bg-primary px-2.5 py-1 text-xs font-medium text-white transition hover:bg-primary-hover"
-								>
-									Upload
-								</button>
-							</div>
-						{/each}
-					</div>
-				{/if}
-			{:else}
-				<button
-					type="button"
-					onclick={enableWatcher}
-					class="flex items-center gap-2 rounded-lg border border-border-hover px-4 py-2 text-sm text-text-secondary transition hover:border-text-muted hover:text-text-base"
-				>
-					<svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-					</svg>
-					Pilih Folder
-				</button>
 			{/if}
 		</section>
 	</div>

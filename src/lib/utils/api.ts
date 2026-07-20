@@ -1,21 +1,8 @@
-import { cacheMetadata } from '$lib/stores/offline';
-
 const BASE = '';
 
 type RequestOptions = {
 	headers?: Record<string, string>;
 };
-
-const STORE_MAP: Record<string, 'groups' | 'items' | 'tasks'> = {
-	'/api/groups': 'groups',
-	'/api/items': 'items',
-	'/api/tasks': 'tasks'
-};
-
-function detectStore(path: string): 'groups' | 'items' | 'tasks' | null {
-	const base = Object.keys(STORE_MAP).find((key) => path === key || path.startsWith(`${key}/`));
-	return base ? STORE_MAP[base] : null;
-}
 
 async function request<T>(method: string, path: string, body?: unknown, options?: RequestOptions): Promise<T> {
 	const res = await fetch(`${BASE}${path}`, {
@@ -34,20 +21,7 @@ async function request<T>(method: string, path: string, body?: unknown, options?
 
 	if (res.status === 204) return undefined as T;
 
-	const data: T = await res.json();
-
-	if (method === 'GET' && typeof data === 'object' && data !== null) {
-		const store = detectStore(path);
-		if (store) {
-			const records = (Array.isArray(data) ? data : [data]) as Array<{ id: string }>;
-			const validRecords = records.filter((r) => r?.id);
-			if (validRecords.length > 0) {
-				cacheMetadata(store, validRecords).catch(() => {});
-			}
-		}
-	}
-
-	return data;
+	return await res.json();
 }
 
 export const api = {

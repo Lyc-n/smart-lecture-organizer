@@ -3,7 +3,6 @@
 	import { goto } from '$app/navigation';
 	import { invalidate } from '$app/navigation';
 	import Icon from '$lib/components/atoms/Icon.svelte';
-	import { downloadForOffline } from '$lib/stores/offline';
 	import { formatSize, formatDateTime } from '$lib/utils/format';
 
 	const item = $derived($page.data.item);
@@ -15,8 +14,6 @@
 	let ocrError = $state('');
 	let ocrTitle = $state('');
 	let ocrResult = $state<string | null>(null);
-	let downloadLoading = $state(false);
-	let downloadDone = $state(false);
 
 	$effect(() => {
 		if (item?.id) {
@@ -35,20 +32,6 @@
 		document: 'Dokumen',
 		note: 'Catatan'
 	};
-
-	async function handleDownload() {
-		if (!item.fileUrl) return;
-		downloadLoading = true;
-		downloadDone = false;
-		try {
-			await downloadForOffline(item.fileUrl);
-			downloadDone = true;
-		} catch {
-			downloadDone = false;
-		} finally {
-			downloadLoading = false;
-		}
-	}
 
 	async function runOcr() {
 		ocrLoading = true;
@@ -211,35 +194,6 @@
 				{:else}
 					<div class="p-8 text-center">
 						<p class="text-sm text-text-muted">Berkas tidak tersedia.</p>
-					</div>
-				{/if}
-
-				{#if item.fileUrl}
-					<div class="border-t border-border-main p-4">
-						<button
-							type="button"
-							onclick={handleDownload}
-							disabled={downloadLoading}
-							class="flex items-center gap-2 rounded-lg border border-border-hover px-4 py-2 text-sm text-text-secondary transition hover:border-text-muted hover:text-text-base disabled:opacity-50"
-						>
-							{#if downloadLoading}
-								<svg class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
-									<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
-									<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-								</svg>
-								Menyimpan...
-							{:else if downloadDone}
-								<svg class="h-4 w-4 text-green-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-								</svg>
-								Tersimpan
-							{:else}
-								<svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-								</svg>
-								Simpan Offline
-							{/if}
-						</button>
 					</div>
 				{/if}
 			</div>

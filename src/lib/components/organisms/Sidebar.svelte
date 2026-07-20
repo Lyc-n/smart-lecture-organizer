@@ -15,13 +15,13 @@
 		onToggleCollapse?: () => void;
 	} = $props();
 
-	const navItems = [
+	const navItems = $derived([
 		{ label: 'Dashboard', icon: 'dashboard', path: '/app' },
 		{ label: 'Grup', icon: 'folder', path: '/app/groups' },
 		{ label: 'Tugas', icon: 'tasks', path: '/app/tasks', badge: overdueCount },
 		{ label: 'Bookmark', icon: 'bookmark', path: '/app/bookmarks' },
 		{ label: 'Cari', icon: 'search', path: '/app/search' }
-	] as const;
+	]);
 
 	function isActive(path: string): boolean {
 		if (path === '/app') return $page.url.pathname === '/app';

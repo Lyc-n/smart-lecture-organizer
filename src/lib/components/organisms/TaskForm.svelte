@@ -33,11 +33,19 @@
 		oncancel: () => void;
 	} = $props();
 
-	let title = $state(task?.title ?? '');
-	let description = $state(task?.description ?? '');
-	let deadline = $state(task?.deadline ? task.deadline.slice(0, 16) : '');
-	let groupId = $state(task?.groupId ?? null);
-	let itemId = $state(task?.itemId ?? null);
+	let title = $state('');
+	let description = $state('');
+	let deadline = $state('');
+	let groupId = $state<string | null>(null);
+	let itemId = $state<string | null>(null);
+
+	$effect(() => {
+		title = task?.title ?? '';
+		description = task?.description ?? '';
+		deadline = task?.deadline ? task.deadline.slice(0, 16) : '';
+		groupId = task?.groupId ?? null;
+		itemId = task?.itemId ?? null;
+	});
 
 	let titleError = $state('');
 

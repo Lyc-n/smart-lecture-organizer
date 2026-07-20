@@ -37,19 +37,21 @@
 		oncancel: () => void;
 	} = $props();
 
-	const _groupName = group?.name ?? prefillName;
-	const _groupSubtitle = group?.subtitle ?? '';
-	const _groupDescription = group?.description ?? '';
-	const _groupColor = group?.color ?? '#6366f1';
-	const _groupIcon = group?.icon ?? 'folder';
-	const _groupParentId = group?.parentId ?? null;
+	let name = $state('');
+	let subtitle = $state('');
+	let description = $state('');
+	let color = $state('#6366f1');
+	let icon = $state('folder');
+	let parentId = $state<string | null>(null);
 
-	let name = $state(_groupName);
-	let subtitle = $state(_groupSubtitle);
-	let description = $state(_groupDescription);
-	let color = $state(_groupColor);
-	let icon = $state(_groupIcon);
-	let parentId = $state(_groupParentId);
+	$effect(() => {
+		name = group?.name ?? prefillName;
+		subtitle = group?.subtitle ?? '';
+		description = group?.description ?? '';
+		color = group?.color ?? '#6366f1';
+		icon = group?.icon ?? 'folder';
+		parentId = group?.parentId ?? null;
+	});
 
 	let nameError = $state('');
 

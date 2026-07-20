@@ -90,7 +90,7 @@
 
 		<div class="rounded-xl bg-bg-elevated border border-border-main p-6">
 			<div class="mb-6">
-				<label class="mb-2 block text-sm font-medium text-text-secondary">Pilih Berkas</label>
+				<span class="mb-2 block text-sm font-medium text-text-secondary">Pilih Berkas</span>
 				<div
 					class="flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-border-hover bg-bg-surface/50 p-8 transition hover:border-primary/50"
 					onclick={() => document.getElementById('file-input')?.click()}
@@ -129,9 +129,9 @@
 
 			{#if groups.length > 0}
 				<div class="mb-6">
-					<label class="mb-2 block text-sm font-medium text-text-secondary">
-						Masukkan ke Grup <span class="text-text-muted">(opsional)</span>
-					</label>
+				<span class="mb-2 block text-sm font-medium text-text-secondary">
+					Masukkan ke Grup <span class="text-text-muted">(opsional)</span>
+				</span>
 					<div class="flex flex-wrap gap-2">
 						{#each groups as group}
 							<button

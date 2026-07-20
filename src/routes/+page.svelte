@@ -1,33 +1,4 @@
 <script lang="ts">
-	import Toast from '$lib/components/atoms/Toast.svelte';
-
-	let deferredPrompt: Event | null = $state(null);
-	let installSupported = $state(false);
-	let showToast = $state(false);
-
-	$effect(() => {
-		if (typeof window === 'undefined') return;
-
-		const handler = (e: Event) => {
-			e.preventDefault();
-			deferredPrompt = e;
-			installSupported = true;
-			showToast = true;
-		};
-		window.addEventListener('beforeinstallprompt', handler);
-		return () => window.removeEventListener('beforeinstallprompt', handler);
-	});
-
-	function onInstallClick() {
-		if (!deferredPrompt) return;
-		(deferredPrompt as any).prompt();
-		(deferredPrompt as any).userChoice.then((result: { outcome: string }) => {
-			if (result.outcome === 'accepted') {
-				deferredPrompt = null;
-				showToast = false;
-			}
-		});
-	}
 </script>
 
 <svelte:head>
@@ -36,21 +7,6 @@
 </svelte:head>
 
 <div class="min-h-screen bg-bg-surface text-text-base">
-	<Toast
-		bind:open={showToast}
-		message="PWA siap diinstall"
-		duration={8000}
-	>
-		{#snippet action()}
-			<button
-				type="button"
-				onclick={onInstallClick}
-				class="rounded-lg bg-primary px-3 py-1 text-xs font-medium text-white transition hover:bg-primary-hover"
-			>
-				Install
-			</button>
-		{/snippet}
-	</Toast>
 	<!-- Navbar -->
 	<nav class="flex items-center justify-between px-8 py-3 sticky top-0 bg-bg-surface max-w-full mx-auto">
 		<div class="flex items-center gap-2">
@@ -83,33 +39,17 @@
 
 		<p class="mt-8 text-sm md:text-lg text-text-secondary max-w-3xl mx-auto leading-relaxed">
 			Smart Lecture Organizer membantu mahasiswa dan pelajar mengatur dokumen, rekaman, video, dan gambar
-			belajar dalam grup yang fleksibel. Lengkap dengan OCR, task management, dan akses offline.
+			belajar dalam grup yang fleksibel. Lengkap dengan OCR, task management, dan pencarian global.
 		</p>
 
 		<div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-			{#if installSupported}
-				<button
-					onclick={onInstallClick}
-					class="px-8 py-3.5 rounded-full border border-text-muted hover:border-text-muted hover:bg-bg-hover transition-all duration-200 font-semibold text-base"
-				>
-					Install Aplikasi
-				</button>
-			{/if}
+			<a
+				href="/auth/register"
+				class="px-8 py-3.5 rounded-full bg-primary hover:bg-primary/90 transition-all duration-200 font-semibold text-base text-white"
+			>
+				Mulai Sekarang
+			</a>
 		</div>
-
-		<!-- {#if !installSupported}
-			<div class="mt-6 flex items-center justify-center gap-4 text-sm text-text-muted">
-				<span>Atau install lewat browser:</span>
-				<span class="flex items-center gap-1.5">
-					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v12m0 0l-4-4m4 4l4-4M4 16v4h16v-4"/></svg>
-					Chrome ⋮ → Install
-				</span>
-				<span class="flex items-center gap-1.5">
-					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v12m0 0l-4-4m4 4l4-4M4 16v4h16v-4"/></svg>
-					Safari 􀊨 → Add ke Home Screen
-				</span>
-			</div>
-		{/if} -->
 	</section>
 
 	<!-- Fitur -->
@@ -153,16 +93,6 @@
 			</div>
 
 			<div class="p-6 rounded-xl bg-bg-elevated border border-border-main hover:border-border-hover transition-colors">
-				<div class="w-10 h-10 rounded-lg bg-success/20 flex items-center justify-center mb-4">
-					<svg class="w-5 h-5 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/></svg>
-				</div>
-				<h3 class="font-semibold text-lg mb-2">Akses Offline</h3>
-				<p class="text-sm text-text-secondary leading-relaxed">
-					Download materi untuk akses offline. File tersimpan di perangkat dan dapat dideteksi otomatis.
-				</p>
-			</div>
-
-			<div class="p-6 rounded-xl bg-bg-elevated border border-border-main hover:border-border-hover transition-colors">
 				<div class="w-10 h-10 rounded-lg bg-tertiary/20 flex items-center justify-center mb-4">
 					<svg class="w-5 h-5 text-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
 				</div>
@@ -181,17 +111,27 @@
 					Tandai materi favorit dengan bookmark. Pin item penting untuk akses cepat kapan saja.
 				</p>
 			</div>
+
+			<div class="p-6 rounded-xl bg-bg-elevated border border-border-main hover:border-border-hover transition-colors">
+				<div class="w-10 h-10 rounded-lg bg-success/20 flex items-center justify-center mb-4">
+					<svg class="w-5 h-5 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+				</div>
+				<h3 class="font-semibold text-lg mb-2">Penyimpanan Cloud</h3>
+				<p class="text-sm text-text-secondary leading-relaxed">
+					Simpan materi di cloud dengan aman. Akses dari perangkat manapun dengan akunmu.
+				</p>
+			</div>
 		</div>
 	</section>
 
-	<!-- CTA Install -->
+	<!-- CTA -->
 	<section class="px-6 py-20 max-w-full text-center page-with-pattern">
 		<div class="p-10 md:p-14 md:w-4xl mx-auto rounded-3xl bg-linear-to-br from-bg-elevated to-primary/20 from-40% light:to-bg-base border border-border-main">
 			<h2 class="text-3xl md:text-4xl font-semibold mb-4">
 				Siap belajar lebih rapi?
 			</h2>
 			<p class="text-text-secondary mb-8 max-w-lg mx-auto">
-				Gunakan Smart Lecture Organizer di perangkat manapun. Install sebagai aplikasi untuk pengalaman native tanpa gangguan.
+				Gunakan Smart Lecture Organizer di perangkat manapun. Daftar gratis dan mulai mengatur materi belajarmu.
 			</p>
 			<div class="flex flex-col sm:flex-row items-center justify-center gap-4">
 			<a
@@ -200,20 +140,9 @@
 			>
 				Mulai Sekarang
 			</a>
-				{#if installSupported}
-					<button
-						onclick={onInstallClick}
-						class="px-8 py-3.5 rounded-full border border-text-muted hover:border-text-muted hover:bg-bg-hover transition-all duration-200 font-semibold"
-					>
-						<span class="flex items-center gap-2">
-							<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v12m0 0l-4-4m4 4l4-4M4 16v4h16v-4"/></svg>
-							Install PWA
-						</span>
-					</button>
-				{/if}
 			</div>
 			<p class="mt-6 text-sm text-text-muted">
-				Gratis • 50 MB penyimpanan online • Offline support
+				Gratis • 50 MB penyimpanan online
 			</p>
 		</div>
 	</section>

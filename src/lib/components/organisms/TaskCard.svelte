@@ -26,7 +26,9 @@
 		onupdate?: () => void;
 	} = $props();
 
-	let completed = $state(task.isCompleted);
+	let completed = $state(false);
+
+	$effect(() => { completed = task.isCompleted; });
 
 	async function toggle() {
 		try {

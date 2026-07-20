@@ -9,8 +9,8 @@
 
 	let { used = 0, limit = 52428800 }: Props = $props();
 
-	let storageUsed = $state(used);
-	let storageLimit = $state(limit);
+	let storageUsed = $state(0);
+	let storageLimit = $state(52428800);
 
 	let storagePct = $derived(Math.min(Math.round((storageUsed / storageLimit) * 100), 100));
 
