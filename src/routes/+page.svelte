@@ -2,7 +2,7 @@
 </script>
 
 <svelte:head>
-	<title>Smart Lecture Organizer</title>
+	<title>SmartLO</title>
 	<meta name="description" content="Atur materi belajarmu dengan rapi. Organizer dokumen, rekaman, video, dan gambar." />
 </svelte:head>
 
@@ -38,7 +38,7 @@
 		</h1>
 
 		<p class="mt-8 text-sm md:text-lg text-text-secondary max-w-3xl mx-auto leading-relaxed">
-			Smart Lecture Organizer membantu mahasiswa dan pelajar mengatur dokumen, rekaman, video, dan gambar
+			SmartLO membantu mahasiswa dan pelajar mengatur dokumen, rekaman, video, dan gambar
 			belajar dalam grup yang fleksibel. Lengkap dengan OCR, task management, dan pencarian global.
 		</p>
 
@@ -55,7 +55,7 @@
 	<!-- Fitur -->
 	<section class="px-6 py-20 max-w-6xl mx-auto">
 		<h2 class="text-3xl md:text-4xl font-semibold text-center mb-4">
-			Kenapa Smart Lecture Organizer?
+			Kenapa SmartLO?
 		</h2>
 		<p class="text-text-secondary text-center mb-14 max-w-2xl mx-auto">
 			Semua fitur yang kamu butuhkan untuk mengatur materi belajar dalam satu tempat.
@@ -131,7 +131,7 @@
 				Siap belajar lebih rapi?
 			</h2>
 			<p class="text-text-secondary mb-8 max-w-lg mx-auto">
-				Gunakan Smart Lecture Organizer di perangkat manapun. Daftar gratis dan mulai mengatur materi belajarmu.
+				Gunakan SmartLO di perangkat manapun. Daftar gratis dan mulai mengatur materi belajarmu.
 			</p>
 			<div class="flex flex-col sm:flex-row items-center justify-center gap-4">
 			<a
@@ -150,7 +150,7 @@
 	<!-- Footer -->
 	<footer class="px-6 py-8 border-t border-border-main">
 		<div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-text-muted">
-			<span>Smart Lecture Organizer</span>
+			<span>SmartLO</span>
 			<span>Dibuat untuk mahasiswa dan pelajar mandiri</span>
 		</div>
 	</footer>

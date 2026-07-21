@@ -103,7 +103,7 @@
 </script>
 
 <svelte:head>
-	<title>{group?.name ?? 'Grup'} — Smart Lecture Organizer</title>
+	<title>{group?.name ?? 'Grup'} — SmartLO</title>
 </svelte:head>
 
 {#if !group}

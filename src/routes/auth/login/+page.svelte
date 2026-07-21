@@ -28,17 +28,17 @@
 </script>
 
 <svelte:head>
-	<title>Masuk — Smart Lecture Organizer</title>
+	<title>Masuk — SmartLO</title>
 </svelte:head>
 
 <div class="min-h-screen bg-bg-surface text-text-base flex items-center justify-center px-4">
 	<div class="w-full max-w-sm">
 		<a href="/" class="inline-flex items-center gap-2 text-2xl font-bold bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent mb-8">
-			Smart Lecture Organizer
+			SmartLO
 		</a>
 
 		<h1 class="text-2xl font-bold mb-1">Masuk</h1>
-		<p class="text-sm text-text-secondary mb-6">Masuk ke akun Smart Lecture Organizer kamu</p>
+		<p class="text-sm text-text-secondary mb-6">Masuk ke akun SmartLO kamu</p>
 
 		<form onsubmit={handleSubmit}>
 			{#if error}

@@ -25,7 +25,7 @@
 </script>
 
 <svelte:head>
-	<title>Pengaturan — Smart Lecture Organizer</title>
+	<title>Pengaturan — SmartLO</title>
 </svelte:head>
 
 <div class="min-h-screen bg-bg-surface text-text-base p-8">

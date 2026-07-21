@@ -61,7 +61,7 @@
 </script>
 
 <svelte:head>
-	<title>{item?.name ?? 'Item'} — Smart Lecture Organizer</title>
+	<title>{item?.name ?? 'Item'} — SmartLO</title>
 </svelte:head>
 
 {#if !loaded}

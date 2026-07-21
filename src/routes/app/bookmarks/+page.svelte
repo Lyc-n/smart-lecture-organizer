@@ -8,7 +8,7 @@
 </script>
 
 <svelte:head>
-	<title>Bookmark — Smart Lecture Organizer</title>
+	<title>Bookmark — SmartLO</title>
 </svelte:head>
 
 <div class="min-h-screen bg-bg-surface text-text-base p-8">

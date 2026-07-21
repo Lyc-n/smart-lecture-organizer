@@ -12,7 +12,7 @@
 </script>
 
 <svelte:head>
-	<title>Dashboard — Smart Lecture Organizer</title>
+	<title>Dashboard — SmartLO</title>
 </svelte:head>
 
 <div class="min-h-screen bg-bg-surface text-text-base p-8">

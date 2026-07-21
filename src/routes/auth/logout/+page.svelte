@@ -5,13 +5,13 @@
 </script>
 
 <svelte:head>
-	<title>Keluar — Smart Lecture Organizer</title>
+	<title>Keluar — SmartLO</title>
 </svelte:head>
 
 <div class="min-h-screen bg-bg-surface text-text-base flex items-center justify-center px-4">
 	<div class="w-full max-w-sm text-center">
 		<h1 class="text-2xl font-bold mb-2">Keluar</h1>
-		<p class="text-sm text-text-secondary mb-8">Apakah kamu yakin ingin keluar dari Smart Lecture Organizer?</p>
+		<p class="text-sm text-text-secondary mb-8">Apakah kamu yakin ingin keluar dari SmartLO?</p>
 
 		<form method="POST" use:enhance>
 			<button

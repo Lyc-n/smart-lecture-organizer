@@ -9,7 +9,7 @@
 </script>
 
 <svelte:head>
-	<title>Smart Lecture Organizer</title>
+	<title>SmartLO</title>
 </svelte:head>
 
 <Toast />

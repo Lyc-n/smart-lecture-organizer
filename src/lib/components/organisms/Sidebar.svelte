@@ -39,10 +39,10 @@
 			class="flex h-7 w-7 shrink-0 items-center justify-center transition hover:opacity-80"
 			title={collapsed ? 'Perluas sidebar' : 'Ciutkan sidebar'}
 		>
-			<img src="/favicon.svg" alt="SLO" class="h-7 w-7" />
+			<img src="/favicon.svg" alt="SmartLO" class="h-7 w-7" />
 		</button>
 		{#if !collapsed}
-			<span class="text-sm font-bold text-text-base">Smart Lecture Organizer</span>
+			<span class="text-sm font-bold text-text-base">SmartLO</span>
 		{/if}
 	</div>
 

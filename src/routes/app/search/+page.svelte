@@ -144,7 +144,7 @@
 </script>
 
 <svelte:head>
-	<title>Cari — Smart Lecture Organizer</title>
+	<title>Cari — SmartLO</title>
 </svelte:head>
 
 <div class="min-h-screen bg-bg-surface text-text-base p-8">

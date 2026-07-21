@@ -43,7 +43,7 @@
 </script>
 
 <svelte:head>
-	<title>Grup — Smart Lecture Organizer</title>
+	<title>Grup — SmartLO</title>
 </svelte:head>
 
 <div class="min-h-screen bg-bg-surface text-text-base p-8">

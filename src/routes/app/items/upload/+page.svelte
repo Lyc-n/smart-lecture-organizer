@@ -68,7 +68,7 @@
 </script>
 
 <svelte:head>
-	<title>Unggah Berkas — Smart Lecture Organizer</title>
+	<title>Unggah Berkas — SmartLO</title>
 </svelte:head>
 
 <div class="min-h-screen bg-bg-surface text-text-base p-8">

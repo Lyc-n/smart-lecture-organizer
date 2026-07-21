@@ -4,7 +4,7 @@
 </script>
 
 <svelte:head>
-	<title>{$page.status} — Smart Lecture Organizer</title>
+	<title>{$page.status} — SmartLO</title>
 </svelte:head>
 
 <div class="flex min-h-screen items-center justify-center bg-bg-surface p-8">
