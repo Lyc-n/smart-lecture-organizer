@@ -1,58 +1,40 @@
 <script lang="ts">
-	import type { Snippet } from 'svelte';
+	import { toast, type ToastVariant } from '$lib/stores/toast';
 
-	type Props = {
-		open?: boolean;
-		message?: string;
-		duration?: number;
-		action?: Snippet;
-		onclose?: () => void;
-	};
-
-	let {
-		open = $bindable(false),
-		message = '',
-		duration = 6000,
-		action,
-		onclose
-	}: Props = $props();
-
-	let timer: ReturnType<typeof setTimeout> | null = null;
-
-	function startTimer() {
-		if (timer) clearTimeout(timer);
-		if (duration > 0 && open) {
-			timer = setTimeout(() => {
-				open = false;
-				onclose?.();
-			}, duration);
-		}
-	}
-
-	function dismiss() {
-		if (timer) clearTimeout(timer);
-		open = false;
-		onclose?.();
-	}
+	let message = $state('');
+	let variant = $state<ToastVariant>('info');
+	let open = $state(false);
 
 	$effect(() => {
-		if (open) startTimer();
-		return () => { if (timer) clearTimeout(timer); };
+		const unsub = toast.subscribe((state) => {
+			message = state.message;
+			variant = state.variant;
+			open = state.open;
+		});
+		return unsub;
 	});
+
+	function dismiss() {
+		toast.dismiss();
+	}
+
+	const variantStyles: Record<ToastVariant, { dot: string; border: string }> = {
+		success: { dot: 'bg-success', border: 'border-success/30' },
+		error: { dot: 'bg-danger', border: 'border-danger/30' },
+		warning: { dot: 'bg-warning', border: 'border-warning/30' },
+		info: { dot: 'bg-info', border: 'border-info/30' }
+	};
+
+	let styles = $derived(variantStyles[variant]);
 </script>
 
 {#if open}
 	<div
-		class="fixed top-4 right-4 z-50 flex items-center gap-3 rounded-xl border border-border-main bg-bg-elevated px-4 py-3 shadow-lg transition-all duration-300"
+		class="fixed top-4 right-4 z-50 flex items-center gap-3 rounded-xl border {styles.border} bg-bg-elevated px-4 py-3 shadow-lg transition-all duration-300"
 		role="alert"
 	>
-		<span class="w-2 h-2 shrink-0 rounded-full bg-success"></span>
+		<span class="w-2 h-2 shrink-0 rounded-full {styles.dot}"></span>
 		<span class="text-sm text-text-base">{message}</span>
-		{#if action}
-			<div>
-				{@render action()}
-			</div>
-		{/if}
 		<button
 			type="button"
 			onclick={dismiss}

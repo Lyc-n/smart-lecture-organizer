@@ -1,8 +1,7 @@
 import { db } from '$lib/server/db';
 import { items, users } from '$lib/server/db/schema';
 import { eq, sql } from 'drizzle-orm';
-
-const DEFAULT_STORAGE_LIMIT = 52428800;
+import { STORAGE_LIMIT } from '$lib/server/constants';
 
 export async function getStorageUsed(userId: string): Promise<number> {
 	const result = await db
@@ -26,7 +25,7 @@ export async function checkStorageQuota(
 			.then((r) => r[0])
 	]);
 
-	const limit = user?.storageLimit ?? DEFAULT_STORAGE_LIMIT;
+	const limit = user?.storageLimit ?? STORAGE_LIMIT;
 
 	return {
 		allowed: used + additionalBytes <= limit,

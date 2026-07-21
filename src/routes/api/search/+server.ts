@@ -1,14 +1,21 @@
 import { requireSession } from '$lib/server/auth/session';
-import { groups } from '$lib/server/db/schema';
-import { getOrThrow } from '$lib/server/db/helpers';
+import { withErrorHandling } from '$lib/server/errors';
+import { rateLimit, RATE_LIMITS } from '$lib/server/rate-limit';
 import { search } from '$lib/server/services/search';
 import { findSimilarImages } from '$lib/server/services/image-search';
-import { json } from '@sveltejs/kit';
+import { groups } from '$lib/server/db/schema';
+import { getOrThrow } from '$lib/server/db/helpers';
+import { json, error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import type { Section } from '$lib/types/search';
 
-export const POST: RequestHandler = async (event) => {
-	const session = await requireSession(event.request);
+export const POST: RequestHandler = withErrorHandling(async (event) => {
+	const rl = rateLimit(event.request, RATE_LIMITS.search);
+	if (!rl.allowed) {
+		error(429, `Too many requests. Retry after ${Math.ceil(rl.retryAfterMs / 1000)}s`);
+	}
+
+	const session = await requireSession(event);
 
 	const body = await event.request.json();
 	const query = typeof body.query === 'string' ? body.query.trim() : '';
@@ -32,4 +39,4 @@ export const POST: RequestHandler = async (event) => {
 
 	const results = await search(userId, query, { page, section, typeFilter, groupId });
 	return json(results);
-};
+});

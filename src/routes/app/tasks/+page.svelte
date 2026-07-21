@@ -5,6 +5,7 @@
 	import TaskCard from '$lib/components/organisms/TaskCard.svelte';
 	import TaskForm from '$lib/components/organisms/TaskForm.svelte';
 	import { api } from '$lib/utils/api';
+	import { toast } from '$lib/stores/toast';
 
 	const dataTasks = $derived($page.data.tasks ?? []);
 	const dataGroups = $derived($page.data.groups ?? []);
@@ -53,9 +54,10 @@
 		try {
 			await api.post('/api/tasks', data);
 			showForm = false;
+			toast.success('Tugas berhasil dibuat');
 			invalidate(() => true);
 		} catch (e) {
-			alert((e as Error).message);
+			toast.error((e as Error).message);
 		}
 	}
 
@@ -70,9 +72,10 @@
 		try {
 			await api.patch(`/api/tasks/${(editingTask as { id: string }).id}`, data);
 			editingTask = null;
+			toast.success('Tugas berhasil diperbarui');
 			invalidate(() => true);
 		} catch (e) {
-			alert((e as Error).message);
+			toast.error((e as Error).message);
 		}
 	}
 

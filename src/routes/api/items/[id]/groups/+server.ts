@@ -2,17 +2,21 @@ import { requireSession } from '$lib/server/auth/session';
 import { db } from '$lib/server/db';
 import { items, itemGroups, groups } from '$lib/server/db/schema';
 import { getOrThrow } from '$lib/server/db/helpers';
+import { withErrorHandling } from '$lib/server/errors';
+import { validateArrayLength, validateUUID } from '$lib/server/validators/common';
 import { json, error } from '@sveltejs/kit';
 import { and, eq, inArray } from 'drizzle-orm';
 import type { RequestHandler } from './$types';
 
-export const POST: RequestHandler = async (event) => {
-	const session = await requireSession(event.request);
+export const POST: RequestHandler = withErrorHandling(async (event) => {
+	const session = await requireSession(event);
+	const id = validateUUID(event.params.id);
 
-	const item = await getOrThrow(items, event.params.id, session.user.id);
+	const item = await getOrThrow(items, id, session.user.id);
 
 	const body = await event.request.json();
-	const groupIds: string[] = body.groupIds ?? [];
+	const groupIds: string[] = Array.isArray(body.groupIds) ? body.groupIds : [];
+	validateArrayLength(groupIds, 'groupIds', { max: 50 });
 
 	if (groupIds.length > 0) {
 		const validGroups = await db
@@ -38,4 +42,4 @@ export const POST: RequestHandler = async (event) => {
 	});
 
 	return json({ success: true });
-};
+});

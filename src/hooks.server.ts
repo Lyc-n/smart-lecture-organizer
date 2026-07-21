@@ -7,17 +7,19 @@ export const handle = async ({ event, resolve }) => {
 		return auth.handler(event.request);
 	}
 
-	if (event.url.pathname.startsWith('/app')) {
+	if (event.url.pathname.startsWith('/app') || event.url.pathname.startsWith('/api')) {
 		const sessionData = await auth.api.getSession({
 			headers: event.request.headers
 		});
 
-		if (!sessionData) {
+		if (event.url.pathname.startsWith('/app') && !sessionData) {
 			redirect(302, '/auth/login');
 		}
 
-		event.locals.user = sessionData.user;
-		event.locals.session = sessionData.session;
+		if (sessionData) {
+			event.locals.user = sessionData.user;
+			event.locals.session = sessionData.session;
+		}
 	}
 
 	return resolve(event);

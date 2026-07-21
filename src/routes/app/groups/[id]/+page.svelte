@@ -7,6 +7,7 @@
 	import GroupForm from '$lib/components/organisms/GroupForm.svelte';
 	import ItemCard from '$lib/components/organisms/ItemCard.svelte';
 	import { api } from '$lib/utils/api';
+	import { toast } from '$lib/stores/toast';
 
 	const group = $derived($page.data.group);
 	const children = $derived($page.data.children ?? []);
@@ -61,9 +62,10 @@
 			await api.post('/api/groups', data);
 			showForm = false;
 			prefillName = '';
+			toast.success('Grup berhasil dibuat');
 			invalidate(() => true);
 		} catch (e) {
-			alert((e as Error).message);
+			toast.error((e as Error).message);
 		}
 	}
 
@@ -79,9 +81,10 @@
 			await api.patch(`/api/groups/${group.id}`, data);
 			showForm = false;
 			prefillName = '';
+			toast.success('Grup berhasil diperbarui');
 			invalidate(() => true);
 		} catch (e) {
-			alert((e as Error).message);
+			toast.error((e as Error).message);
 		}
 	}
 
@@ -90,17 +93,26 @@
 		deleting = true;
 		try {
 			await api.del(`/api/groups/${group.id}`);
+			toast.success('Grup berhasil dihapus');
 			goto('/app/groups');
 		} catch (e) {
-			alert((e as Error).message);
+			toast.error((e as Error).message);
 			deleting = false;
 		}
 	}
 </script>
 
 <svelte:head>
-	<title>{group.name} — Smart Lecture Organizer</title>
+	<title>{group?.name ?? 'Grup'} — Smart Lecture Organizer</title>
 </svelte:head>
+
+{#if !group}
+	<div class="min-h-screen bg-bg-surface text-text-base p-8">
+		<div class="mx-auto max-w-2xl text-center text-text-muted">
+			<p>Memuat data grup...</p>
+		</div>
+	</div>
+{:else}
 
 <div class="min-h-screen bg-bg-surface text-text-base p-8">
 	<div class="mx-auto max-w-2xl">
@@ -259,4 +271,5 @@
 		onsubmit={prefillName ? handleCreate : handleEdit}
 		oncancel={() => { showForm = false; prefillName = ''; }}
 	/>
+{/if}
 {/if}

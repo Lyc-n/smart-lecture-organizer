@@ -61,70 +61,78 @@
 </script>
 
 <svelte:head>
-	<title>{item.name} — Smart Lecture Organizer</title>
+	<title>{item?.name ?? 'Item'} — Smart Lecture Organizer</title>
 </svelte:head>
 
-<div class="min-h-screen bg-bg-surface text-text-base p-8">
-	<div class="mx-auto max-w-4xl">
-		<button
-			type="button"
-			onclick={() => goto('/app/groups')}
-			class="mb-4 flex items-center gap-1 text-sm text-text-muted transition hover:text-text-secondary"
-		>
-			<svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-				<path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
-			</svg>
-			Kembali
-		</button>
+{#if !item}
+	<div class="min-h-screen bg-bg-surface text-text-base p-8">
+		<div class="mx-auto max-w-4xl text-center text-text-muted">
+			<p>Memuat data item...</p>
+		</div>
+	</div>
+{:else}
+	<div class="min-h-screen bg-bg-surface text-text-base p-8">
+		<div class="mx-auto max-w-4xl">
+			<button
+				type="button"
+				onclick={() => goto('/app/groups')}
+				class="mb-4 flex items-center gap-1 text-sm text-text-muted transition hover:text-text-secondary"
+			>
+				<svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+				</svg>
+				Kembali
+			</button>
 
-		<div class="rounded-xl bg-bg-elevated border border-border-main overflow-hidden">
-			<div class="p-6 pb-4">
-				<div class="mb-2 flex items-start justify-between">
-					<div>
-						<h1 class="text-xl font-bold">{item.name}</h1>
-						<p class="mt-1 text-sm text-text-muted">{typeLabels[item.type] ?? item.type}</p>
+			<div class="rounded-xl bg-bg-elevated border border-border-main overflow-hidden">
+				<div class="p-6 pb-4">
+					<div class="mb-2 flex items-start justify-between">
+						<div>
+							<h1 class="text-xl font-bold">{item.name}</h1>
+							<p class="mt-1 text-sm text-text-muted">{typeLabels[item.type] ?? item.type}</p>
+						</div>
+					</div>
+
+					<div class="mt-4 flex flex-wrap gap-4 text-xs text-text-muted">
+						<span>Ukuran: {formatSize(item.fileSize)}</span>
+						<span>Diupload: {formatDateTime(item.createdAt)}</span>
+						{#if item.updatedAt && String(item.updatedAt) !== String(item.createdAt)}
+							<span>Diubah: {formatDateTime(item.updatedAt)}</span>
+						{/if}
 					</div>
 				</div>
 
-				<div class="mt-4 flex flex-wrap gap-4 text-xs text-text-muted">
-					<span>Ukuran: {formatSize(item.fileSize)}</span>
-					<span>Diupload: {formatDateTime(item.createdAt)}</span>
-					{#if item.updatedAt && String(item.updatedAt) !== String(item.createdAt)}
-						<span>Diubah: {formatDateTime(item.updatedAt)}</span>
+				<ItemMediaPreview {item} {note} {ocrLoading} {ocrError} {ocrResult} onRunOcr={runOcr} />
+			</div>
+
+			{#if ocrResult || note}
+				<div class="mt-6 rounded-xl bg-bg-elevated border border-border-main p-6">
+					<h2 class="mb-3 text-sm font-semibold text-text-secondary uppercase tracking-wider">Hasil OCR</h2>
+					{#if note?.title}
+						<h3 class="mb-2 text-base font-medium text-text-secondary">{note.title}</h3>
 					{/if}
+					<p class="whitespace-pre-wrap text-sm text-text-secondary">{ocrResult ?? note?.content}</p>
 				</div>
-			</div>
+			{/if}
 
-		<ItemMediaPreview {item} {note} {ocrLoading} {ocrError} {ocrResult} onRunOcr={runOcr} />
+			{#if groups.length > 0}
+				<div class="mt-6 rounded-xl bg-bg-elevated border border-border-main p-6">
+					<h2 class="mb-3 text-sm font-semibold text-text-secondary uppercase tracking-wider">Grup</h2>
+					<div class="flex flex-wrap gap-2">
+						{#each groups as group}
+							<button
+								type="button"
+								onclick={() => goto(`/app/groups/${group.id}`)}
+								class="flex items-center gap-2 rounded-lg border border-border-hover bg-bg-surface px-3 py-2 text-sm text-text-secondary transition hover:border-text-muted hover:text-text-secondary"
+							>
+								<div class="h-3 w-3 rounded-full" style="background-color: {group.color}"></div>
+								<Icon name={group.icon} size={14} />
+								<span>{group.name}</span>
+							</button>
+						{/each}
+					</div>
+				</div>
+			{/if}
 		</div>
-
-		{#if ocrResult || note}
-			<div class="mt-6 rounded-xl bg-bg-elevated border border-border-main p-6">
-				<h2 class="mb-3 text-sm font-semibold text-text-secondary uppercase tracking-wider">Hasil OCR</h2>
-				{#if note?.title}
-					<h3 class="mb-2 text-base font-medium text-text-secondary">{note.title}</h3>
-				{/if}
-				<p class="whitespace-pre-wrap text-sm text-text-secondary">{ocrResult ?? note?.content}</p>
-			</div>
-		{/if}
-
-		{#if groups.length > 0}
-			<div class="mt-6 rounded-xl bg-bg-elevated border border-border-main p-6">
-				<h2 class="mb-3 text-sm font-semibold text-text-secondary uppercase tracking-wider">Grup</h2>
-				<div class="flex flex-wrap gap-2">
-					{#each groups as group}
-						<button
-							type="button"
-							onclick={() => goto(`/app/groups/${group.id}`)}
-							class="flex items-center gap-2 rounded-lg border border-border-hover bg-bg-surface px-3 py-2 text-sm text-text-secondary transition hover:border-text-muted hover:text-text-secondary"
-						>
-							<div class="h-3 w-3 rounded-full" style="background-color: {group.color}"></div>
-							<Icon name={group.icon} size={14} />
-							<span>{group.name}</span>
-						</button>
-					{/each}
-				</div>
-			</div>
-		{/if}
 	</div>
-</div>
+{/if}

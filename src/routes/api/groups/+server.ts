@@ -2,23 +2,24 @@ import { requireSession } from '$lib/server/auth/session';
 import { db } from '$lib/server/db';
 import { groups } from '$lib/server/db/schema';
 import { getUserGroupsPaginated, invalidateUserCache } from '$lib/server/db/helpers';
+import { withErrorHandling } from '$lib/server/errors';
 import { parsePagination } from '$lib/server/pagination';
 import { parseBody } from '$lib/server/validators/group';
 import { json, error } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
 import type { RequestHandler } from './$types';
 
-export const GET: RequestHandler = async (event) => {
-	const session = await requireSession(event.request);
+export const GET: RequestHandler = withErrorHandling(async (event) => {
+	const session = await requireSession(event);
 	const { page, limit } = parsePagination(new URL(event.request.url));
 
 	const result = await getUserGroupsPaginated(session.user.id, page, limit);
 
 	return json(result);
-};
+});
 
-export const POST: RequestHandler = async (event) => {
-	const session = await requireSession(event.request);
+export const POST: RequestHandler = withErrorHandling(async (event) => {
+	const session = await requireSession(event);
 
 	const body = await event.request.json();
 	const { name, color, icon, subtitle, description, parentId } = parseBody(body);
@@ -54,4 +55,4 @@ export const POST: RequestHandler = async (event) => {
 	invalidateUserCache(session.user.id);
 
 	return json(created, { status: 201 });
-};
+});

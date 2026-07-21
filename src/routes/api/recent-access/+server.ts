@@ -1,13 +1,14 @@
 import { requireSession } from '$lib/server/auth/session';
 import { db } from '$lib/server/db';
 import { recentAccess } from '$lib/server/db/schema';
+import { withErrorHandling } from '$lib/server/errors';
 import { parseTargetId, validateMutualExclusion } from '$lib/server/validators/target';
 import { json } from '@sveltejs/kit';
 import { eq, and, inArray, sql } from 'drizzle-orm';
 import type { RequestHandler } from './$types';
 
-export const POST: RequestHandler = async (event) => {
-	const session = await requireSession(event.request);
+export const POST: RequestHandler = withErrorHandling(async (event) => {
+	const session = await requireSession(event);
 
 	const body = await event.request.json();
 	const { itemId, groupId } = parseTargetId(body);
@@ -62,4 +63,4 @@ export const POST: RequestHandler = async (event) => {
 	});
 
 	return json({ success: true });
-};
+});

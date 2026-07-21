@@ -3,15 +3,10 @@ import { db } from '$lib/server/db';
 import { items, itemGroups, groups, ocrNotes } from '$lib/server/db/schema';
 import { getOrThrow } from '$lib/server/db/helpers';
 import { eq } from 'drizzle-orm';
-import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async (event) => {
-	const session = await requireSession(event.request).catch(() => null);
-
-	if (!session) {
-		redirect(302, '/auth/login');
-	}
+	const session = await requireSession(event);
 
 	const item = await getOrThrow(items, event.params.id, session.user.id);
 

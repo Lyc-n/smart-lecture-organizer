@@ -2,17 +2,12 @@ import { requireSession } from '$lib/server/auth/session';
 import { db } from '$lib/server/db';
 import { groups, items, itemGroups } from '$lib/server/db/schema';
 import { getUserGroups, getGroupDescendants, getOrThrow } from '$lib/server/db/helpers';
-import { redirect } from '@sveltejs/kit';
 import { eq, desc } from 'drizzle-orm';
 import { getRecommendedGroups } from '$lib/server/services/recommend';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async (event) => {
-	const session = await requireSession(event.request).catch(() => null);
-
-	if (!session) {
-		redirect(302, '/auth/login');
-	}
+	const session = await requireSession(event);
 
 	const group = await getOrThrow(groups, event.params.id, session.user.id);
 

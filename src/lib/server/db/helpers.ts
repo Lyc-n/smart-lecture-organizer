@@ -4,6 +4,7 @@ import { error } from '@sveltejs/kit';
 import { eq, sql } from 'drizzle-orm';
 import { cached, cache } from '$lib/server/cache';
 import { getOffset, type PaginatedResult, DEFAULT_PAGE_SIZE } from '$lib/server/pagination';
+import { validateUUID } from '$lib/server/validators/common';
 
 type AnyPgTable = { id: any; [key: string]: any };
 
@@ -12,6 +13,8 @@ export async function getOrThrow(
 	id: string,
 	userId: string
 ): Promise<any> {
+	validateUUID(id);
+
 	const record = await (db.select().from(table as any).where(eq(table.id, id)) as any).then(
 		(r: unknown[]) => r[0]
 	);
@@ -38,6 +41,19 @@ export async function getUserGroups(userId: string, limit = MAX_GROUPS_LIMIT) {
 			.where(eq(groups.userId, userId))
 			.orderBy(asc(groups.sortOrder), asc(groups.name))
 			.limit(limit);
+	}, 60_000);
+}
+
+export async function getUserGroupCount(userId: string): Promise<number> {
+	return cached(`groupCount:${userId}`, async () => {
+		const { groups } = await import('$lib/server/db/schema');
+
+		const result = await db
+			.select({ count: sql<number>`COUNT(*)` })
+			.from(groups)
+			.where(eq(groups.userId, userId));
+
+		return Number(result[0]?.count ?? 0);
 	}, 60_000);
 }
 
@@ -181,5 +197,5 @@ export async function getUserBookmarksPaginated(
 }
 
 export function invalidateUserCache(userId: string): void {
-	cache.invalidate(`(groups|overdue|bookmarks):${userId}`);
+	cache.invalidate(`(groups|groupCount|overdue|bookmarks):${userId}`);
 }

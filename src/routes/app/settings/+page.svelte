@@ -2,8 +2,9 @@
 	import { page } from '$app/stores';
 	import { getCurrentMode, setTheme } from '$lib/stores/theme.svelte';
 	import type { ThemeMode } from '$lib/stores/theme.svelte';
+	import { STORAGE_LIMIT } from '$lib/constants';
 
-	const limit = $derived($page.data.limit ?? 52428800);
+	const limit = $derived($page.data.limit ?? STORAGE_LIMIT);
 	const used = $derived($page.data.used ?? 0);
 	const percentage = $derived(Math.min(Math.round((used / limit) * 100), 100));
 

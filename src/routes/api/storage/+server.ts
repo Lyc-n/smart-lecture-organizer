@@ -4,7 +4,7 @@ import { json, error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 
 export const GET: RequestHandler = async (event) => {
-	const session = await requireSession(event.request);
+	const session = await requireSession(event);
 
 	try {
 		const { used, limit } = await checkStorageQuota(session.user.id, 0);

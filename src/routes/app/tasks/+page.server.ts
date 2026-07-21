@@ -3,15 +3,10 @@ import { db } from '$lib/server/db';
 import { tasks, groups, items } from '$lib/server/db/schema';
 import { getUserGroups, getOverdueCount } from '$lib/server/db/helpers';
 import { eq, and, asc, sql } from 'drizzle-orm';
-import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async (event) => {
-	const session = await requireSession(event.request).catch(() => null);
-
-	if (!session) {
-		redirect(302, '/auth/login');
-	}
+	const session = await requireSession(event);
 
 	const userId = session.user.id;
 	const url = new URL(event.request.url);

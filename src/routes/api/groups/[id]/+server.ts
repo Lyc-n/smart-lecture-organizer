@@ -2,25 +2,29 @@ import { requireSession } from '$lib/server/auth/session';
 import { db } from '$lib/server/db';
 import { groups } from '$lib/server/db/schema';
 import { getOrThrow, getGroupDescendants, invalidateUserCache } from '$lib/server/db/helpers';
+import { withErrorHandling } from '$lib/server/errors';
 import { validatePatchBody } from '$lib/server/validators/group';
+import { validateUUID } from '$lib/server/validators/common';
 import { json, error } from '@sveltejs/kit';
 import { eq, sql } from 'drizzle-orm';
 import type { RequestHandler } from './$types';
 
-export const GET: RequestHandler = async (event) => {
-	const session = await requireSession(event.request);
+export const GET: RequestHandler = withErrorHandling(async (event) => {
+	const session = await requireSession(event);
+	const id = validateUUID(event.params.id);
 
-	const group = await getOrThrow(groups, event.params.id, session.user.id);
+	const group = await getOrThrow(groups, id, session.user.id);
 
 	const children = await getGroupDescendants(group.id);
 
 	return json({ group, children: children.rows });
-};
+});
 
-export const PATCH: RequestHandler = async (event) => {
-	const session = await requireSession(event.request);
+export const PATCH: RequestHandler = withErrorHandling(async (event) => {
+	const session = await requireSession(event);
+	const id = validateUUID(event.params.id);
 
-	const group = await getOrThrow(groups, event.params.id, session.user.id);
+	const group = await getOrThrow(groups, id, session.user.id);
 	const body = await event.request.json();
 	const updates = validatePatchBody(body);
 
@@ -74,16 +78,17 @@ export const PATCH: RequestHandler = async (event) => {
 	invalidateUserCache(session.user.id);
 
 	return json(updated);
-};
+});
 
-export const DELETE: RequestHandler = async (event) => {
-	const session = await requireSession(event.request);
+export const DELETE: RequestHandler = withErrorHandling(async (event) => {
+	const session = await requireSession(event);
+	const id = validateUUID(event.params.id);
 
-	await getOrThrow(groups, event.params.id, session.user.id);
+	await getOrThrow(groups, id, session.user.id);
 
-	await db.delete(groups).where(eq(groups.id, event.params.id));
+	await db.delete(groups).where(eq(groups.id, id));
 
 	invalidateUserCache(session.user.id);
 
 	return json(null, { status: 204 });
-};
+});

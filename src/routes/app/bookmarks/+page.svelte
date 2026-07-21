@@ -5,6 +5,7 @@
 	import { formatDate } from '$lib/utils/format';
 
 	const bookmarks = $derived($page.data.bookmarks ?? []);
+	const loaded = $derived($page.data.bookmarks !== undefined);
 </script>
 
 <svelte:head>
@@ -15,7 +16,13 @@
 	<div class="mx-auto max-w-2xl">
 		<h1 class="mb-6 text-2xl font-bold">Bookmark</h1>
 
-		{#if bookmarks.length === 0}
+		{#if !loaded}
+			<div class="space-y-2">
+				{#each [1, 2, 3] as _}
+					<div class="h-14 animate-pulse rounded-xl bg-bg-elevated"></div>
+				{/each}
+			</div>
+		{:else if bookmarks.length === 0}
 			<div class="rounded-xl bg-bg-elevated border border-border-main p-8 text-center">
 				<div
 					class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-bg-hover"

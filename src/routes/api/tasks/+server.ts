@@ -2,14 +2,15 @@ import { requireSession } from '$lib/server/auth/session';
 import { db } from '$lib/server/db';
 import { tasks, groups, items } from '$lib/server/db/schema';
 import { getOrThrow, invalidateUserCache } from '$lib/server/db/helpers';
-import { parsePagination, getOffset, MAX_PAGE_SIZE } from '$lib/server/pagination';
+import { withErrorHandling } from '$lib/server/errors';
+import { parsePagination, getOffset } from '$lib/server/pagination';
 import { parseCreateTask } from '$lib/server/validators/task';
 import { json } from '@sveltejs/kit';
 import { eq, and, asc, lte, gte, sql } from 'drizzle-orm';
 import type { RequestHandler } from './$types';
 
-export const GET: RequestHandler = async (event) => {
-	const session = await requireSession(event.request);
+export const GET: RequestHandler = withErrorHandling(async (event) => {
+	const session = await requireSession(event);
 
 	const url = new URL(event.request.url);
 	const { page, limit } = parsePagination(url);
@@ -63,10 +64,10 @@ export const GET: RequestHandler = async (event) => {
 		limit,
 		hasMore: offset + limit < countResult
 	});
-};
+});
 
-export const POST: RequestHandler = async (event) => {
-	const session = await requireSession(event.request);
+export const POST: RequestHandler = withErrorHandling(async (event) => {
+	const session = await requireSession(event);
 
 	const body = await event.request.json();
 	const { title, description, groupId, itemId, deadline } = parseCreateTask(body);
@@ -94,4 +95,4 @@ export const POST: RequestHandler = async (event) => {
 	invalidateUserCache(session.user.id);
 
 	return json(created, { status: 201 });
-};
+});

@@ -1,5 +1,6 @@
 import { error } from '@sveltejs/kit';
 import { HEX_COLOR, VALID_ICONS } from '$lib/server/constants';
+import { validateStringLength } from '$lib/server/validators/common';
 
 export function parseBody(body: unknown): {
 	name: string;
@@ -33,7 +34,11 @@ export function parseBody(body: unknown): {
 	const description = typeof data.description === 'string' ? data.description.trim() || undefined : undefined;
 	const parentId = typeof data.parent_id === 'string' ? data.parent_id : undefined;
 
-	return { name: data.name.trim(), color, icon, subtitle, description, parentId };
+	const name = validateStringLength(data.name.trim(), 'Name', { max: 100 });
+	if (subtitle) validateStringLength(subtitle, 'Subtitle', { max: 200 });
+	if (description) validateStringLength(description, 'Description', { max: 5000 });
+
+	return { name, color, icon, subtitle, description, parentId };
 }
 
 export function validatePatchBody(body: unknown): Record<string, unknown> {
@@ -48,7 +53,7 @@ export function validatePatchBody(body: unknown): Record<string, unknown> {
 		if (typeof data.name !== 'string' || data.name.trim().length === 0) {
 			error(400, 'Name cannot be empty');
 		}
-		updates.name = data.name.trim();
+		updates.name = validateStringLength(data.name.trim(), 'Name', { max: 100 });
 	}
 
 	if (data.color !== undefined) {
@@ -66,11 +71,13 @@ export function validatePatchBody(body: unknown): Record<string, unknown> {
 	}
 
 	if (data.subtitle !== undefined) {
-		updates.subtitle = typeof data.subtitle === 'string' ? data.subtitle.trim() || null : null;
+		const val = typeof data.subtitle === 'string' ? data.subtitle.trim() || null : null;
+		updates.subtitle = val ? validateStringLength(val, 'Subtitle', { max: 200 }) : null;
 	}
 
 	if (data.description !== undefined) {
-		updates.description = typeof data.description === 'string' ? data.description.trim() || null : null;
+		const val = typeof data.description === 'string' ? data.description.trim() || null : null;
+		updates.description = val ? validateStringLength(val, 'Description', { max: 5000 }) : null;
 	}
 
 	if (data.parent_id !== undefined) {

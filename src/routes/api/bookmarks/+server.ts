@@ -2,23 +2,24 @@ import { requireSession } from '$lib/server/auth/session';
 import { db } from '$lib/server/db';
 import { bookmarks, items, groups } from '$lib/server/db/schema';
 import { getOrThrow, getUserBookmarksPaginated, invalidateUserCache } from '$lib/server/db/helpers';
+import { withErrorHandling } from '$lib/server/errors';
 import { parsePagination } from '$lib/server/pagination';
 import { parseTargetId, validateMutualExclusion } from '$lib/server/validators/target';
 import { json } from '@sveltejs/kit';
 import { eq, and } from 'drizzle-orm';
 import type { RequestHandler } from './$types';
 
-export const GET: RequestHandler = async (event) => {
-	const session = await requireSession(event.request);
+export const GET: RequestHandler = withErrorHandling(async (event) => {
+	const session = await requireSession(event);
 	const { page, limit } = parsePagination(new URL(event.request.url));
 
 	const result = await getUserBookmarksPaginated(session.user.id, page, limit);
 
 	return json(result);
-};
+});
 
-export const POST: RequestHandler = async (event) => {
-	const session = await requireSession(event.request);
+export const POST: RequestHandler = withErrorHandling(async (event) => {
+	const session = await requireSession(event);
 
 	const body = await event.request.json();
 	const { itemId, groupId } = parseTargetId(body);
@@ -57,4 +58,4 @@ export const POST: RequestHandler = async (event) => {
 	invalidateUserCache(session.user.id);
 
 	return json({ bookmarked: true }, { status: 201 });
-};
+});

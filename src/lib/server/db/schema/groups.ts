@@ -5,6 +5,7 @@ import { itemGroups } from './item-groups';
 import { tasks } from './tasks';
 import { bookmarks } from './bookmarks';
 import { recentAccess } from './recent-access';
+import { DEFAULT_GROUP_COLOR } from '$lib/constants';
 
 export type Group = typeof groups.$inferSelect;
 export type NewGroup = typeof groups.$inferInsert;
@@ -20,7 +21,7 @@ export const groups = pgTable(
 		name: text('name').notNull(),
 		subtitle: text('subtitle'),
 		description: text('description'),
-		color: text('color').notNull().default('#6366f1'),
+		color: text('color').notNull().default(DEFAULT_GROUP_COLOR),
 		icon: text('icon').notNull().default('folder'),
 		sortOrder: integer('sort_order').notNull().default(0),
 		createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),

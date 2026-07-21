@@ -5,6 +5,7 @@
 	import GroupTree from '$lib/components/organisms/GroupTree.svelte';
 	import GroupForm from '$lib/components/organisms/GroupForm.svelte';
 	import { api } from '$lib/utils/api';
+	import { toast } from '$lib/stores/toast';
 
 	const groups = $derived($page.data.groups ?? []);
 	const recommendations = $derived($page.data.recommendations ?? []);
@@ -33,9 +34,10 @@
 			await api.post('/api/groups', data);
 			showForm = false;
 			prefillName = '';
+			toast.success('Grup berhasil dibuat');
 			invalidate(() => true);
 		} catch (e) {
-			alert((e as Error).message);
+			toast.error((e as Error).message);
 		}
 	}
 </script>
