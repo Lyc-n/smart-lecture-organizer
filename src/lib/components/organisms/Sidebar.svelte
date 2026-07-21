@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { goto } from '$app/navigation';
 	import NavItem from '$lib/components/molecules/NavItem.svelte';
 
 	let {
@@ -16,16 +15,16 @@
 	} = $props();
 
 	const navItems = $derived([
-		{ label: 'Dashboard', icon: 'dashboard', path: '/app' },
-		{ label: 'Grup', icon: 'folder', path: '/app/groups' },
-		{ label: 'Tugas', icon: 'tasks', path: '/app/tasks', badge: overdueCount },
-		{ label: 'Bookmark', icon: 'bookmark', path: '/app/bookmarks' },
-		{ label: 'Cari', icon: 'search', path: '/app/search' }
+		{ label: 'Dashboard', icon: 'dashboard', href: '/app' },
+		{ label: 'Grup', icon: 'folder', href: '/app/groups' },
+		{ label: 'Tugas', icon: 'tasks', href: '/app/tasks', badge: overdueCount },
+		{ label: 'Bookmark', icon: 'bookmark', href: '/app/bookmarks' },
+		{ label: 'Cari', icon: 'search', href: '/app/search' }
 	]);
 
-	function isActive(path: string): boolean {
-		if (path === '/app') return $page.url.pathname === '/app';
-		return $page.url.pathname.startsWith(path);
+	function isActive(href: string): boolean {
+		if (href === '/app') return $page.url.pathname === '/app';
+		return $page.url.pathname.startsWith(href);
 	}
 </script>
 
@@ -54,10 +53,9 @@
 				<NavItem
 					label={item.label}
 					icon={item.icon}
-					path={item.path}
-					active={isActive(item.path)}
+					href={item.href}
+					active={isActive(item.href)}
 					collapsed={collapsed}
-					onclick={() => goto(item.path)}
 				/>
 			</div>
 		{/each}

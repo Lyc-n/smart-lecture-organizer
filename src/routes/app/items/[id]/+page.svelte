@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { goto } from '$app/navigation';
 	import { invalidate } from '$app/navigation';
 	import Icon from '$lib/components/atoms/Icon.svelte';
 	import ItemMediaPreview from '$lib/components/molecules/ItemMediaPreview.svelte';
@@ -9,6 +8,7 @@
 	const item = $derived($page.data.item);
 	const groups = $derived($page.data.groups ?? []);
 	const note = $derived($page.data.note);
+	const loaded = $derived($page.data.item !== undefined);
 
 	let ocrLoading = $state(false);
 	let ocrError = $state('');
@@ -64,25 +64,34 @@
 	<title>{item?.name ?? 'Item'} — Smart Lecture Organizer</title>
 </svelte:head>
 
-{#if !item}
+{#if !loaded}
+	<div class="min-h-screen bg-bg-surface text-text-base p-8">
+		<div class="mx-auto max-w-4xl">
+			<div class="flex flex-col gap-4">
+				<div class="h-6 w-24 animate-pulse rounded bg-bg-hover"></div>
+				<div class="h-48 animate-pulse rounded-xl bg-bg-elevated"></div>
+				<div class="h-32 animate-pulse rounded-xl bg-bg-elevated"></div>
+			</div>
+		</div>
+	</div>
+{:else if !item}
 	<div class="min-h-screen bg-bg-surface text-text-base p-8">
 		<div class="mx-auto max-w-4xl text-center text-text-muted">
-			<p>Memuat data item...</p>
+			<p>Item tidak ditemukan.</p>
 		</div>
 	</div>
 {:else}
 	<div class="min-h-screen bg-bg-surface text-text-base p-8">
 		<div class="mx-auto max-w-4xl">
-			<button
-				type="button"
-				onclick={() => goto('/app/groups')}
+			<a
+				href="/app/groups"
 				class="mb-4 flex items-center gap-1 text-sm text-text-muted transition hover:text-text-secondary"
 			>
 				<svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
 					<path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
 				</svg>
 				Kembali
-			</button>
+			</a>
 
 			<div class="rounded-xl bg-bg-elevated border border-border-main overflow-hidden">
 				<div class="p-6 pb-4">
@@ -120,15 +129,14 @@
 					<h2 class="mb-3 text-sm font-semibold text-text-secondary uppercase tracking-wider">Grup</h2>
 					<div class="flex flex-wrap gap-2">
 						{#each groups as group}
-							<button
-								type="button"
-								onclick={() => goto(`/app/groups/${group.id}`)}
+							<a
+								href="/app/groups/{group.id}"
 								class="flex items-center gap-2 rounded-lg border border-border-hover bg-bg-surface px-3 py-2 text-sm text-text-secondary transition hover:border-text-muted hover:text-text-secondary"
 							>
 								<div class="h-3 w-3 rounded-full" style="background-color: {group.color}"></div>
 								<Icon name={group.icon} size={14} />
 								<span>{group.name}</span>
-							</button>
+							</a>
 						{/each}
 					</div>
 				</div>

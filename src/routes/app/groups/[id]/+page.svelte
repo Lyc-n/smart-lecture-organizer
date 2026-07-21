@@ -108,24 +108,31 @@
 
 {#if !group}
 	<div class="min-h-screen bg-bg-surface text-text-base p-8">
-		<div class="mx-auto max-w-2xl text-center text-text-muted">
-			<p>Memuat data grup...</p>
+		<div class="mx-auto max-w-2xl">
+			<div class="flex flex-col gap-4">
+				<div class="h-6 w-24 animate-pulse rounded bg-bg-hover"></div>
+				<div class="h-32 animate-pulse rounded-xl bg-bg-elevated"></div>
+				<div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
+					{#each [1, 2, 3, 4] as _}
+						<div class="h-16 animate-pulse rounded-xl bg-bg-elevated"></div>
+					{/each}
+				</div>
+			</div>
 		</div>
 	</div>
 {:else}
 
 <div class="min-h-screen bg-bg-surface text-text-base p-8">
 	<div class="mx-auto max-w-2xl">
-		<button
-			type="button"
-			onclick={() => goto('/app/groups')}
+		<a
+			href="/app/groups"
 			class="mb-4 flex items-center gap-1 text-sm text-text-muted hover:text-text-secondary transition"
 		>
 			<svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
 				<path d="M15 18l-6-6 6-6" />
 			</svg>
 			Kembali
-		</button>
+		</a>
 
 		<div class="rounded-xl bg-bg-elevated border border-border-main p-6">
 			<div class="flex items-start gap-4">
@@ -192,7 +199,7 @@
 					{#each children as child (child.id)}
 						<GroupCard
 							group={child}
-							onclick={() => goto(`/app/groups/${child.id}`)}
+							href="/app/groups/{child.id}"
 						/>
 					{/each}
 				</div>
@@ -249,13 +256,13 @@
 			{:else if viewMode === 'grid'}
 				<div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
 					{#each sortedItems as item (item.id)}
-						<ItemCard {item} onclick={() => goto(`/app/items/${item.id}`)} />
+						<ItemCard {item} href="/app/items/{item.id}" />
 					{/each}
 				</div>
 			{:else}
 				<div class="flex flex-col gap-2">
 					{#each sortedItems as item (item.id)}
-						<ItemCard {item} onclick={() => goto(`/app/items/${item.id}`)} />
+						<ItemCard {item} href="/app/items/{item.id}" />
 					{/each}
 				</div>
 			{/if}

@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
 	import { formatSize } from '$lib/utils/format';
 	import type { SearchItem } from '$lib/types/search';
 
@@ -15,9 +14,8 @@
 	<h2 class="mb-3 text-sm font-semibold text-text-secondary uppercase tracking-wider">Item ({items.length})</h2>
 	<div class="flex flex-col gap-2">
 		{#each items as item (item.id)}
-			<button
-				type="button"
-				onclick={() => goto(`/app/items/${item.id}`)}
+			<a
+				href="/app/items/{item.id}"
 				class="flex items-center gap-3 rounded-xl bg-bg-elevated border border-border-main p-3 text-left transition hover:border-border-hover"
 			>
 				<div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-bg-hover text-text-muted">
@@ -29,7 +27,7 @@
 					<div class="truncate text-sm font-medium text-text-base">{item.name}</div>
 					<div class="text-xs text-text-muted">{item.type} &middot; {formatSize(item.fileSize)}</div>
 				</div>
-			</button>
+			</a>
 		{/each}
 	</div>
 	{#if hasMore}

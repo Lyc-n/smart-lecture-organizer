@@ -4,7 +4,7 @@
 
 	let {
 		group,
-		onclick
+		href = ''
 	}: {
 		group: {
 			id: string;
@@ -14,13 +14,12 @@
 			icon: string;
 			itemCount?: number;
 		};
-		onclick?: () => void;
+		href?: string;
 	} = $props();
 </script>
 
-<button
-	type="button"
-	onclick={onclick}
+<a
+	{href}
 	class="flex w-full items-center gap-3 rounded-xl bg-bg-elevated border border-border-main p-3 text-left transition hover:border-border-hover hover:bg-bg-hover/80"
 	style="border-left: 3px solid {group.color}"
 >
@@ -39,4 +38,4 @@
 	{#if group.itemCount !== undefined}
 		<Badge>{group.itemCount}</Badge>
 	{/if}
-</button>
+</a>

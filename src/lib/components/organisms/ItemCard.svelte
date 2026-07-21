@@ -16,10 +16,10 @@
 
 	let {
 		item,
-		onclick
+		href = ''
 	}: {
 		item: Item;
-		onclick?: () => void;
+		href?: string;
 	} = $props();
 
 	const typeIcons: Record<string, string> = {
@@ -35,6 +35,7 @@
 	$effect(() => { pinned = item.isPinned; });
 
 	async function togglePin(e: MouseEvent) {
+		e.preventDefault();
 		e.stopPropagation();
 		try {
 			const result = await api.post<{ isPinned: boolean }>(`/api/items/${item.id}/pin`);
@@ -45,12 +46,9 @@
 	}
 </script>
 
-<div
-	class="flex w-full cursor-pointer items-center gap-3 rounded-xl bg-bg-elevated border border-border-main p-3 text-left transition hover:border-border-hover hover:bg-bg-hover/80"
-	onclick={onclick}
-	onkeydown={(e) => e.key === 'Enter' && onclick?.()}
-	role="button"
-	tabindex="0"
+<a
+	{href}
+	class="flex w-full items-center gap-3 rounded-xl bg-bg-elevated border border-border-main p-3 text-left transition hover:border-border-hover hover:bg-bg-hover/80"
 >
 	<div
 		class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-bg-hover text-text-muted"
@@ -77,4 +75,4 @@
 	>
 		<Icon name="pin" size={16} class={pinned ? 'text-yellow-400' : ''} />
 	</button>
-</div>
+</a>

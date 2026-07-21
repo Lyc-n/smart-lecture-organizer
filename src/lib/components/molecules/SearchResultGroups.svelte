@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
 	import Icon from '$lib/components/atoms/Icon.svelte';
 	import type { SearchGroup } from '$lib/types/search';
 
@@ -15,9 +14,8 @@
 	<h2 class="mb-3 text-sm font-semibold text-text-secondary uppercase tracking-wider">Grup ({groups.length})</h2>
 	<div class="flex flex-col gap-2">
 		{#each groups as group (group.id)}
-			<button
-				type="button"
-				onclick={() => goto(`/app/groups/${group.id}`)}
+			<a
+				href="/app/groups/{group.id}"
 				class="flex items-center gap-3 rounded-xl bg-bg-elevated border border-border-main p-3 text-left transition hover:border-border-hover"
 			>
 				<div
@@ -32,7 +30,7 @@
 						<div class="text-xs text-text-muted">{group.subtitle}</div>
 					{/if}
 				</div>
-			</button>
+			</a>
 		{/each}
 	</div>
 	{#if hasMore}

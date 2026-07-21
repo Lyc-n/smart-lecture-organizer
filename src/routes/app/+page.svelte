@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { goto } from '$app/navigation';
 	import ItemCard from '$lib/components/organisms/ItemCard.svelte';
 	import { formatDateTime } from '$lib/utils/format';
 
@@ -41,7 +40,7 @@
 						<h2 class="mb-3 text-sm font-semibold text-text-secondary uppercase tracking-wider">Disematkan</h2>
 						<div class="flex flex-col gap-2">
 							{#each pinnedItems as item (item.id)}
-								<ItemCard {item} onclick={() => goto(`/app/items/${item.id}`)} />
+								<ItemCard {item} href="/app/items/{item.id}" />
 							{/each}
 						</div>
 					</section>
@@ -53,9 +52,8 @@
 						<div class="flex flex-col gap-2">
 							{#each recentAccess as ra (ra.id)}
 								{#if ra.itemId}
-									<button
-										type="button"
-										onclick={() => goto(`/app/items/${ra.itemId}`)}
+									<a
+										href="/app/items/{ra.itemId}"
 										class="flex items-center gap-3 rounded-xl bg-bg-elevated border border-border-main p-3 text-left transition hover:border-border-hover"
 									>
 										<div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-bg-hover text-text-muted">
@@ -67,11 +65,10 @@
 											<div class="truncate text-sm text-text-base">{ra.itemName}</div>
 											<div class="text-xs text-text-muted">{formatDateTime(ra.accessedAt)}</div>
 										</div>
-									</button>
+									</a>
 								{:else if ra.groupId}
-									<button
-										type="button"
-										onclick={() => goto(`/app/groups/${ra.groupId}`)}
+									<a
+										href="/app/groups/{ra.groupId}"
 										class="flex items-center gap-3 rounded-xl bg-bg-elevated border border-border-main p-3 text-left transition hover:border-border-hover"
 									>
 										<div
@@ -86,7 +83,7 @@
 											<div class="truncate text-sm text-text-base">{ra.groupName}</div>
 											<div class="text-xs text-text-muted">{formatDateTime(ra.accessedAt)}</div>
 										</div>
-									</button>
+									</a>
 								{/if}
 							{/each}
 						</div>
@@ -96,39 +93,35 @@
 				<section>
 					<h2 class="mb-3 text-sm font-semibold text-text-secondary uppercase tracking-wider">Ringkasan</h2>
 					<div class="grid grid-cols-3 gap-3">
-						<button
-							type="button"
-							onclick={() => goto('/app/groups')}
+						<a
+							href="/app/groups"
 							class="rounded-xl bg-bg-elevated border border-border-main p-4 text-left transition hover:border-border-hover"
 						>
 							<div class="text-2xl font-bold">{groupCount}</div>
 							<div class="text-xs text-text-muted">Grup</div>
-						</button>
-						<button
-							type="button"
-							onclick={() => goto('/app/tasks?status=pending')}
+						</a>
+						<a
+							href="/app/tasks?status=pending"
 							class="rounded-xl bg-bg-elevated border border-border-main p-4 text-left transition hover:border-border-hover"
 						>
 							<div class="text-2xl font-bold">{tasksPending}</div>
 							<div class="text-xs text-text-muted">Tugas</div>
-						</button>
-						<button
-							type="button"
-							onclick={() => goto('/app/tasks?status=overdue')}
+						</a>
+						<a
+							href="/app/tasks?status=overdue"
 							class="rounded-xl bg-bg-elevated border border-border-main p-4 text-left transition hover:border-border-hover"
 						>
 							<div class="text-2xl font-bold text-danger">{tasksOverdue}</div>
 							<div class="text-xs text-text-muted">Terlambat</div>
-						</button>
+						</a>
 					</div>
 				</section>
 
 				<section>
 					<h2 class="mb-3 text-sm font-semibold text-text-secondary uppercase tracking-wider">Akses Cepat</h2>
 					<div class="flex flex-col gap-2">
-						<button
-							type="button"
-							onclick={() => goto('/app/groups')}
+						<a
+							href="/app/groups"
 							class="flex items-center gap-3 rounded-xl bg-bg-elevated border border-border-main p-3 text-left transition hover:border-border-hover"
 						>
 							<div class="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
@@ -140,10 +133,9 @@
 								<div class="text-sm font-medium text-text-base">Buat Grup</div>
 								<div class="text-xs text-text-muted">Buat grup belajar baru</div>
 							</div>
-						</button>
-						<button
-							type="button"
-							onclick={() => goto('/app/items/upload')}
+						</a>
+						<a
+							href="/app/items/upload"
 							class="flex items-center gap-3 rounded-xl bg-bg-elevated border border-border-main p-3 text-left transition hover:border-border-hover"
 						>
 							<div class="flex h-9 w-9 items-center justify-center rounded-lg bg-success/10 text-success">
@@ -155,10 +147,9 @@
 								<div class="text-sm font-medium text-text-base">Upload Materi</div>
 								<div class="text-xs text-text-muted">Unggah file materi baru</div>
 							</div>
-						</button>
-						<button
-							type="button"
-							onclick={() => goto('/app/tasks')}
+						</a>
+						<a
+							href="/app/tasks"
 							class="flex items-center gap-3 rounded-xl bg-bg-elevated border border-border-main p-3 text-left transition hover:border-border-hover"
 						>
 							<div class="flex h-9 w-9 items-center justify-center rounded-lg bg-tertiary/10 text-tertiary">
@@ -170,10 +161,9 @@
 								<div class="text-sm font-medium text-text-base">Buat Tugas</div>
 								<div class="text-xs text-text-muted">Buat tugas baru</div>
 							</div>
-						</button>
-						<button
-							type="button"
-							onclick={() => goto('/app/bookmarks')}
+						</a>
+						<a
+							href="/app/bookmarks"
 							class="flex items-center gap-3 rounded-xl bg-bg-elevated border border-border-main p-3 text-left transition hover:border-border-hover"
 						>
 							<div class="flex h-9 w-9 items-center justify-center rounded-lg bg-rose-500/10 text-rose-400">
@@ -185,7 +175,7 @@
 								<div class="text-sm font-medium text-text-base">Bookmark</div>
 								<div class="text-xs text-text-muted">Item dan grup yang dibookmark</div>
 							</div>
-						</button>
+						</a>
 					</div>
 				</section>
 			</div>

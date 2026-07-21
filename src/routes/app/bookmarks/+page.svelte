@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { goto } from '$app/navigation';
 	import Icon from '$lib/components/atoms/Icon.svelte';
 	import { formatDate } from '$lib/utils/format';
 
@@ -37,9 +36,8 @@
 			<div class="flex flex-col gap-2">
 				{#each bookmarks as bm (bm.id)}
 					{#if bm.itemId}
-						<button
-							type="button"
-							onclick={() => goto(`/app/items/${bm.itemId}`)}
+						<a
+							href="/app/items/{bm.itemId}"
 							class="flex w-full items-center gap-3 rounded-xl bg-bg-elevated border border-border-main p-3 text-left transition hover:border-border-hover"
 						>
 							<div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-bg-hover text-text-muted">
@@ -51,11 +49,10 @@
 								<div class="truncate text-sm font-medium text-text-base">{bm.itemName}</div>
 								<div class="text-xs text-text-muted">Item &middot; {formatDate(bm.createdAt)}</div>
 							</div>
-						</button>
+						</a>
 					{:else if bm.groupId}
-						<button
-							type="button"
-							onclick={() => goto(`/app/groups/${bm.groupId}`)}
+						<a
+							href="/app/groups/{bm.groupId}"
 							class="flex w-full items-center gap-3 rounded-xl bg-bg-elevated border border-border-main p-3 text-left transition hover:border-border-hover"
 						>
 							<div
@@ -68,7 +65,7 @@
 								<div class="truncate text-sm font-medium text-text-base">{bm.groupName}</div>
 								<div class="text-xs text-text-muted">Grup &middot; {formatDate(bm.createdAt)}</div>
 							</div>
-						</button>
+						</a>
 					{/if}
 				{/each}
 			</div>

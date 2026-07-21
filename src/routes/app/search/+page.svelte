@@ -259,9 +259,8 @@
 		{#if results.items.length > 0 && activeTab === 'image'}
 			<div class="grid grid-cols-2 gap-3 sm:grid-cols-3">
 				{#each results.items as item (item.id)}
-					<button
-						type="button"
-						onclick={() => goto(`/app/items/${item.id}`)}
+					<a
+						href="/app/items/{item.id}"
 						class="group rounded-xl bg-bg-elevated border border-border-main overflow-hidden transition hover:border-border-hover"
 					>
 						<div class="aspect-square bg-bg-hover">
@@ -280,7 +279,7 @@
 								</div>
 							{/if}
 						</div>
-					</button>
+					</a>
 				{/each}
 			</div>
 		{/if}

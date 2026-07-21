@@ -4,7 +4,7 @@
 	type Props = {
 		label: string;
 		icon: string;
-		path?: string;
+		href?: string;
 		active?: boolean;
 		badge?: number;
 		collapsed?: boolean;
@@ -16,7 +16,7 @@
 	let {
 		label,
 		icon,
-		path = '',
+		href = '',
 		active = false,
 		badge = 0,
 		collapsed = false,
@@ -34,23 +34,45 @@
 	});
 </script>
 
-<button
-	{type}
-	{onclick}
-	title={collapsed ? label : undefined}
-	class="relative flex w-full items-center gap-3 rounded-lg {collapsed ? 'justify-center px-2 py-2.5' : 'px-3 py-2.5'} text-sm font-medium transition {variantStyles[variant]}"
->
-	<Icon name={icon} size={20} />
-	{#if !collapsed}
-		{label}
-		{#if badge > 0}
-			<span class="ml-auto flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-danger px-1 text-xs font-bold text-white">
+{#if href}
+	<a
+		{href}
+		title={collapsed ? label : undefined}
+		class="relative flex w-full items-center gap-3 rounded-lg {collapsed ? 'justify-center px-2 py-2.5' : 'px-3 py-2.5'} text-sm font-medium transition {variantStyles[variant]}"
+	>
+		<Icon name={icon} size={20} />
+		{#if !collapsed}
+			{label}
+			{#if badge > 0}
+				<span class="ml-auto flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-danger px-1 text-xs font-bold text-white">
+					{badge}
+				</span>
+			{/if}
+		{:else if badge > 0}
+			<span class="absolute -right-0.5 -top-0.5 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-danger px-0.5 text-[10px] font-bold text-white">
 				{badge}
 			</span>
 		{/if}
-	{:else if badge > 0}
-		<span class="absolute -right-0.5 -top-0.5 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-danger px-0.5 text-[10px] font-bold text-white">
-			{badge}
-		</span>
-	{/if}
-</button>
+	</a>
+{:else}
+	<button
+		{type}
+		{onclick}
+		title={collapsed ? label : undefined}
+		class="relative flex w-full items-center gap-3 rounded-lg {collapsed ? 'justify-center px-2 py-2.5' : 'px-3 py-2.5'} text-sm font-medium transition {variantStyles[variant]}"
+	>
+		<Icon name={icon} size={20} />
+		{#if !collapsed}
+			{label}
+			{#if badge > 0}
+				<span class="ml-auto flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-danger px-1 text-xs font-bold text-white">
+					{badge}
+				</span>
+			{/if}
+		{:else if badge > 0}
+			<span class="absolute -right-0.5 -top-0.5 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-danger px-0.5 text-[10px] font-bold text-white">
+				{badge}
+			</span>
+		{/if}
+	</button>
+{/if}
